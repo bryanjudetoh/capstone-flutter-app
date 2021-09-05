@@ -1,51 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:youthapp/Screens/Welcome/components/components.dart';
+import 'package:youthapp/constants.dart';
+import 'package:youthapp/Screens/Signup/components/components.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
+
+  @override
+  _SignUpScreenState createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+
+  String email = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Register",
-                    style: TextStyle(fontFamily: 'SF Pro Display',
-                        fontSize: 35.0,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 20),
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Sign Up",
+                      style: TextStyle(fontFamily: 'SF Pro Display',
+                          fontSize: 35.0,
+                          fontWeight: FontWeight.bold),
                     ),
-                    onPressed: () {},
-                    child: const Text('Skip',
-                      style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 20),
+                      ),
+                      onPressed: () {Navigator.pop(context);},
+                      child: const Text('Back',
+                        style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
+                      ),
                     ),
-                  ),
-                ]
+                  ]
               ),
               SizedBox(
                 height: 100.0,
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    "Phone Number:",
-                    style: TextStyle( fontFamily: 'SF Pro Display',
-                      fontSize: 16.0
-                    )
+                  TextFormField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Email',
+                      hintText: 'Enter your email',
+                    ),
+                    validator: emailValidator,
+                    onSaved: (value) => email = value!,
                   ),
-                  const PhoneNumberForm(),
-                  Align(
-                    alignment: Alignment.center,
-                    child: const LoginButton()
+                  SizedBox( height: 10.0,),
+                  ElevatedButton(
+                    child: Text('Register',
+                      style: TextStyle(fontFamily: 'SF Pro Display'),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0),
+                      ),
+                      padding: EdgeInsets.fromLTRB(100.0, 10.0, 100.0, 10.0),
+                      primary: kLightBlue,
+                    ),
+                    onPressed: () {Navigator.pushNamed(context, '/registration', arguments: email);}, //TODO: Registration Screen with required email field
                   ),
                 ],
               ),
@@ -55,8 +78,8 @@ class WelcomeScreen extends StatelessWidget {
                   Text(
                     "Or social media access",
                     style: TextStyle(
-                      fontFamily: "SF Pro Display",
-                      fontSize: 16.0
+                        fontFamily: "SF Pro Display",
+                        fontSize: 16.0
                     ),
                   ),
                   FractionallySizedBox(
@@ -98,7 +121,7 @@ class WelcomeScreen extends StatelessWidget {
                     style: TextButton.styleFrom(
                       textStyle: const TextStyle(fontSize: 20),
                     ),
-                    onPressed: () {},
+                    onPressed: () {Navigator.pushNamed(context, '/login');},
                     child: const Text('Log In here',
                       style: TextStyle( fontFamily: "SF Pro Display", fontSize: 16.0),
                     ),
@@ -111,5 +134,4 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
-
 
