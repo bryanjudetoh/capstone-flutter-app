@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:youthapp/Screens/Welcome/components/components.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/widgets/rounded-button.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -16,24 +16,13 @@ class WelcomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image(
-                    image: AssetImage("assets/images/equity-lab-potion-logo.png")
+                    image: AssetImage(
+                        "assets/images/equity-lab-potion-logo.png")
                 ),
-                ElevatedButton(
-                  child: Text('Sign Up',
-                    style: TextStyle(fontFamily: 'SF Pro Display'),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0),
-                    ),
-                    padding: EdgeInsets.fromLTRB(100.0, 10.0, 100.0, 10.0),
-                    primary: kLightBlue,
-                  ),
-                  onPressed: () {Navigator.pushNamed(context, '/signup');},
-                ),
+                RoundedButton("Sign Up", () => Navigator.pushNamed(context, '/signup'), kLightBlue),
                 ElevatedButton(
                   child: Text('Log In',
-                    style: TextStyle(fontFamily: 'SF Pro Display', color: kLightBlue),
+                    style: TextStyle(fontFamily: 'SF Pro Display', color: kLightBlue, fontWeight: FontWeight.bold),
                   ),
                   style: ElevatedButton.styleFrom(
                     shape: new RoundedRectangleBorder(
@@ -51,4 +40,5 @@ class WelcomeScreen extends StatelessWidget {
       ),
     );
   }
+
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:youthapp/Screens/Login/components/components.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/widgets/rounded-button.dart';
+import 'package:youthapp/utilities/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -36,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextButton.styleFrom(
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  onPressed: () {Navigator.pop(context);},
+                  onPressed: () {Navigator.pushNamed(context, '/');},
                   child: const Text('Back',
                     style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                   ),
@@ -73,19 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             onSaved: (value) => password = value!,
                           ),
                           SizedBox( height: 10.0,),
-                          ElevatedButton(
-                            child: Text('Log In',
-                              style: TextStyle(fontFamily: 'SF Pro Display'),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              shape: new RoundedRectangleBorder(
-                                borderRadius: new BorderRadius.circular(30.0),
-                              ),
-                              padding: EdgeInsets.fromLTRB(100.0, 10.0, 100.0, 10.0),
-                              primary: kLightBlue,
-                            ),
-                            onPressed: () {submit();},
-                          ),
+                          RoundedButton("Log In", submit, kLightBlue),
                         ],
                       ),
                   ),
@@ -97,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  "Don't have an account?",
+                  "Forgot your password?",
                   style: TextStyle(
                     fontFamily: "SF Pro Display",
                     fontSize: 16.0,
@@ -107,8 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextButton.styleFrom(
                     textStyle: const TextStyle(fontSize: 20),
                   ),
-                  onPressed: () {Navigator.pushNamed(context, '/signup');},
-                  child: const Text('Sign up here',
+                  onPressed: () {Navigator.pushNamed(context, '/forgotpw');},
+                  child: const Text('Reset here',
                     style: TextStyle( fontFamily: "SF Pro Display", fontSize: 16.0),
                   ),
                 ),

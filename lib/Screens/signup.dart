@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
-import 'package:youthapp/Screens/Signup/components/components.dart';
+import 'package:youthapp/widgets/rounded-button.dart';
+import 'package:youthapp/utilities/validators.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -35,7 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextButton.styleFrom(
                         textStyle: const TextStyle(fontSize: 20),
                       ),
-                      onPressed: () {Navigator.pop(context);},
+                      onPressed: () {Navigator.pushNamed(context, '/');},
                       child: const Text('Back',
                         style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                       ),
@@ -57,19 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onSaved: (value) => email = value!,
                   ),
                   SizedBox( height: 10.0,),
-                  ElevatedButton(
-                    child: Text('Register',
-                      style: TextStyle(fontFamily: 'SF Pro Display'),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30.0),
-                      ),
-                      padding: EdgeInsets.fromLTRB(100.0, 10.0, 100.0, 10.0),
-                      primary: kLightBlue,
-                    ),
-                    onPressed: () {Navigator.pushNamed(context, '/registration', arguments: email);}, //TODO: Registration Screen with required email field
-                  ),
+                  RoundedButton('Register', () => {Navigator.pushNamed(context, '/registration', arguments: email)}, kLightBlue),
                 ],
               ),
               Column(

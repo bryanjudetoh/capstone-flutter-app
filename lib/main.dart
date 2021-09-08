@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:youthapp/Screens/Login/login.dart';
-import 'package:youthapp/Screens/Signup/signup.dart';
-import 'Screens/Welcome/welcome.dart';
+import 'package:youthapp/Screens/login.dart';
+import 'package:youthapp/Screens/signup.dart';
+import 'package:youthapp/Screens/forgotpw.dart';
+import 'Screens/welcome.dart';
 import 'package:youthapp/constants.dart';
 
 void main() {
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => WelcomeScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignUpScreen(),
+        '/forgotpw': (context) => ForgotPasswordScreen(),
       },
     );
   }
