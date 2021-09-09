@@ -6,6 +6,7 @@ final emailValidator = MultiValidator([
 ]);
 
 final passwordValidator = MultiValidator([
-  RequiredValidator(errorText: 'password is required'),
-  LengthRangeValidator(errorText: 'password must be between 8 to 30 characters long', max: 30, min: 8),
+  RequiredValidator(errorText: 'Password is required'),
+  LengthRangeValidator(errorText: 'Password must be between 8 to 30 characters long', max: 30, min: 8),
+  PatternValidator(r'(^[^ \n]*$)', errorText: 'Password cannot have any spaces or newline characters')
 ]);

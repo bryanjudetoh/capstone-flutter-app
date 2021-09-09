@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
@@ -11,7 +12,7 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-
+  final _formkey = GlobalKey<FormState>();
   String email = '';
 
   @override
@@ -48,17 +49,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               ),
               Column(
                 children: <Widget>[
-                  TextFormField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Email',
-                      hintText: 'Enter your email',
+                  Form(
+                    key: _formkey,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Email',
+                        hintText: 'Enter your email',
+                      ),
+                      validator: emailValidator,
+                      onSaved: (value) => email = value!,
                     ),
-                    validator: emailValidator,
-                    onSaved: (value) => email = value!,
                   ),
                   SizedBox( height: 10.0,),
-                  RoundedButton('Register', () => {Navigator.pushNamed(context, '/registration', arguments: email)}, kLightBlue),
+                  RoundedButton('Register', register, kLightBlue),
                 ],
               ),
               Column(
@@ -121,6 +125,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
     );
+  }
+
+  void register() {
+    final form = _formkey.currentState!;
+
+    if (form.validate()) {
+      form.save();
+
+      print('Form valid: $email');
+    }
+    Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingScreen(email: email)));
   }
 }
 

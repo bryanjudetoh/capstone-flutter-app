@@ -22,7 +22,7 @@ class WelcomeScreen extends StatelessWidget {
                 RoundedButton("Sign Up", () => Navigator.pushNamed(context, '/signup'), kLightBlue),
                 ElevatedButton(
                   child: Text('Log In',
-                    style: TextStyle(fontFamily: 'SF Pro Display', color: kLightBlue, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontFamily: 'SF Pro Display', color: kLightBlue, fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                   style: ElevatedButton.styleFrom(
                     shape: new RoundedRectangleBorder(

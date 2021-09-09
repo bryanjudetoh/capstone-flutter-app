@@ -12,7 +12,7 @@ class RoundedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       child: Text(title,
-        style: TextStyle(fontFamily: 'SF Pro Display', fontWeight: FontWeight.bold),
+        style: TextStyle(fontFamily: 'SF Pro Display', fontWeight: FontWeight.bold, fontSize: 16.0),
       ),
       style: ElevatedButton.styleFrom(
         shape: new RoundedRectangleBorder(
