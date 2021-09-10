@@ -5,8 +5,8 @@ import 'package:youthapp/utilities/validators.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  final String email;
-  const OnboardingScreen({Key? key, required this.email}) : super(key: key);
+  final String? email;
+  const OnboardingScreen({Key? key, this.email }) : super(key: key);
 
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
@@ -21,8 +21,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void initState() {
-    if (widget.email.length > 0) {
-      email = widget.email;
+    print(widget.email);
+    var len = widget.email?.length ?? 0;
+    if ( len > 0) {
+      email = widget.email ?? '';
     }
   }
 

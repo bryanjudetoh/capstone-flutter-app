@@ -135,7 +135,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
       print('Form valid: $email');
     }
-    Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingScreen(email: email)));
+    Navigator.pushNamed(context, '/onboarding', arguments: email);
+    //Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingScreen(email: email)));
   }
 }
 

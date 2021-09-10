@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/models/user.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -108,14 +111,33 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-  void submit() {
+  void submit() async {
     final form = _formkey.currentState!;
 
     if (form.validate()) {
       form.save();
 
-      print('Form valid: $email, $password');
-      //setState(() => isSignedIn = true);
+      final body = jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+      });
+      User user = await doLogin(body);
+      Navigator.pushNamed(context, '/home', arguments: user);
+    }
+  }
+
+  Future<User> doLogin(json) async {
+    final response = await http.post(
+        Uri.parse('https://eq-lab-dev.me/api/mp/auth/login?type=email'),
+        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+        body: json,
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      print(response.body);
+      throw Exception('Log in failed!');
     }
   }
 }
