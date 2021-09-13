@@ -121,23 +121,44 @@ class _LoginScreenState extends State<LoginScreen> {
         'email': email,
         'password': password,
       });
-      User user = await doLogin(body);
-      Navigator.pushNamed(context, '/home', arguments: user);
+      try {
+        User user = await doLogin(body);
+        Navigator.pushNamed(context, '/home', arguments: user);
+      }
+      on Exception catch (err) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Error"),
+                content: Text(err.toString()),
+                actions: [
+                  TextButton(
+                    child: Text("Ok"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            });
+      }
+
     }
   }
 
-  Future<User> doLogin(json) async {
+  Future<User> doLogin(body) async {
     final response = await http.post(
         Uri.parse('https://eq-lab-dev.me/api/mp/auth/login?type=email'),
         headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
-        body: json,
+        body: body,
     );
 
     if (response.statusCode == 200) {
       return User.fromJson(jsonDecode(response.body));
     } else {
-      print(response.body);
-      throw Exception('Log in failed!');
+
+      throw Exception('User not found or password incorrect!');
     }
   }
 }

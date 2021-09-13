@@ -1,42 +1,55 @@
-import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
+part 'user.g.dart';
 
+@JsonSerializable()
 class User {
-  String userId, email, firstName, lastName, roleId, role, userType;
-  bool enabled;
-  DateTime createdAt, lastLogin;
+  @JsonKey(required: true, disallowNullValue: true)
+  String userId;
 
-  User({required this.userId, required this.email, required this.firstName, required this.lastName, required this.enabled,
-    required this.roleId, required this.role, required this.createdAt, required this.lastLogin, required this.userType});
+  @JsonKey(required: true)
+  String email;
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      userId: json['userId'],
-      email: json['email'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      enabled: json['enabled'],
-      roleId: json['roleId'],
-      role: json['role'],
-      createdAt: DateTime.parse(json['createdAt']),
-      lastLogin: DateTime.parse(json['lastLogin']),
-      userType: json['userType'],
-    );
-  }
+  String? mobile;
 
-  Map<String, dynamic> toJson() {
-    return {
-      "userId" : userId,
-      "email" : email,
-      "firstName" : firstName,
-      "lastName" : lastName,
-      "enabled" : enabled,
-      "roleId" : roleId,
-      "role" : role,
-      "createdAt" : createdAt,
-      "lastLogin" : lastLogin,
-      "userType" : userType,
+  @JsonKey(required: true)
+  String firstName;
 
-    };
-  }
+  @JsonKey(required: true)
+  String lastName;
+
+  String? gender;
+
+  int? age;
+
+  DateTime? dob;
+
+  String? address1;
+  String? address2;
+  String? address3;
+  String? postalCode;
+  String? countryCode;
+  String? city;
+
+  String? school;
+
+  String? roleId;
+  String? role;
+  String? userType;
+
+  bool? enabled;
+
+  DateTime? createdAt;
+  DateTime? lastLogin;
+
+  User({required this.userId, required this.email, this.mobile, required this.firstName, required this.lastName,
+    this.gender, this.age, this.dob,
+    this.address1, this.address2, this.address3,
+    this.postalCode, this.countryCode, this.city, this.school,
+    this.roleId, this.role, this.userType,
+    this.enabled, this.createdAt, this.lastLogin,});
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';

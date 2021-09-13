@@ -4,18 +4,20 @@ import 'package:youthapp/models/user.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 
 class HomeScreen extends StatefulWidget {
-  final User? user;
-  const HomeScreen({Key? key, this.user}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("This is a home screen")
+    final User user = ModalRoute.of(context)!.settings.arguments as User;
+
+    return Scaffold(
+      body: Text(user.firstName),
     );
   }
 }
