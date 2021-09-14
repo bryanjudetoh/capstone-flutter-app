@@ -35,12 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Text(
                   "Log In",
-                  style: TextStyle(fontFamily: 'SF Pro Display',
-                      fontSize: 35.0,
-                      fontWeight: FontWeight.bold),
-                ),TextButton(
+                  style: xLargeTitleTextStyle,
+                ),
+                TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: mediumTitleTextStyle,
                   ),
                   onPressed: () {Navigator.pushNamed(context, '/');},
                   child: const Text('Back',
@@ -61,21 +60,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           FormInput(
                             placeholder: 'Email',
                             validator: emailValidator,
-                            func: (value) => email = value!,
-                            obscureText: false,
+                            func: (value) => this.email = value!,
                           ),
                           SizedBox( height: 10.0),
                           FormInput(
                             placeholder: 'Password',
                             validator: passwordValidator,
-                            func: (value) => password = value!,
-                            obscureText: true
+                            func: (value) => this.password = value!,
+                            obscureText: true,
                           ),
                           SizedBox( height: 10.0),
                           RoundedButton(
                               title: "Log In",
                               func: submit,
-                              color: kLightBlue
+                              colorBG: kLightBlue,
+                              colorFont: kWhite,
                           ),
                         ],
                       ),
@@ -89,18 +88,15 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Text(
                   "Forgot your password?",
-                  style: TextStyle(
-                    fontFamily: "SF Pro Display",
-                    fontSize: 16.0,
-                  ),
+                  style: bodyTextStyle,
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: bodyTextStyle,
                   ),
                   onPressed: () {Navigator.pushNamed(context, '/forgotpw');},
                   child: const Text('Reset here',
-                    style: TextStyle( fontFamily: "SF Pro Display", fontSize: 16.0),
+                    style: bodyTextStyle,
                   ),
                 ),
               ],

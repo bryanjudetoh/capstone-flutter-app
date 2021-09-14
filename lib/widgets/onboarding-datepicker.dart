@@ -24,14 +24,14 @@ class _OnboardingDatepickerState extends State<OnboardingDatepicker> {
           children: <Widget>[
             Text(
               widget.title,
-              style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0),
+              style: bodyTextStyleBold,
             ),
             SizedBox( width: 15.0,),
             Flexible(
                 fit: FlexFit.tight,
                 child: Text(
                   currentSelectedDate.toString().split(' ')[0],
-                  style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0, fontWeight: FontWeight.bold),
+                  style: bodyTextStyle,
                 )
             ),
             SizedBox( width: 15.0,),
@@ -39,7 +39,7 @@ class _OnboardingDatepickerState extends State<OnboardingDatepicker> {
               onPressed: () => _selectDate(context),
               child: Text(
                 'Select date',
-                style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0, fontWeight: FontWeight.bold),
+                style: bodyTextStyleBold,
               ),
               style: ElevatedButton.styleFrom(
                 primary: kLightBlue,

@@ -21,7 +21,8 @@ class WelcomeScreen extends StatelessWidget {
                 RoundedButton(
                   title: "Sign Up",
                   func: () => Navigator.pushNamed(context, '/signup'),
-                  color: kLightBlue,
+                  colorBG: kLightBlue,
+                  colorFont: kWhite,
                 ),
                 SizedBox(
                   height: 10.0,
@@ -29,7 +30,8 @@ class WelcomeScreen extends StatelessWidget {
                 RoundedButton(
                   title: "Log In",
                   func: () => Navigator.pushNamed(context, '/login'),
-                  color: kGrey,
+                  colorBG: kGrey,
+                  colorFont: kLightBlue,
                 ),
               ],
             ),

@@ -21,7 +21,7 @@ class OnboardingTextfield extends StatelessWidget {
           children: <Widget>[
             Text(
               this.title,
-              style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0),
+              style: bodyTextStyleBold,
             ),
             SizedBox( height: 5.0,),
             Container(
