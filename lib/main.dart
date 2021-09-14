@@ -5,6 +5,7 @@ import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/forgotpw.dart';
 import 'package:youthapp/screens/home.dart';
+import 'package:youthapp/screens/verification.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => SignUpScreen(),
         '/onboarding': (context) => OnboardingScreen(),
         '/home': (context) => HomeScreen(),
+        '/verification': (context) => VerificationScreen(),
       }
     );
   }
