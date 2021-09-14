@@ -14,8 +14,7 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
 
 class OnboardingScreen extends StatefulWidget {
-  final String? email;
-  const OnboardingScreen({Key? key, this.email }) : super(key: key);
+  const OnboardingScreen({Key? key}) : super(key: key);
 
   @override
   _OnboardingScreenState createState() => _OnboardingScreenState();
@@ -44,7 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     String inputEmail = ModalRoute.of(context)!.settings.arguments as String;
 
     if ( inputEmail.length > 0) {
-      this.email = inputEmail; //remove quotation marks
+      this.email = inputEmail;
     }
 
 
@@ -206,7 +205,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
       try {
         User user = await doRegistration(body);
-        Navigator.pushNamed(context, '/home', arguments: user);
+        Navigator.pushNamed(context, '/verification', arguments: user);
       }
       on Exception catch (err) {
         showDialog(
