@@ -4,7 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/widgets/alert-popup.dart';
+import 'package:youthapp/widgets/onboarding-datepicker.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
+import 'package:youthapp/widgets/onboarding-textfield.dart';
+import 'package:youthapp/widgets/onboarding-dropdown.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
@@ -34,9 +38,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String countryCode = countryCodesList[0];
   String city = '';
   String school = '';
-
-  String _genderSelectedValue = genderList[0];
-  String _countryCodeSelectedValue = countryCodesList[0];
 
   @override
   Widget build(BuildContext context) {
@@ -78,391 +79,93 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               key: _formkey,
               child: Column(
                 children: <Widget>[
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'First Name:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'John',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => firstName = value!,
-                          ),
-                        ],
-                      )
-                  ),// First Name
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Last Name:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Wong',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => lastName = value!,
-                          ),
-                        ],
-                      )
-                  ),// Last Name
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Mobile Number:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your mobile number',
-                            ),
-                            validator: mobileNumValidator,
-                            onSaved: (value) => mobile = value!,
-                          ),
-                        ],
-                      )
-                  ),// Mobile Number
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Email:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            initialValue: this.email,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your email',
-                            ),
-                            validator: emailValidator,
-                            onSaved: (value) => email = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                      title: 'First Name:',
+                      hintText: 'John',
+                      validator: RequiredValidator(errorText: "* Required"),
+                      callback: (value) => this.firstName = value!,
+                  ),// FirstName
+                  OnboardingTextfield(
+                      title: 'Last Name:',
+                      hintText: 'Wong',
+                      validator: RequiredValidator(errorText: "* Required"),
+                      callback: (value) => this.lastName = value!
+                  ),// LastName
+                  OnboardingTextfield(
+                      title: 'Mobile Number:',
+                      hintText: 'Enter your mobile number',
+                      validator: mobileNumValidator,
+                      callback: (value) => this.mobile = value!
+                  ),// Mobile
+                  OnboardingTextfield(
+                      title: 'Email:',
+                      hintText: 'Enter your email',
+                      initialValue: this.email,
+                      validator: emailValidator,
+                      callback: (value) => this.email = value!,
                   ),// Email
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Password:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your password',
-                            ),
-                            validator: passwordValidator,
-                            onSaved: (value) => password = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                      title: 'Password:',
+                      hintText: 'Enter your password',
+                      obscureText: true,
+                      validator: passwordValidator,
+                      callback: (value) => this.password = value!,
                   ),// Password
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Gender:',
-                            style: bodyTextStyle,
-                          ),
-                          SizedBox( width: 15.0,),
-                          Flexible(
-                            fit: FlexFit.tight,
-                            child: FormField<String>(
-                              builder: (FormFieldState<String> state) {
-                                return InputDecorator(
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  isEmpty: this.gender == '',
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _genderSelectedValue,
-                                      isDense: true,
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          this.gender = value!;
-                                          _genderSelectedValue = value;
-                                        });
-                                      },
-                                      items: genderList.map((String value) {
-                                        return DropdownMenuItem<String> (
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      )
+                  OnboardingDropdown(
+                      title: 'Gender',
+                      input: this.gender,
+                      list: genderList,
+                      callback: (value) => this.gender = value!,
                   ),// Gender
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Age:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your age',
-                            ),
-                            validator: ageValidator,
-                            onSaved: (value) => age = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                      title: 'Age:',
+                      hintText: 'Enter your age',
+                      validator: ageValidator,
+                      callback: (value) => this.age = value!,
                   ),// Age
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Date of Birth:',
-                          style: TextStyle(fontFamily: 'SF Pro Display',
-                              fontSize: 16.0),
-                        ),
-                        SizedBox( width: 15.0,),
-                        Flexible(
-                          fit: FlexFit.tight,
-                          child: Text(
-                              "${dob.toLocal()}".split(' ')[0],
-                            style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0, fontWeight: FontWeight.bold),
-                          )
-                        ),
-                        SizedBox( width: 15.0,),
-                        ElevatedButton(
-                          onPressed: () => _selectDate(context),
-                          child: Text(
-                            'Select date',
-                            style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0, fontWeight: FontWeight.bold),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            primary: kLightBlue,
-                          ),
-                        ),
-                      ],
-                    )
+                  OnboardingDatepicker(
+                      title: 'Date of Birth:',
+                      callback: (value) => this.dob = value!,
                   ),// DOB
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Address 1:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your address',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => address1 = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                    title: 'Address 1:',
+                    hintText: 'Enter your address',
+                    validator: RequiredValidator(errorText: "* Required"),
+                    callback: (value) => this.address1 = value!,
                   ),// Address1
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Address 2:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your address',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => address2 = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                    title: 'Address 2:',
+                    hintText: 'Enter your address',
+                    callback: (value) => this.address2 = value!,
                   ),// Address2
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Address 3:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your address',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => address3 = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                    title: 'Address 3:',
+                    hintText: 'Enter your address',
+                    callback: (value) => this.address3 = value!,
                   ),// Address3
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Postal Code:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your postal code',
-                            ),
-                            validator: postalCodeValidator,
-                            onSaved: (value) => postalCode = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                    title: 'Postal Code:',
+                    hintText: 'Enter your postal code',
+                    validator: postalCodeValidator,
+                    callback: (value) => this.postalCode = value!,
                   ),// Postal Code
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            'Country Code:',
-                            style: bodyTextStyle,
-                          ),
-                          SizedBox( width: 15.0,),
-                          Flexible(
-                            fit: FlexFit.tight,
-                            child: FormField<String>(
-                              builder: (FormFieldState<String> state) {
-                                return InputDecorator(
-                                  decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                  ),
-                                  isEmpty: this.countryCode == '',
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<String>(
-                                      value: _countryCodeSelectedValue,
-                                      isDense: true,
-                                      onChanged: (String? value) {
-                                        setState(() {
-                                          this.countryCode = value!;
-                                          _countryCodeSelectedValue = value;
-                                        });
-                                      },
-                                      items: countryCodesList.map((String value) {
-                                        return DropdownMenuItem<String> (
-                                          value: value,
-                                          child: Text(value),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      )
+                  OnboardingDropdown(
+                      title: 'Country Code:',
+                      input: this.countryCode,
+                      list: countryCodesList,
+                      callback: (value) => this.countryCode = value!,
                   ),// Country Code
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'City:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your city',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => city = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                    title: 'City:',
+                    hintText: 'Enter your city',
+                    validator: RequiredValidator(errorText: "* Required"),
+                    callback: (value) => this.city = value!,
                   ),// City
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'School:',
-                            style: TextStyle(fontFamily: 'SF Pro Display',
-                                fontSize: 16.0),
-                          ),
-                          SizedBox( height: 5.0,),
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              hintText: 'Enter your school',
-                            ),
-                            validator: RequiredValidator(errorText: "* Required"),
-                            onSaved: (value) => school = value!,
-                          ),
-                        ],
-                      )
+                  OnboardingTextfield(
+                    title: 'School:',
+                    hintText: 'Enter your school',
+                    validator: RequiredValidator(errorText: "* Required"),
+                    callback: (value) => this.school = value!,
                   ),// School
                 ],
               ),
@@ -506,19 +209,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Error"),
-                content: Text(err.toString()),
-                actions: [
-                  TextButton(
-                    child: Text("Ok"),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              );
-            });
+              return AlertPopup(
+                title: "Error",
+                desc: err.toString(),);
+            }
+        );
       }
     }
   }
@@ -530,30 +225,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: body,
     );
 
-    print(body);
-
     if (response.statusCode == 202) {
       return User.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 500) {
-      print(response.body);
       throw Exception('User already exists in our system');
     }
     else {
-      print(response.body);
       throw Exception('Error while creating user!');
     }
   }
 
-  _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1970),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null)
-      setState(() {
-        this.dob = picked;
-      });
-  }
+
 }
