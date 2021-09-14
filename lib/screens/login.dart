@@ -35,12 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Text(
                   "Log In",
-                  style: TextStyle(fontFamily: 'SF Pro Display',
-                      fontSize: 35.0,
-                      fontWeight: FontWeight.bold),
-                ),TextButton(
+                  style: xLargeTitleTextStyle,
+                ),
+                TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: mediumTitleTextStyle,
                   ),
                   onPressed: () {Navigator.pushNamed(context, '/');},
                   child: const Text('Back',
@@ -59,20 +58,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: <Widget>[
                           FormInput(
-                            'Email',
-                            emailValidator,
-                            (value) => email = value!,
-                            false
+                            placeholder: 'Email',
+                            validator: emailValidator,
+                            func: (value) => this.email = value!,
                           ),
                           SizedBox( height: 10.0),
                           FormInput(
-                            'Password',
-                            passwordValidator,
-                            (value) => password = value!,
-                            true
+                            placeholder: 'Password',
+                            validator: passwordValidator,
+                            func: (value) => this.password = value!,
+                            obscureText: true,
                           ),
                           SizedBox( height: 10.0),
-                          RoundedButton("Log In", submit, kLightBlue),
+                          RoundedButton(
+                              title: "Log In",
+                              func: submit,
+                              colorBG: kLightBlue,
+                              colorFont: kWhite,
+                          ),
                         ],
                       ),
                   ),
@@ -85,18 +88,15 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Text(
                   "Forgot your password?",
-                  style: TextStyle(
-                    fontFamily: "SF Pro Display",
-                    fontSize: 16.0,
-                  ),
+                  style: bodyTextStyle,
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: bodyTextStyle,
                   ),
                   onPressed: () {Navigator.pushNamed(context, '/forgotpw');},
                   child: const Text('Reset here',
-                    style: TextStyle( fontFamily: "SF Pro Display", fontSize: 16.0),
+                    style: bodyTextStyle,
                   ),
                 ),
               ],

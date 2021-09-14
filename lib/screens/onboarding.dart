@@ -59,13 +59,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: <Widget>[
                   Text(
                     "Onboarding",
-                    style: TextStyle(fontFamily: 'SF Pro Display',
-                        fontSize: 35.0,
-                        fontWeight: FontWeight.bold),
+                    style: xLargeTitleTextStyle,
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 20),
+                      textStyle: mediumTitleTextStyle,
                     ),
                     onPressed: () {Navigator.pop(context);},
                     child: const Text('Back',
@@ -170,7 +168,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
-            RoundedButton("Register Account", submit, kLightBlue)
+            RoundedButton(
+              title: "Register Account",
+              func: submit,
+              colorBG: kLightBlue,
+              colorFont: kWhite,
+            ),
           ],
         ),
       ),
