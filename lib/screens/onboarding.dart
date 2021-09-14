@@ -170,7 +170,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
-            RoundedButton("Register Account", submit, kLightBlue)
+            RoundedButton(
+                title: "Register Account",
+                func: submit,
+                color: kLightBlue,
+            ),
           ],
         ),
       ),

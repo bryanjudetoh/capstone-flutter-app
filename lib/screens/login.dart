@@ -59,20 +59,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: <Widget>[
                           FormInput(
-                            'Email',
-                            emailValidator,
-                            (value) => email = value!,
-                            false
+                            placeholder: 'Email',
+                            validator: emailValidator,
+                            func: (value) => email = value!,
+                            obscureText: false,
                           ),
                           SizedBox( height: 10.0),
                           FormInput(
-                            'Password',
-                            passwordValidator,
-                            (value) => password = value!,
-                            true
+                            placeholder: 'Password',
+                            validator: passwordValidator,
+                            func: (value) => password = value!,
+                            obscureText: true
                           ),
                           SizedBox( height: 10.0),
-                          RoundedButton("Log In", submit, kLightBlue),
+                          RoundedButton(
+                              title: "Log In",
+                              func: submit,
+                              color: kLightBlue
+                          ),
                         ],
                       ),
                   ),

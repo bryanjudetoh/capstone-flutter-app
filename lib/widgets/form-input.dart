@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 class FormInput extends StatelessWidget {
-  FormInput(this.placeholder, this.validator, this.func, this.obscureText);
+  FormInput({required this.placeholder, required this.validator, required this.func, required this.obscureText});
   final String placeholder;
-  final MultiValidator validator;
+  final FieldValidator validator;
   final Function(String?) func;
   final bool obscureText;
 

@@ -73,7 +73,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       onSaved: (value) => email = value!,
                     ),
                     SizedBox( height: 10.0,),
-                    RoundedButton("Reset Password", submit, kLightBlue),
+                    RoundedButton(
+                        title: "Reset Password",
+                        func: submit,
+                        color: kLightBlue
+                    ),
                   ],
                 ),
               ),

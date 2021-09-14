@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class RoundedButton extends StatelessWidget {
-  RoundedButton(this.title, this.func, this.color);
+  RoundedButton({required this.title, required this.func, required this.color});
   final String title;
   final Function func;
   final Color color;
@@ -17,7 +17,7 @@ class RoundedButton extends StatelessWidget {
         shape: new RoundedRectangleBorder(
           borderRadius: new BorderRadius.circular(30.0),
         ),
-        padding: EdgeInsets.fromLTRB(140.0, 20.0, 140.0, 20.0),
+        padding: EdgeInsets.fromLTRB(120.0, 20.0, 120.0, 20.0),
         primary: color,
       ),
       onPressed: () {func();},

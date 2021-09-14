@@ -61,7 +61,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                   SizedBox( height: 10.0,),
-                  RoundedButton('Register', register, kLightBlue),
+                  RoundedButton(
+                      title: 'Register',
+                      func: register,
+                      color: kLightBlue,
+                  ),
                 ],
               ),
               Column(
@@ -135,7 +139,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       print('Form valid: $email');
     }
     Navigator.pushNamed(context, '/onboarding', arguments: email);
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingScreen(email: email)));
   }
 }
 
