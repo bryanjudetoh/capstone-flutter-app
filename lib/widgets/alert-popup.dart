@@ -10,16 +10,16 @@ class AlertPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title, style: defaultTextStyleBold,),
-      content: Text(desc, style: defaultTextStyle,),
+      title: Text(title, style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0, fontWeight: FontWeight.bold),),
+      content: Text(desc, style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0),),
       actions: [
         TextButton(
-          child: Text("Ok", style: defaultTextStyle,),
+          child: Text("Ok", style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0),),
           onPressed: () {
             Navigator.of(context).pop();
           },
         )
       ],
-    );;
+    );
   }
 }
