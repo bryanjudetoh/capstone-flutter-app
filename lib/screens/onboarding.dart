@@ -197,7 +197,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         children: <Widget>[
                           Text(
                             'Gender:',
-                            style: defaultTextStyle,
+                            style: bodyTextStyle,
                           ),
                           SizedBox( width: 15.0,),
                           Flexible(
@@ -383,7 +383,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         children: <Widget>[
                           Text(
                             'Country Code:',
-                            style: defaultTextStyle,
+                            style: bodyTextStyle,
                           ),
                           SizedBox( width: 15.0,),
                           Flexible(

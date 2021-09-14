@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
+import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
@@ -57,27 +58,20 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       child: Column(
                         children: <Widget>[
-                          TextFormField(
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Email',
-                              hintText: 'Enter your email',
-                            ),
-                            validator: emailValidator,
-                            onSaved: (value) => email = value!,
+                          FormInput(
+                            'Email',
+                            emailValidator,
+                            (value) => email = value!,
+                            false
                           ),
-                          SizedBox( height: 10.0,),
-                          TextFormField(
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Password',
-                              hintText: 'Enter your password',
-                            ),
-                            validator: passwordValidator,
-                            onSaved: (value) => password = value!,
+                          SizedBox( height: 10.0),
+                          FormInput(
+                            'Password',
+                            passwordValidator,
+                            (value) => password = value!,
+                            true
                           ),
-                          SizedBox( height: 10.0,),
+                          SizedBox( height: 10.0),
                           RoundedButton("Log In", submit, kLightBlue),
                         ],
                       ),
