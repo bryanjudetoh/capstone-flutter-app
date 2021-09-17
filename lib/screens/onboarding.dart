@@ -125,18 +125,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       callback: (value) => this.dob = value!,
                   ),// DOB
                   OnboardingTextfield(
-                    title: 'Address 1:',
+                    title: 'Address Line 1:',
                     hintText: 'Enter your address',
                     validator: RequiredValidator(errorText: "* Required"),
                     callback: (value) => this.address1 = value!,
                   ),// Address1
                   OnboardingTextfield(
-                    title: 'Address 2:',
+                    title: 'Address Line 2:',
                     hintText: 'Enter your address',
                     callback: (value) => this.address2 = value!,
                   ),// Address2
                   OnboardingTextfield(
-                    title: 'Address 3:',
+                    title: 'Address Line 3:',
                     hintText: 'Enter your address',
                     callback: (value) => this.address3 = value!,
                   ),// Address3
@@ -205,7 +205,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
       try {
         User user = await doRegistration(body);
-        Navigator.pushNamed(context, '/verification', arguments: user);
+        Navigator.pushNamedAndRemoveUntil(context, '/verification', ModalRoute.withName('/'), arguments: user);
       }
       on Exception catch (err) {
         showDialog(

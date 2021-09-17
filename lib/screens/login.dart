@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
@@ -20,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  final SecureStorage secureStorage = SecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextButton.styleFrom(
                     textStyle: mediumTitleTextStyle,
                   ),
-                  onPressed: () {Navigator.pushNamed(context, '/');},
+                  onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
                   child: const Text('Back',
                     style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                   ),
@@ -118,7 +120,10 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       try {
         User user = await doLogin(body);
-        Navigator.pushNamed(context, '/home', arguments: user);
+        secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
+        var token = await secureStorage.readSecureData('accessToken');
+        print(token);
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
       }
       on Exception catch (err) {
         showDialog(
@@ -139,10 +144,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+      var responseBody = jsonDecode(response.body);
+      var token = responseBody['token'];
+
+      secureStorage.writeSecureData('accessToken', token['accessToken']);
+      secureStorage.writeSecureData('refreshToken', token['refreshToken']);
+
+      return User.fromJson(responseBody);
     } else {
 
-      throw Exception('User not found or password incorrect!');
+      throw Exception(jsonDecode(response.body)['message']);
     }
   }
 }
