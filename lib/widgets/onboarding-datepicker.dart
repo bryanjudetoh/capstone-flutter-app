@@ -57,7 +57,11 @@ class _OnboardingDatepickerState extends State<OnboardingDatepicker> {
       firstDate: DateTime(1970),
       lastDate: DateTime.now(),
     );
-    if (picked != null)
+    if (picked != null) {
       widget.callback!(picked);
+      setState(() {
+        this.currentSelectedDate = picked;
+      });
+    }
   }
 }

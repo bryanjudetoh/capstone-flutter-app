@@ -11,7 +11,8 @@ class VerificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    //final User user = ModalRoute.of(context)!.settings.arguments as User;
+    final User user = ModalRoute.of(context)!.settings.arguments as User;
+    String name = user.firstName;
 
     return Scaffold(
       body: Container(
@@ -30,7 +31,7 @@ class VerificationScreen extends StatelessWidget {
                   style: TextButton.styleFrom(
                     textStyle: mediumTitleTextStyle,
                   ),
-                  onPressed: () {Navigator.pushNamed(context, '/login');},
+                  onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);},
                   child: const Text('Back',
                     style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                   ),
@@ -41,7 +42,7 @@ class VerificationScreen extends StatelessWidget {
             Column(
               children: <Widget>[
                 Text(
-                  'Registration successful! Please check your email for a verification link before logging in.',
+                  'Thank you for registering, $name! Please check your email for a verification link before logging in.',
                   style: bodyTextStyle,
                   textAlign: TextAlign.center,
                 ),

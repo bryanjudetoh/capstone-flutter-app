@@ -35,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       style: TextButton.styleFrom(
                         textStyle: mediumTitleTextStyle,
                       ),
-                      onPressed: () {Navigator.pushNamed(context, '/');},
+                      onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
                       child: const Text('Back',
                         style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                       ),
