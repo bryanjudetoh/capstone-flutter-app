@@ -111,7 +111,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         showDialog(context: context, builder: (BuildContext context) {
           return AlertPopup(
             title: "Error",
-            desc: err.toString(),);
+            desc: formatExceptionMessage(err.toString()),);
         });
       }
     }
@@ -127,7 +127,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (response.statusCode == 200) {
       return true;
     } else {
-      throw Exception('Email does not exist in our database.');
+      throw Exception(jsonDecode(response.body)['error']['message']);
     }
+  }
+
+  String formatExceptionMessage(String str) {
+    int idx = str.indexOf(":");
+    return str.substring(idx+1).trim();
   }
 }
