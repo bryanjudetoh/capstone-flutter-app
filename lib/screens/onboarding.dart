@@ -213,7 +213,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             builder: (BuildContext context) {
               return AlertPopup(
                 title: "Error",
-                desc: err.toString(),);
+                desc: formatExceptionMessage(err.toString()),);
             }
         );
       }
@@ -233,9 +233,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       throw Exception('User already exists in our system');
     }
     else {
-      throw Exception('Error while creating user!');
+      throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }
 
+  String formatExceptionMessage(String str) {
+    int idx = str.indexOf(":");
+    return str.substring(idx+1).trim();
+  }
 
 }

@@ -11,7 +11,6 @@ class HomeScreen extends StatefulWidget {
 
 
   final SecureStorage secureStorage = SecureStorage();
-  late final User user;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -19,17 +18,70 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-
-
-  _HomeScreenState() {
-    retrieveUserFromStorage(widget.secureStorage).then((value) => widget.user = value);
-    print('loaded user from secure storage');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('This is a home screen', style: bodyTextStyleBold,),
+      body: FutureBuilder<User>(
+        future: retrieveUserFromStorage(widget.secureStorage),
+        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+          List<Widget> children;
+          if (snapshot.hasData) {
+            User user = snapshot.data!;
+            children = <Widget>[
+              Icon(
+                Icons.check_circle_outline,
+                color: Colors.green,
+                size: 60,
+              ),
+              Padding(padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Received ${user.firstName}\'s user data',
+                    style: largeTitleTextStyle,
+                  ),
+              ),
+              RoundedButton(
+                  title: 'Clear secure storage',
+                  func: widget.secureStorage.deleteAllData,
+                  colorBG: kLightBlue,
+                  colorFont: kWhite
+              )
+            ];
+          }
+          else if (snapshot.hasError) {
+            children = <Widget>[
+              Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 60,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Text('Error: ${snapshot.error}' , style: largeTitleTextStyle,),
+              ),
+            ];
+          }
+          else {
+            children = const <Widget>[
+              SizedBox(
+                child: CircularProgressIndicator(),
+                width: 60,
+                height: 60,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 16),
+                child: Text('Loading user...', style: largeTitleTextStyle,),
+              )
+            ];
+          }
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: children,
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -38,3 +90,4 @@ class _HomeScreenState extends State<HomeScreen> {
     return User.fromJson(jsonDecode(jsonUser));
   }
 }
+

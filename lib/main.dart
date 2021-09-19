@@ -9,19 +9,13 @@ import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 
-String? currentAccessToken = null;
+String? currentAccessToken;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final SecureStorage secureStorage = SecureStorage();
   currentAccessToken = await secureStorage.readSecureData('accessToken');
-  if (currentAccessToken == null) {
-    print('no token');
-  } else {
-    print('THERE IS A TOKEN');
-    print(currentAccessToken);
-  }
   runApp(MyApp());
 }
 

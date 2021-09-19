@@ -121,15 +121,13 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         User user = await doLogin(body);
         secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
-        var token = await secureStorage.readSecureData('accessToken');
-        print(token);
         Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
       }
       on Exception catch (err) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertPopup(title: "Error", desc: err.toString(),);
+              return AlertPopup(title: "Error", desc: formatExceptionMessage(err.toString()),);
             });
       }
 
@@ -153,7 +151,12 @@ class _LoginScreenState extends State<LoginScreen> {
       return User.fromJson(responseBody);
     } else {
 
-      throw Exception(jsonDecode(response.body)['message']);
+      throw Exception(jsonDecode(response.body)['error']['message']);
     }
+  }
+
+  String formatExceptionMessage(String str) {
+    int idx = str.indexOf(":");
+    return str.substring(idx+1).trim();
   }
 }
