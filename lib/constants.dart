@@ -8,6 +8,7 @@ const kBlack = Color(0xFF000000);
 const kLightBlue = Color(0xFF5EC8D8);
 const kYellow = Color(0xFFFAAD19);
 const kGrey = Color(0xFFDBDFF1);
+const kDarkGrey = Color(0xFF66676C);
 const kTeal = Color(0xFF6FBCB5);
 const kRed = Color(0xFFF15929);
 

@@ -3,7 +3,7 @@ import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
-import 'package:youthapp/screens/forgotpw.dart';
+import 'package:youthapp/screens/forgot-password.dart';
 import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/securestorage.dart';
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => WelcomeScreen(),
         '/login': (context) => LoginScreen(),
-        '/forgotpw': (context) => ForgotPasswordScreen(),
+        '/forgot-password': (context) => ForgotPasswordScreen(),
         '/signup': (context) => SignUpScreen(),
         '/onboarding': (context) => OnboardingScreen(),
         '/home': (context) => HomeScreen(),
