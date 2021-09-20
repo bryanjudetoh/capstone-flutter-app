@@ -3,6 +3,7 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:open_mail_app/open_mail_app.dart';
+import 'package:youthapp/widgets/text-button.dart';
 
 class VerificationScreen extends StatelessWidget {
   const VerificationScreen({Key? key}) : super(key: key);
@@ -25,16 +26,13 @@ class VerificationScreen extends StatelessWidget {
               children: <Widget>[
                 Text(
                   "Pending Verification",
-                  style: xLargeTitleTextStyle,
+                  style: titleOneTextStyleBold,
                 ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: mediumTitleTextStyle,
-                  ),
-                  onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);},
-                  child: const Text('Back',
-                    style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
-                  ),
+                PlainTextButton(
+                  title: 'Back',
+                  func: () {Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);},
+                  textStyle: titleThreeTextStyleBold,
+                  textColor: kBlack,
                 ),
               ],
             ),
@@ -86,7 +84,7 @@ class VerificationScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Open Mail App", style: mediumTitleTextStyle,),
+          title: Text("Open Mail App", style: titleThreeTextStyleBold,),
           content: Text("No mail apps installed", style: bodyTextStyle,),
           actions: <Widget>[
             TextButton(

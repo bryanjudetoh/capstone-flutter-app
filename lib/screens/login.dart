@@ -8,6 +8,7 @@ import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
+import 'package:youthapp/widgets/text-button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -36,17 +37,14 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  "Log In",
-                  style: xLargeTitleTextStyle,
+                  'Log In',
+                  style: largeTitleTextStyleBold,
                 ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: mediumTitleTextStyle,
-                  ),
-                  onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
-                  child: const Text('Back',
-                    style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
-                  ),
+                PlainTextButton(
+                  title: 'Back',
+                  func: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
+                  textStyle: backButtonBoldItalics,
+                  textColor: kBlack,
                 ),
               ],
             ),
@@ -92,14 +90,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   "Forgot your password?",
                   style: bodyTextStyle,
                 ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: bodyTextStyle,
-                  ),
-                  onPressed: () {Navigator.pushNamed(context, '/forgotpw');},
-                  child: const Text('Reset here',
-                    style: bodyTextStyle,
-                  ),
+                PlainTextButton(
+                    title: 'Reset here',
+                    func: () {Navigator.pushNamed(context, '/forgotpw');},
+                    textStyle: bodyTextStyle
                 ),
               ],
             ),

@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Padding(padding: EdgeInsets.all(16.0),
                   child: Text(
                     'Received ${user.firstName}\'s user data',
-                    style: largeTitleTextStyle,
+                    style: titleTwoTextStyleBold,
                   ),
               ),
               RoundedButton(
@@ -56,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: Text('Error: ${snapshot.error}' , style: largeTitleTextStyle,),
+                child: Text('Error: ${snapshot.error}' , style: titleTwoTextStyleBold,),
               ),
             ];
           }
@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: EdgeInsets.only(top: 16),
-                child: Text('Loading user...', style: largeTitleTextStyle,),
+                child: Text('Loading user...', style: titleTwoTextStyleBold,),
               )
             ];
           }
