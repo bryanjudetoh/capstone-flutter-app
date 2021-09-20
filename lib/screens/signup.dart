@@ -3,6 +3,7 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
+import 'package:youthapp/widgets/text-button.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -29,16 +30,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: <Widget>[
                     Text(
                       "Sign Up",
-                      style: xLargeTitleTextStyle,
+                      style: titleOneTextStyleBold,
                     ),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        textStyle: mediumTitleTextStyle,
-                      ),
-                      onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
-                      child: const Text('Back',
-                        style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
-                      ),
+                    PlainTextButton(
+                      title: 'Back',
+                      func: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
+                      textStyle: backButtonBoldItalics,
+                      textColor: kBlack,
                     ),
                   ]
               ),
@@ -103,14 +101,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     "Already have an account?",
                     style: bodyTextStyle,
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(fontSize: 20),
-                    ),
-                    onPressed: () {Navigator.pushNamed(context, '/login');},
-                    child: const Text('Log In here',
-                      style: bodyTextStyle,
-                    ),
+                  PlainTextButton(
+                      title: 'Log In here',
+                      func: () {Navigator.pushNamed(context, '/login');},
+                      textStyle: bodyTextStyle
                   ),
                 ],
               ),

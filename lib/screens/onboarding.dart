@@ -12,6 +12,7 @@ import 'package:youthapp/widgets/onboarding-dropdown.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
+import 'package:youthapp/widgets/text-button.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -58,16 +59,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 children: <Widget>[
                   Text(
                     "Onboarding",
-                    style: xLargeTitleTextStyle,
+                    style: titleOneTextStyleBold,
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      textStyle: mediumTitleTextStyle,
-                    ),
-                    onPressed: () {Navigator.pop(context);},
-                    child: const Text('Back',
-                      style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
-                    ),
+                  PlainTextButton(
+                    title: 'Back',
+                    func: () {Navigator.pop(context);},
+                    textStyle: backButtonBoldItalics,
+                    textColor: kBlack,
                   ),
                 ]
             ),

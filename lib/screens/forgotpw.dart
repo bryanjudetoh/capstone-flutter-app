@@ -7,6 +7,7 @@ import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
+import 'package:youthapp/widgets/text-button.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -33,15 +34,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               children: <Widget>[
                 Text(
                   "Forgot Password",
-                  style: xLargeTitleTextStyle,
-                ),TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: mediumTitleTextStyle,
-                  ),
-                  onPressed: () {Navigator.pop(context);},
-                  child: const Text('Back',
-                    style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
-                  ),
+                  style: titleOneTextStyleBold,
+                ),
+                PlainTextButton(
+                  title: 'Back',
+                  func: () {Navigator.pop(context);},
+                  textStyle: backButtonBoldItalics,
+                  textColor: kBlack,
                 ),
               ],
             ),
