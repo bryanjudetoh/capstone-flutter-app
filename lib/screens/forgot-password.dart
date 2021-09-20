@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
+import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
@@ -32,12 +33,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               children: <Widget>[
                 Text(
                   "Forgot Password",
-                  style: TextStyle(fontFamily: 'SF Pro Display',
-                      fontSize: 35.0,
-                      fontWeight: FontWeight.bold),
+                  style: xLargeTitleTextStyle,
                 ),TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: mediumTitleTextStyle,
                   ),
                   onPressed: () {Navigator.pop(context);},
                   child: const Text('Back',
@@ -59,21 +58,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       alignment: Alignment.topLeft,
                       child: Text(
                         'Recovery password will be sent to your email address:',
-                        style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 14.0, fontStyle: FontStyle.italic, color: Colors.grey[600]),
+                        style: smallBodyTextStyle,
                       ),
                     ),
                     SizedBox( height: 5.0,),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                      ),
-                      validator: emailValidator,
-                      onSaved: (value) => email = value!,
+                    FormInput(
+                        placeholder: 'Enter your email',
+                        validator: emailValidator,
+                        func: (value) => email = value!,
                     ),
                     SizedBox( height: 10.0,),
-                    RoundedButton("Reset Password", submit, kLightBlue),
+                    RoundedButton(
+                        title: "Reset Password",
+                        func: submit,
+                        colorBG: kLightBlue,
+                        colorFont: kWhite,
+                    ),
                   ],
                 ),
               ),
@@ -99,7 +99,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       });
       try {
         if (await doResetPassword(body)) {
-          print('still carried on');
           showDialog(context: context, builder: (BuildContext context) {
             return AlertPopup(
               title: "Success",
@@ -112,7 +111,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         showDialog(context: context, builder: (BuildContext context) {
           return AlertPopup(
             title: "Error",
-            desc: err.toString(),);
+            desc: formatExceptionMessage(err.toString()),);
         });
       }
     }
@@ -128,8 +127,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print('----Entered exception-----');
-      throw Exception('Email does not exist in our database.');
+      throw Exception(jsonDecode(response.body)['error']['message']);
     }
+  }
+
+  String formatExceptionMessage(String str) {
+    int idx = str.indexOf(":");
+    return str.substring(idx+1).trim();
   }
 }

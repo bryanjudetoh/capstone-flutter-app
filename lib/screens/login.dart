@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
@@ -20,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  final SecureStorage secureStorage = SecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +37,13 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Text(
                   "Log In",
-                  style: TextStyle(fontFamily: 'SF Pro Display',
-                      fontSize: 35.0,
-                      fontWeight: FontWeight.bold),
-                ),TextButton(
+                  style: xLargeTitleTextStyle,
+                ),
+                TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: mediumTitleTextStyle,
                   ),
-                  onPressed: () {Navigator.pushNamed(context, '/');},
+                  onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
                   child: const Text('Back',
                     style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                   ),
@@ -59,20 +60,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: Column(
                         children: <Widget>[
                           FormInput(
-                            'Email',
-                            emailValidator,
-                            (value) => email = value!,
-                            false
+                            placeholder: 'Email',
+                            validator: emailValidator,
+                            func: (value) => this.email = value!,
                           ),
                           SizedBox( height: 10.0),
                           FormInput(
-                            'Password',
-                            passwordValidator,
-                            (value) => password = value!,
-                            true
+                            placeholder: 'Password',
+                            validator: passwordValidator,
+                            func: (value) => this.password = value!,
+                            obscureText: true,
                           ),
                           SizedBox( height: 10.0),
-                          RoundedButton("Log In", submit, kLightBlue),
+                          RoundedButton(
+                              title: "Log In",
+                              func: submit,
+                              colorBG: kLightBlue,
+                              colorFont: kWhite,
+                          ),
                         ],
                       ),
                   ),
@@ -85,18 +90,15 @@ class _LoginScreenState extends State<LoginScreen> {
               children: <Widget>[
                 Text(
                   "Forgot your password?",
-                  style: TextStyle(
-                    fontFamily: "SF Pro Display",
-                    fontSize: 16.0,
-                  ),
+                  style: bodyTextStyle,
                 ),
                 TextButton(
                   style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 20),
+                    textStyle: bodyTextStyle,
                   ),
                   onPressed: () {Navigator.pushNamed(context, '/forgotpw');},
                   child: const Text('Reset here',
-                    style: TextStyle( fontFamily: "SF Pro Display", fontSize: 16.0),
+                    style: bodyTextStyle,
                   ),
                 ),
               ],
@@ -118,13 +120,14 @@ class _LoginScreenState extends State<LoginScreen> {
       });
       try {
         User user = await doLogin(body);
-        Navigator.pushNamed(context, '/home', arguments: user);
+        secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
       }
       on Exception catch (err) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertPopup(title: "Error", desc: err.toString(),);
+              return AlertPopup(title: "Error", desc: formatExceptionMessage(err.toString()),);
             });
       }
 
@@ -139,10 +142,21 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+      var responseBody = jsonDecode(response.body);
+      var token = responseBody['token'];
+
+      secureStorage.writeSecureData('accessToken', token['accessToken']);
+      secureStorage.writeSecureData('refreshToken', token['refreshToken']);
+
+      return User.fromJson(responseBody);
     } else {
 
-      throw Exception('User not found or password incorrect!');
+      throw Exception(jsonDecode(response.body)['error']['message']);
     }
+  }
+
+  String formatExceptionMessage(String str) {
+    int idx = str.indexOf(":");
+    return str.substring(idx+1).trim();
   }
 }

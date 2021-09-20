@@ -16,14 +16,23 @@ class WelcomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Image(
-                    image: AssetImage(
-                        "assets/images/equity-lab-potion-logo.png")
+                  image: AssetImage("assets/images/equity-lab-potion-logo.png"),
                 ),
-                RoundedButton("Sign Up", () => Navigator.pushNamed(context, '/signup'), kLightBlue),
+                RoundedButton(
+                  title: "Sign Up",
+                  func: () => Navigator.pushNamed(context, '/signup'),
+                  colorBG: kLightBlue,
+                  colorFont: kWhite,
+                ),
                 SizedBox(
                   height: 10.0,
                 ),
-                RoundedButton("Log In", () => Navigator.pushNamed(context, '/login'), kGrey),
+                RoundedButton(
+                  title: "Log In",
+                  func: () => Navigator.pushNamed(context, '/login'),
+                  colorBG: kGrey,
+                  colorFont: kLightBlue,
+                ),
               ],
             ),
           ],

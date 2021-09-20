@@ -34,7 +34,7 @@ class _OnboardingDropdownState extends State<OnboardingDropdown> {
           children: <Widget>[
             Text(
               widget.title,
-              style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0),
+              style: bodyTextStyleBold,
             ),
             SizedBox( width: 15.0,),
             Flexible(
@@ -43,7 +43,10 @@ class _OnboardingDropdownState extends State<OnboardingDropdown> {
                 builder: (FormFieldState<String> state) {
                   return InputDecorator(
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Color.fromRGBO(94, 200, 216, 0.1),
                       border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.all(12),
                     ),
                     isEmpty: widget.input == '',
                     child: DropdownButtonHideUnderline(
@@ -57,7 +60,7 @@ class _OnboardingDropdownState extends State<OnboardingDropdown> {
                         items: widget.list.map((String value) {
                           return DropdownMenuItem<String> (
                             value: value,
-                            child: Text(value),
+                            child: Text(value, style: bodyTextStyle,),
                           );
                         }).toList(),
                       ),

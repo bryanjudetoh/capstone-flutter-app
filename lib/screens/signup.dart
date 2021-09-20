@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 
@@ -28,15 +29,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   children: <Widget>[
                     Text(
                       "Sign Up",
-                      style: TextStyle(fontFamily: 'SF Pro Display',
-                          fontSize: 35.0,
-                          fontWeight: FontWeight.bold),
+                      style: xLargeTitleTextStyle,
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 20),
+                        textStyle: mediumTitleTextStyle,
                       ),
-                      onPressed: () {Navigator.pushNamed(context, '/');},
+                      onPressed: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
                       child: const Text('Back',
                         style: TextStyle( fontFamily: "SF Pro Display", fontSize: 20.0, fontStyle: FontStyle.italic, color: Colors.black),
                       ),
@@ -50,18 +49,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: <Widget>[
                   Form(
                     key: _formkey,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Email',
-                        hintText: 'Enter your email',
-                      ),
-                      validator: emailValidator,
-                      onSaved: (value) => email = value!,
-                    ),
+                    child: FormInput(
+                        placeholder: "Email",
+                        validator: emailValidator,
+                        func: (value) => email = value!,
+                    )
                   ),
                   SizedBox( height: 10.0,),
-                  RoundedButton('Register', register, kLightBlue),
+                  RoundedButton(
+                    title: 'Register',
+                    func: register,
+                    colorBG: kLightBlue,
+                    colorFont: kWhite,
+                  ),
                 ],
               ),
               Column(
@@ -69,10 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: <Widget>[
                   Text(
                     "Or social media access",
-                    style: TextStyle(
-                        fontFamily: "SF Pro Display",
-                        fontSize: 16.0
-                    ),
+                    style: bodyTextStyle,
                   ),
                   FractionallySizedBox(
                     widthFactor: 0.80,
@@ -104,10 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 children: <Widget>[
                   Text(
                     "Already have an account?",
-                    style: TextStyle(
-                      fontFamily: "SF Pro Display",
-                      fontSize: 16.0,
-                    ),
+                    style: bodyTextStyle,
                   ),
                   TextButton(
                     style: TextButton.styleFrom(
@@ -115,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     onPressed: () {Navigator.pushNamed(context, '/login');},
                     child: const Text('Log In here',
-                      style: TextStyle( fontFamily: "SF Pro Display", fontSize: 16.0),
+                      style: bodyTextStyle,
                     ),
                   ),
                 ],
@@ -131,11 +125,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (form.validate()) {
       form.save();
-
-      print('Form valid: $email');
+      Navigator.pushNamed(context, '/onboarding', arguments: email);
     }
-    Navigator.pushNamed(context, '/onboarding', arguments: email);
-    //Navigator.push(context, MaterialPageRoute(builder: (context) => OnboardingScreen(email: email)));
   }
 }
 

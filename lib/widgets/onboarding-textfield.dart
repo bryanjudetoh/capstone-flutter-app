@@ -21,19 +21,26 @@ class OnboardingTextfield extends StatelessWidget {
           children: <Widget>[
             Text(
               this.title,
-              style: TextStyle(fontFamily: 'SF Pro Display', fontSize: 16.0),
+              style: bodyTextStyleBold,
             ),
             SizedBox( height: 5.0,),
-            TextFormField(
-              initialValue: this.initialValue,
-              obscureText: this.obscureText ?? false,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: this.hintText,
+            Container(
+              decoration: BoxDecoration(
+                color: Color.fromRGBO(94, 200, 216, 0.1),
+                borderRadius: new BorderRadius.circular(16.0),
               ),
-              validator: validatorCheck(this.validator),
-              onSaved: this.callback,
-            ),
+              child: TextFormField(
+                initialValue: this.initialValue,
+                obscureText: this.obscureText ?? false,
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: this.hintText,
+                  contentPadding: EdgeInsets.all(12),
+                ),
+                validator: validatorCheck(this.validator),
+                onSaved: this.callback,
+              ),
+            )
           ],
         )
     );
