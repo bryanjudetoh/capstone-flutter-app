@@ -25,15 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: PageView(
         children: <Widget>[
           Container(
-            color: kWhite,
+            color: Colors.white,
             child: HomeScreenBody(user: user),
           ),
           Container(
-            color: kWhite,
+            color: Colors.white,
             child: NotificationsScreenBody(user: user),
           ),
           Container(
-            color: kWhite,
+            color: kBackground,
             child: ProfileScreenBody(user: user),
           ),
         ],
@@ -69,9 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _page,
         selectedItemColor: kLightBlue,
         onTap: navigationTapped,
-        showSelectedLabels: true,
+        showSelectedLabels: false,
         showUnselectedLabels: false,
         elevation: 0.0,
+        backgroundColor: Colors.white,
       ),
     );
   }
