@@ -127,4 +127,4 @@ const backButtonBoldItalics = TextStyle(
 );
 
 var countryCodesList = ['MN', 'SG', 'MY'];
-var genderList = ['male', 'female', 'other'];
+var genderList = ['male', 'female', 'others'];

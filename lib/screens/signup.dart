@@ -34,7 +34,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                     PlainTextButton(
                       title: 'Back',
-                      func: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
+                      func: () {Navigator.pushNamedAndRemoveUntil(context, '/welcome', (r) => false);},
                       textStyle: backButtonBoldItalics,
                       textColor: kBlack,
                     ),
