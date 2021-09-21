@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         User user = await doLogin(body);
         secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
+        Navigator.pushNamedAndRemoveUntil(context, '/init-home', (r) => false);
       }
       on Exception catch (err) {
         showDialog(

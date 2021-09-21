@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
+import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
-import 'package:youthapp/screens/home.dart';
+import 'package:youthapp/screens/init.dart';
 import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -27,15 +28,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Youth App',
       debugShowCheckedModeBanner: false,
-      initialRoute: currentAccessToken!.isEmpty || JwtDecoder.isExpired(currentAccessToken!) ? '/' : '/home',
+      initialRoute: currentAccessToken!.isEmpty || JwtDecoder.isExpired(currentAccessToken!) ? '/' : '/init-home',
       routes: {
         '/': (context) => WelcomeScreen(),
         '/login': (context) => LoginScreen(),
         '/forgot-password': (context) => ForgotPasswordScreen(),
         '/signup': (context) => SignUpScreen(),
         '/onboarding': (context) => OnboardingScreen(),
-        '/home': (context) => HomeScreen(),
         '/verification': (context) => VerificationScreen(),
+        '/init-home': (context) => InitialiseHomeScreen(),
+        '/home': (context) => HomeScreen(),
       }
     );
   }

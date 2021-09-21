@@ -1,93 +1,131 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/screens/notifications.dart';
+import 'package:youthapp/screens/profile.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-
-  final SecureStorage secureStorage = SecureStorage();
-
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _page = 0;
+  PageController pageController = new PageController();
 
   @override
   Widget build(BuildContext context) {
+    final User user = ModalRoute.of(context)!.settings.arguments as User;
+
     return Scaffold(
-      body: FutureBuilder<User>(
-        future: retrieveUserFromStorage(widget.secureStorage),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          List<Widget> children;
-          if (snapshot.hasData) {
-            User user = snapshot.data!;
-            children = <Widget>[
-              Icon(
-                Icons.check_circle_outline,
-                color: Colors.green,
-                size: 60,
-              ),
-              Padding(padding: EdgeInsets.all(16.0),
-                  child: Text(
-                    'Received ${user.firstName}\'s user data',
-                    style: titleTwoTextStyleBold,
-                  ),
-              ),
-              RoundedButton(
-                  title: 'Clear secure storage',
-                  func: widget.secureStorage.deleteAllData,
-                  colorBG: kLightBlue,
-                  colorFont: kWhite
-              )
-            ];
-          }
-          else if (snapshot.hasError) {
-            children = <Widget>[
-              Icon(
-                Icons.error_outline,
-                color: Colors.red,
-                size: 60,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Text('Error: ${snapshot.error}' , style: titleTwoTextStyleBold,),
-              ),
-            ];
-          }
-          else {
-            children = const <Widget>[
-              SizedBox(
-                child: CircularProgressIndicator(),
-                width: 60,
-                height: 60,
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16),
-                child: Text('Loading user...', style: titleTwoTextStyleBold,),
-              )
-            ];
-          }
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: children,
+      body: PageView(
+        children: <Widget>[
+          Container(
+            color: kWhite,
+            child: HomeScreenBody(user: user),
+          ),
+          Container(
+            color: kWhite,
+            child: NotificationsScreenBody(user: user),
+          ),
+          Container(
+            color: kWhite,
+            child: ProfileScreenBody(user: user),
+          ),
+        ],
+        controller: pageController,
+        onPageChanged: onPageChanged,
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(
+                Icons.cottage_outlined,
+                size: 30),
+            label: 'Home',
+            backgroundColor: kDarkGrey,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.notifications_outlined,
+              size: 30,
             ),
-          );
-        },
+            label: 'Notifications',
+            backgroundColor: kDarkGrey,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.person_outlined,
+              size: 30,
+            ),
+            label: 'Profile',
+            backgroundColor: kDarkGrey,
+          ),
+        ],
+        currentIndex: _page,
+        selectedItemColor: kLightBlue,
+        onTap: navigationTapped,
+        showSelectedLabels: true,
+        showUnselectedLabels: false,
+        elevation: 0.0,
       ),
     );
   }
 
-  Future<User> retrieveUserFromStorage(SecureStorage secureStorage) async {
-    final jsonUser = await secureStorage.readSecureData('user');
-    return User.fromJson(jsonDecode(jsonUser));
+  void navigationTapped(int page) {
+    //Animating Page
+    pageController.jumpToPage(page);
+  }
+
+  void onPageChanged(int page) {
+    setState(() {
+      this._page = page;
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
   }
 }
 
+class HomeScreenBody extends StatefulWidget {
+  const HomeScreenBody({Key? key, required this.user}) : super(key: key);
+
+  final User user;
+  @override
+  _HomeScreenBodyState createState() => _HomeScreenBodyState();
+}
+
+class _HomeScreenBodyState extends State<HomeScreenBody> {
+  final SecureStorage secureStorage = SecureStorage();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Center(
+          child: Text(
+            'This is the homescreen',
+            style: titleTwoTextStyle,
+          ),
+        ),
+        RoundedButton(
+            title: 'Log Out',
+            func: () {
+              secureStorage.deleteAllData();
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            },
+            colorBG: kLightBlue,
+            colorFont: kWhite
+        )
+      ],
+    );
+  }
+}
