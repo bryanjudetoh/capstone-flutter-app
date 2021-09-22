@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
+import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
-import 'package:youthapp/screens/home.dart';
+import 'package:youthapp/screens/init.dart';
 import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 
 String? currentAccessToken;
 
@@ -27,16 +29,33 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Youth App',
       debugShowCheckedModeBanner: false,
-      initialRoute: currentAccessToken!.isEmpty || JwtDecoder.isExpired(currentAccessToken!) ? '/' : '/home',
+      home: SplashScreen(),
       routes: {
-        '/': (context) => WelcomeScreen(),
+        '/welcome': (context) => WelcomeScreen(),
+        '/splash': (context) => SplashScreen(),
         '/login': (context) => LoginScreen(),
-        '/forgot-password': (context) => ForgotPasswordScreen(),
+        '/forgotpw': (context) => ForgotPasswordScreen(),
         '/signup': (context) => SignUpScreen(),
         '/onboarding': (context) => OnboardingScreen(),
-        '/home': (context) => HomeScreen(),
         '/verification': (context) => VerificationScreen(),
+        '/init-home': (context) => InitialiseHomeScreen(),
+        '/home': (context) => HomeScreen(),
       }
+    );
+  }
+}
+
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSplashScreen(
+      duration: 1000,
+      splash: Image(image: AssetImage('assets/images/equity-lab-logo.png'),), //ask Temy to provide a SVG icon for this
+      nextScreen: currentAccessToken!.isEmpty || JwtDecoder.isExpired(currentAccessToken!) ? WelcomeScreen() : InitialiseHomeScreen(),
+      splashTransition: SplashTransition.fadeTransition,
+      backgroundColor: Colors.white,
     );
   }
 }

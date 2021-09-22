@@ -182,7 +182,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     if (form.validate()) {
       form.save();
-
       final body = jsonEncode(<String, String> {
         'email': email,
         'mobile': mobile,
@@ -200,10 +199,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         "city": city,
         "school": school,
       });
+      print(body);
 
       try {
         User user = await doRegistration(body);
-        Navigator.pushNamedAndRemoveUntil(context, '/verification', ModalRoute.withName('/'), arguments: user);
+        Navigator.pushNamedAndRemoveUntil(context, '/verification', ModalRoute.withName('/welcome'), arguments: user);
       }
       on Exception catch (err) {
         showDialog(
@@ -231,6 +231,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       throw Exception('User already exists in our system');
     }
     else {
+      print(response.body);
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }

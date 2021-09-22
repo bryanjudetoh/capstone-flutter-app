@@ -31,7 +31,7 @@ class VerificationScreen extends StatelessWidget {
                 PlainTextButton(
                   title: 'Back',
                   func: () {Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);},
-                  textStyle: titleThreeTextStyleBold,
+                  textStyle: backButtonBoldItalics,
                   textColor: kBlack,
                 ),
               ],

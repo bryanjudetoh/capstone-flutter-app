@@ -11,6 +11,7 @@ const kGrey = Color(0xFFDBDFF1);
 const kDarkGrey = Color(0xFF66676C);
 const kTeal = Color(0xFF6FBCB5);
 const kRed = Color(0xFFF15929);
+const kBluishWhite = Color(0xFFDBDFF1);
 
 const hugeTitleTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
@@ -126,4 +127,4 @@ const backButtonBoldItalics = TextStyle(
 );
 
 var countryCodesList = ['MN', 'SG', 'MY'];
-var genderList = ['male', 'female', 'other'];
+var genderList = ['male', 'female', 'others'];
