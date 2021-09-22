@@ -14,14 +14,14 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
 
-class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+class EditAccountDetailsScreen extends StatefulWidget {
+  const EditAccountDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
+  _EditAccountDetailsScreenState createState() => _EditAccountDetailsScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
   final _formkey = GlobalKey<FormState>();
   String email = '';
   String firstName = '';
