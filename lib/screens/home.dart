@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: NotificationsScreenBody(user: user),
           ),
           Container(
-            color: Colors.white,
+            color: kBackground,
             child: ProfileScreenBody(user: user),
           ),
         ],
@@ -73,9 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _page,
         selectedItemColor: kLightBlue,
         onTap: navigationTapped,
-        showSelectedLabels: true,
+        showSelectedLabels: false,
         showUnselectedLabels: false,
         elevation: 0.0,
+        backgroundColor: Colors.white,
       ),
     );
   }

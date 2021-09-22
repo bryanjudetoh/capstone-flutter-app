@@ -12,6 +12,7 @@ const kDarkGrey = Color(0xFF66676C);
 const kTeal = Color(0xFF6FBCB5);
 const kRed = Color(0xFFF15929);
 const kBluishWhite = Color(0xFFDBDFF1);
+const kBackground = Color(0xFFF9F9F9);
 
 const hugeTitleTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
