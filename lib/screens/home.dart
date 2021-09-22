@@ -4,7 +4,11 @@ import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/notifications.dart';
 import 'package:youthapp/screens/profile.dart';
 import 'package:youthapp/utilities/securestorage.dart';
-import 'package:youthapp/widgets/rounded-button.dart';
+import 'package:youthapp/widgets/activities-carousel.dart';
+import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:youthapp/utilities/images-titles-lists.dart';
+
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -93,6 +97,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
     pageController.dispose();
   }
+  
+
 }
 
 class HomeScreenBody extends StatefulWidget {
@@ -106,27 +112,78 @@ class HomeScreenBody extends StatefulWidget {
 class _HomeScreenBodyState extends State<HomeScreenBody> {
   final SecureStorage secureStorage = SecureStorage();
 
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Center(
-          child: Text(
-            'This is the homescreen',
-            style: titleTwoTextStyle,
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              SvgPicture.asset('assets/images/equity-lab-homescreen-logo.svg'),
+              SizedBox(width: 10,),
+              PlainTextButton(
+                title: 'Logout',
+                func: () { doLogout(secureStorage); },
+                textStyle: bodyTextStyleBold,
+                textColor: Colors.black,
+              ),
+            ],
           ),
-        ),
-        RoundedButton(
-            title: 'Log Out',
-            func: () {
-              secureStorage.deleteAllData();
-              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-            },
-            colorBG: kLightBlue,
-            colorFont: kWhite
-        )
-      ],
+          SizedBox(height: 20,),
+          Image(image: AssetImage('assets/images/temp-homescreen-potions-level.png')),
+          ActivitiesCarousel(
+              title: 'For you:',
+              seeAllFunc: () {},
+              imagesList: imagesListForYou,
+              titlesList: titlesListForYou,
+          ),
+          ActivitiesCarousel(
+            title: 'Pride Board:',
+            seeAllFunc: () {},
+            imagesList: imagesListPrideBoard,
+            titlesList: titlesListPrideBoard,
+          ),
+          ActivitiesCarousel(
+            title: 'Scholarship:',
+            seeAllFunc: () {},
+            imagesList: imagesListScholarship,
+            titlesList: titlesListScholarship,
+          ),
+          ActivitiesCarousel(
+            title: 'Internship:',
+            seeAllFunc: () {},
+            imagesList: imagesListInternship,
+            titlesList: titlesListInternship,
+          ),
+          ActivitiesCarousel(
+            title: 'Mentorship:',
+            seeAllFunc: () {},
+            imagesList: imagesListMentorship,
+            titlesList: titlesListMentorship,
+          ),
+          ActivitiesCarousel(
+            title: 'Training:',
+            seeAllFunc: () {},
+            imagesList: imagesListTraining,
+            titlesList: titlesListTraining,
+          ),
+          ActivitiesCarousel(
+            title: 'Activities:',
+            seeAllFunc: () {},
+            imagesList: imagesListActivities,
+            titlesList: titlesListActivities,
+          ),
+        ],
+      ),
     );
+  }
+
+  void doLogout(secureStorage) {
+    secureStorage.deleteAllData();
+    Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
   }
 }

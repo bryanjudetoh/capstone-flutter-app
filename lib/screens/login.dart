@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 PlainTextButton(
                   title: 'Back',
-                  func: () {Navigator.pushNamedAndRemoveUntil(context, '/', (r) => false);},
+                  func: () {Navigator.pushNamedAndRemoveUntil(context, '/welcome', (r) => false);},
                   textStyle: backButtonBoldItalics,
                   textColor: kBlack,
                 ),

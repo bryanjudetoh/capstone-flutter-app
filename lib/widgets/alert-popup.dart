@@ -10,7 +10,7 @@ class AlertPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title, style: bodyTextStyleBold,),
+      title: Text(title, style: titleTwoTextStyleBold,),
       content: Text(desc, style: bodyTextStyle,),
       actions: [
         TextButton(
