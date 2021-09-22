@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import '../constants.dart';
 
 class ProfileScreenBody extends StatelessWidget {
@@ -9,19 +10,8 @@ class ProfileScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const captionTextStyle = TextStyle(
-      fontFamily: 'SF Pro Display',
-      fontSize: 15.0,
-      height: 1.25,
-      color: kDarkGrey,
-    );
-
-    const tabTextStyle = TextStyle(
-      fontFamily: 'SF Pro Display',
-      fontSize: 15.0,
-      height: 1.25,
-      color: Colors.white,
-    );
+    
+    final SecureStorage secureStorage = SecureStorage();
 
     return Container(
       margin: EdgeInsets.only(left: 35.0, right: 35.0, top: 50.0),
@@ -35,16 +25,17 @@ class ProfileScreenBody extends StatelessWidget {
                     'Profile',
                     style: titleOneTextStyleBold,
                   ),
-                  Icon(
-                    Icons.settings_outlined,
-                    size: 24,
-                    color: kDarkGrey,
-                  ),
+                  IconButton(
+                    onPressed: modalBottomSheet(context, secureStorage),
+                    icon: Icon(
+                      Icons.settings_outlined,
+                      size: 30,
+                      color: kDarkGrey,
+                    ),
+                  )
                 ]
             ),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox( height: 20, ),
             Container(
               padding: EdgeInsets.all(10.0),
               margin: EdgeInsets.only(bottom: 30.0),
@@ -78,14 +69,14 @@ class ProfileScreenBody extends StatelessWidget {
                       Column(
                         children: <Widget>[
                           Text(
-                            'Behbat',
+                            "${user.firstName} ${user.lastName}",
                             textAlign: TextAlign.left,
                             style: bodyTextStyleBold,
                           ),
                           Row(
                             children: <Widget>[
                               Text(
-                                '77th school / ',
+                                '${user.school} / ',
                                 textAlign: TextAlign.left,
                                 style: captionTextStyle,
                               ),
@@ -93,7 +84,7 @@ class ProfileScreenBody extends StatelessWidget {
                                 width: 5.0,
                               ),
                               Text(
-                                'Mongolia',
+                                '${user.city}',
                                 textAlign: TextAlign.left,
                                 style: captionTextStyle,
                               ),
@@ -102,7 +93,7 @@ class ProfileScreenBody extends StatelessWidget {
                           Row(
                               children: <Widget>[
                                 Text(
-                                  'Born on 12 May 2001 / ',
+                                  'Born on ${user.dob.toString().split(' ')[0]} / ',
                                   textAlign: TextAlign.left,
                                   style: captionTextStyle,
                                 ),
@@ -110,14 +101,14 @@ class ProfileScreenBody extends StatelessWidget {
                                   width: 5.0,
                                 ),
                                 Text(
-                                  'Male',
+                                  '${user.gender}',
                                   textAlign: TextAlign.left,
                                   style: captionTextStyle,
                                 ),
                               ]
                           ),
                           Text(
-                            'behbat@77.com',
+                            '${user.email}',
                             style: captionTextStyle,
                           ),
                         ],
@@ -264,5 +255,43 @@ class ProfileScreenBody extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  VoidCallback modalBottomSheet(BuildContext context, secureStorage) {
+    return () { showModalBottomSheet(context: context,
+        builder: (context) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: new Icon(Icons.edit),
+                title: new Text('Edit Account Details'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, 'edit-account');
+                },
+              ),
+              ListTile(
+                leading: new Icon(Icons.edit),
+                title: new Text('Change Password'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, 'changepw');
+                },
+              ),
+              ListTile(
+                leading: new Icon(Icons.logout),
+                title: new Text('Logout'),
+                onTap: () {
+                  doLogout(context, secureStorage);
+                },
+              ),
+            ],
+          );
+        }
+    ); };
+  }
+
+  void doLogout(BuildContext context, secureStorage) {
+    secureStorage.deleteAllData();
+    Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
   }
 }
