@@ -3,6 +3,7 @@ import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
+import 'package:youthapp/screens/fb-signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
 import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/verification.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/forgot-password': (context) => ForgotPasswordScreen(),
         '/signup': (context) => SignUpScreen(),
+        '/fb-signup': (context) => FbSignUpScreen(),
         '/onboarding': (context) => OnboardingScreen(),
         '/home': (context) => HomeScreen(),
         '/verification': (context) => VerificationScreen(),

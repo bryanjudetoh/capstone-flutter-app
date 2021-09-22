@@ -9,6 +9,7 @@ import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -80,6 +81,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                   ),
                 ),
+            SignInButton(
+              Buttons.FacebookNew,
+              onPressed: (){},
+            ),
             SizedBox(
               height: 10.0,
             ),

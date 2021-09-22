@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/widgets/form-input.dart';
@@ -66,7 +68,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "Or social media access",
+                    "Or sign up with social media",
                     style: bodyTextStyle,
                   ),
                   FractionallySizedBox(
@@ -76,18 +78,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       children: <Widget>[
                         IconButton(
                           iconSize: 60.0,
-                          icon: new Image.asset("assets/icons/apple.png"),
-                          onPressed: () { },
-                        ),
-                        IconButton(
-                          iconSize: 60.0,
                           icon: new Image.asset("assets/icons/facebook.png"),
-                          onPressed: () { },
-                        ),
-                        IconButton(
-                          iconSize: 60.0,
-                          icon: new Image.asset("assets/icons/google.png"),
-                          onPressed: () { },
+                          onPressed: facebookRegister,
                         ),
                       ],
                     ),
@@ -121,6 +113,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
       form.save();
       Navigator.pushNamed(context, '/onboarding', arguments: email);
     }
+  }
+
+  void facebookRegister() {
+    Navigator.pushNamed(context, '/fb-signup', arguments: email);
   }
 }
 
