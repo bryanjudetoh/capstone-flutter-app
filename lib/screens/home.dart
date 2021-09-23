@@ -9,7 +9,6 @@ import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youthapp/utilities/images-titles-lists.dart';
 
-
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
 
@@ -47,9 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(
-                Icons.cottage_outlined,
-                size: 30),
+            icon: Icon(Icons.cottage_outlined, size: 30),
             label: 'Home',
             backgroundColor: kDarkGrey,
           ),
@@ -97,21 +94,19 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
     pageController.dispose();
   }
-  
-
 }
 
 class HomeScreenBody extends StatefulWidget {
   const HomeScreenBody({Key? key, required this.user}) : super(key: key);
 
   final User user;
+
   @override
   _HomeScreenBodyState createState() => _HomeScreenBodyState();
 }
 
 class _HomeScreenBodyState extends State<HomeScreenBody> {
   final SecureStorage secureStorage = SecureStorage();
-
 
   @override
   Widget build(BuildContext context) {
@@ -124,22 +119,29 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               SvgPicture.asset('assets/images/equity-lab-homescreen-logo.svg'),
-              SizedBox(width: 10,),
-              PlainTextButton(
-                title: 'Logout',
-                func: () { doLogout(secureStorage); },
-                textStyle: bodyTextStyleBold,
-                textColor: Colors.black,
+              SizedBox(
+                width: 10,
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/search');
+                },
+                icon: Icon(Icons.search),
+                iconSize: 30,
               ),
             ],
           ),
-          SizedBox(height: 20,),
-          Image(image: AssetImage('assets/images/temp-homescreen-potions-level.png')),
+          SizedBox(
+            height: 20,
+          ),
+          Image(
+              image: AssetImage(
+                  'assets/images/temp-homescreen-potions-level.png')),
           ActivitiesCarousel(
-              title: 'For you:',
-              seeAllFunc: () {},
-              imagesList: imagesListForYou,
-              titlesList: titlesListForYou,
+            title: 'For you:',
+            seeAllFunc: () {},
+            imagesList: imagesListForYou,
+            titlesList: titlesListForYou,
           ),
           ActivitiesCarousel(
             title: 'Pride Board:',

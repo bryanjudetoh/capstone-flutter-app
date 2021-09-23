@@ -5,6 +5,7 @@ import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/onboarding.dart';
+import 'package:youthapp/screens/search.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/fb-signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomeScreen(),
         '/edit-account-details': (context) => EditAccountDetailsScreen(),
         '/change-password': (context) => ChangePasswordScreen(),
+        '/search': (context) => SearchScreen(),
       }
     );
   }
