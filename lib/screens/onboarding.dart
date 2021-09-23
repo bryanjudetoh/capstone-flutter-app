@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/utilities/onboardingParams.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/onboarding-datepicker.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
@@ -38,15 +39,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   String countryCode = countryCodesList[0];
   String city = '';
   String school = '';
+  String fbUserId = '';
+  String fbAccessToken = '';
 
   @override
   Widget build(BuildContext context) {
-    String inputEmail = ModalRoute.of(context)!.settings.arguments as String;
+    final args = ModalRoute.of(context)!.settings.arguments as OnboardingParams;
 
-    if ( inputEmail.length > 0) {
-      this.email = inputEmail;
+    if (args.email.length > 0) {
+      this.email = args.email;
     }
 
+    if (args.fbUserId != null) {
+      this.fbUserId = args.fbUserId!;
+      this.fbAccessToken = args.fbAccessToken!;
+      this.firstName = args.firstName!;
+      this.lastName = args.lastName!;
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -63,111 +72,115 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   PlainTextButton(
                     title: 'Back',
-                    func: () {Navigator.pop(context);},
+                    func: () {
+                      Navigator.pop(context);
+                    },
                     textStyle: backButtonBoldItalics,
                     textColor: kBlack,
                   ),
-                ]
+                ]),
+            SizedBox(
+              height: 10.0,
             ),
-            SizedBox( height: 10.0,),
             Form(
               key: _formkey,
               child: Column(
                 children: <Widget>[
                   OnboardingTextfield(
-                      title: 'First Name:',
-                      hintText: 'John',
-                      validator: RequiredValidator(errorText: "* Required"),
-                      callback: (value) => this.firstName = value!,
-                  ),// FirstName
+                    title: 'First Name:',
+                    hintText: 'John',
+                    initialValue: this.firstName,
+                    validator: RequiredValidator(errorText: "* Required"),
+                    callback: (value) => this.firstName = value!,
+                  ), // FirstName
                   OnboardingTextfield(
                       title: 'Last Name:',
                       hintText: 'Wong',
+                      initialValue: this.lastName,
                       validator: RequiredValidator(errorText: "* Required"),
-                      callback: (value) => this.lastName = value!
-                  ),// LastName
+                      callback: (value) => this.lastName = value!), // LastName
                   OnboardingTextfield(
                       title: 'Mobile Number:',
                       hintText: 'Enter your mobile number',
                       validator: mobileNumValidator,
-                      callback: (value) => this.mobile = value!
-                  ),// Mobile
+                      callback: (value) => this.mobile = value!), // Mobile
                   OnboardingTextfield(
-                      title: 'Email:',
-                      hintText: 'Enter your email',
-                      initialValue: this.email,
-                      validator: emailValidator,
-                      callback: (value) => this.email = value!,
-                  ),// Email
-                  OnboardingTextfield(
+                    title: 'Email:',
+                    hintText: 'Enter your email',
+                    initialValue: this.email,
+                    validator: emailValidator,
+                    callback: (value) => this.email = value!,
+                  ), // Email
+                  if (!args.isFbLogin)
+                    OnboardingTextfield(
                       title: 'Password:',
                       hintText: 'Enter your password',
                       obscureText: true,
                       validator: passwordValidator,
                       callback: (value) => this.password = value!,
-                  ),// Password
+                    ), // Password
                   OnboardingDropdown(
-                      title: 'Gender',
-                      input: this.gender,
-                      list: genderList,
-                      callback: (value) => this.gender = value!,
-                  ),// Gender
+                    title: 'Gender',
+                    input: this.gender,
+                    list: genderList,
+                    callback: (value) => this.gender = value!,
+                  ), // Gender
                   OnboardingTextfield(
-                      title: 'Age:',
-                      hintText: 'Enter your age',
-                      validator: ageValidator,
-                      callback: (value) => this.age = value!,
-                  ),// Age
+                    title: 'Age:',
+                    hintText: 'Enter your age',
+                    validator: ageValidator,
+                    callback: (value) => this.age = value!,
+                  ), // Age
                   OnboardingDatepicker(
-                      title: 'Date of Birth:',
-                      callback: (value) => this.dob = value!,
-                  ),// DOB
+                    title: 'Date of Birth:',
+                    callback: (value) => this.dob = value!,
+                  ), // DOB
                   OnboardingTextfield(
                     title: 'Address Line 1:',
                     hintText: 'Enter your address',
                     validator: RequiredValidator(errorText: "* Required"),
                     callback: (value) => this.address1 = value!,
-                  ),// Address1
+                  ), // Address1
                   OnboardingTextfield(
                     title: 'Address Line 2:',
                     hintText: 'Enter your address',
                     callback: (value) => this.address2 = value!,
-                  ),// Address2
+                  ), // Address2
                   OnboardingTextfield(
                     title: 'Address Line 3:',
                     hintText: 'Enter your address',
                     callback: (value) => this.address3 = value!,
-                  ),// Address3
+                  ), // Address3
                   OnboardingTextfield(
                     title: 'Postal Code:',
                     hintText: 'Enter your postal code',
                     validator: postalCodeValidator,
                     callback: (value) => this.postalCode = value!,
-                  ),// Postal Code
+                  ), // Postal Code
                   OnboardingDropdown(
-                      title: 'Country Code:',
-                      input: this.countryCode,
-                      list: countryCodesList,
-                      callback: (value) => this.countryCode = value!,
-                  ),// Country Code
+                    title: 'Country Code:',
+                    input: this.countryCode,
+                    list: countryCodesList,
+                    callback: (value) => this.countryCode = value!,
+                  ), // Country Code
                   OnboardingTextfield(
                     title: 'City:',
                     hintText: 'Enter your city',
                     validator: RequiredValidator(errorText: "* Required"),
                     callback: (value) => this.city = value!,
-                  ),// City
+                  ), // City
                   OnboardingTextfield(
                     title: 'School:',
                     hintText: 'Enter your school',
                     validator: RequiredValidator(errorText: "* Required"),
                     callback: (value) => this.school = value!,
-                  ),// School
+                  ), // School
                 ],
               ),
             ),
             RoundedButton(
               title: "Register Account",
-              func: submit,
+              func: args.isFbLogin ? submitFb : submit,
               colorBG: kLightBlue,
               colorFont: kWhite,
             ),
@@ -183,7 +196,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (form.validate()) {
       form.save();
 
-      final body = jsonEncode(<String, String> {
+      final body = jsonEncode(<String, String>{
         'email': email,
         'mobile': mobile,
         'password': password,
@@ -202,42 +215,116 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
 
       try {
-        User user = await doRegistration(body);
-        Navigator.pushNamedAndRemoveUntil(context, '/verification', ModalRoute.withName('/'), arguments: user);
-      }
-      on Exception catch (err) {
+        User user = await doRegistration(body, false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, '/verification', ModalRoute.withName('/'),
+            arguments: user);
+      } on Exception catch (err) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertPopup(
                 title: "Error",
-                desc: formatExceptionMessage(err.toString()),);
-            }
-        );
+                desc: formatExceptionMessage(err.toString()),
+              );
+            });
       }
     }
   }
-  
-  Future<User> doRegistration(body) async {
-    final response = await http.post(
-      Uri.parse('https://eq-lab-dev.me/api/mp/user/register?type=email'),
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
-      body: body,
-    );
+
+  Future<User> doRegistration(body, isFb) async {
+    var response = http.Response(body, 400);
+
+    if (!isFb) {
+      response = await http.post(
+        Uri.parse('https://eq-lab-dev.me/api/mp/user/register?type=email'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body,
+      );
+    } else {
+      response = await http.post(
+        Uri.parse('https://eq-lab-dev.me/api/mp/user/register?type=fb'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: body,
+      );
+    }
 
     if (response.statusCode == 202) {
       return User.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 500) {
       throw Exception('User already exists in our system');
-    }
-    else {
+    } else {
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }
 
   String formatExceptionMessage(String str) {
     int idx = str.indexOf(":");
-    return str.substring(idx+1).trim();
+    return str.substring(idx + 1).trim();
   }
 
+  void submitFb() async {
+    final form = _formkey.currentState!;
+
+    if (form.validate()) {
+      form.save();
+
+      final body = jsonEncode(<String, String>{
+        'email': email,
+        'mobile': mobile,
+        'firstName': firstName,
+        'lastName': lastName,
+        "gender": gender,
+        "age": age,
+        "dob": dob.toString(),
+        "address1": address1,
+        "address2": address2,
+        "address3": address3,
+        "postalCode": postalCode,
+        "countryCode": countryCode,
+        "city": city,
+        "school": school,
+        "fbUserId": this.fbUserId,
+        "fbAccessToken": this.fbAccessToken
+      });
+
+      try {
+        User user = await doRegistration(body, true);
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Sign Up Success!'),
+              content: SingleChildScrollView(
+                child: Text('You have signed up with your Facebook account.'),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Proceed to Log in'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/login');
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } on Exception catch (err) {
+        print("$err");
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: "Error",
+                desc: formatExceptionMessage(err.toString()),
+              );
+            });
+      }
+    }
+  }
 }

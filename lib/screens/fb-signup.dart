@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/utilities/onboardingParams.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -15,6 +16,7 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
   final fb = FacebookLogin();
   bool fbLogin = false;
   String fbUserId = "";
+  String fbAccessToken = "";
   String firstName = "";
   String lastName = "";
   String email = "";
@@ -108,7 +110,7 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
       case FacebookLoginStatus.success:
         // Logged in
         final fbUserId = res.accessToken!.userId;
-        final accessToken = res.accessToken;
+        final accessToken = res.accessToken!.token;
 
         // Get name
         final profile = await fb.getUserProfile();
@@ -119,15 +121,13 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
         // Get Email
         final email = await fb.getUserEmail();
 
-        // Check if email permissions is denied
-        if (email != null) print('And your email is $email');
-
         // Get Profile Pic
         final imageUrl = await fb.getProfileImageUrl(width: 200);
 
         setState(() {
           this.fbLogin = true;
           this.fbUserId = fbUserId;
+          this.fbAccessToken = accessToken;
           this.firstName = firstName!;
           this.lastName = lastName!;
           this.email = email!;
@@ -147,7 +147,15 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
 
   void proceedToOnboarding() {
     if (this.fbLogin) {
-      Navigator.pushNamed(context, '/onboarding', arguments: email);
+      Navigator.pushNamed(context, '/onboarding', arguments: OnboardingParams(
+        fbUserId: this.fbUserId,
+        fbAccessToken: this.fbAccessToken,
+        firstName: this.firstName,
+        lastName: this.lastName,
+        imageUrl: this.imageUrl,
+        email: this.email,
+        isFbLogin: true
+      ));
     }
   }
 }

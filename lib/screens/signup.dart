@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/utilities/onboardingParams.dart';
 import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
@@ -111,12 +112,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (form.validate()) {
       form.save();
-      Navigator.pushNamed(context, '/onboarding', arguments: email);
+      Navigator.pushNamed(context, '/onboarding', arguments: OnboardingParams(
+        email: this.email,
+        isFbLogin: false
+      ));
     }
   }
 
   void facebookRegister() {
-    Navigator.pushNamed(context, '/fb-signup', arguments: email);
+    Navigator.pushNamed(context, '/fb-signup');
   }
 }
 
