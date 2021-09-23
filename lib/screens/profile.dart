@@ -267,14 +267,14 @@ class ProfileScreenBody extends StatelessWidget {
                 leading: new Icon(Icons.edit),
                 title: new Text('Edit Account Details'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, 'edit-account');
+                  Navigator.pushReplacementNamed(context, 'edit-account-details');
                 },
               ),
               ListTile(
                 leading: new Icon(Icons.edit),
                 title: new Text('Change Password'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, 'changepw');
+                  Navigator.pushReplacementNamed(context, 'change-password', arguments: this.user);
                 },
               ),
               ListTile(

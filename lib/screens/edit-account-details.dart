@@ -41,6 +41,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /*
         resizeToAvoidBottomInset: true,
         body: SingleChildScrollView(
           child: Container(
@@ -153,6 +154,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
               ],
             )
           ),
-      ),
+      ), */
     );
   }
+}
