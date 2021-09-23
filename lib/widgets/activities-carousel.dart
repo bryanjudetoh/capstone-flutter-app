@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:carousel_slider/carousel_state.dart';
 import 'package:youthapp/constants.dart';
 
 class ActivitiesCarousel extends StatefulWidget {

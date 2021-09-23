@@ -134,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
             context: context,
             builder: (BuildContext context) {
               return AlertPopup(
-                  title: "Login Failed!", desc: 'Invalid Email/Password.');
+                  title: "Login Failed!", desc: formatExceptionMessage(err.toString()));
             });
       }
     }

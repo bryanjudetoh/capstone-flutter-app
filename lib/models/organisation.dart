@@ -18,23 +18,10 @@ class Organisation {
 
   List<String>? orgTags;
 
-  String? roleId;
-  String? role;
-  String? userType;
-  String? loginType;
-
-  bool? enabled;
-  bool? verified;
-
-  DateTime? createdAt;
-  DateTime? lastLogin;
-
-  String? profilePicUrl;
+  String? orgDisplayPicUrl;
 
   Organisation({required this.id, required this.name, this.email,
-    this.countryCode, this.website,
-    this.roleId, this.role, this.userType, this.loginType,
-    this.enabled, this.verified, this.createdAt, this.lastLogin, this.profilePicUrl});
+    this.countryCode, this.website, this.orgDisplayPicUrl});
 
   factory Organisation.fromJson(Map<String, dynamic> json) => _$OrganisationFromJson(json);
 

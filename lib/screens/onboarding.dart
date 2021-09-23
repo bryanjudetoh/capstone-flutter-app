@@ -293,7 +293,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
 
       try {
-        User user = await doRegistration(body, true);
+        doRegistration(body, true);
 
         showDialog(
           context: context,

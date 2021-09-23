@@ -347,8 +347,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     title: new Text('Change Password'),
                     onTap: () {
                       Navigator.pushReplacementNamed(
-                          context, '/change-password',
-                          arguments: user);
+                          context, '/change-password',);
                     },
                   ),
                 ListTile(

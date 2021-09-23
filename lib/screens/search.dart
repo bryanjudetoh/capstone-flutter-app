@@ -2,16 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:youthapp/models/organisation.dart';
-import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
-import 'package:youthapp/widgets/alert-popup.dart';
-
-import 'package:youthapp/widgets/text-button.dart';
 
 import '../constants.dart';
 
@@ -80,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
               children: organisations.map((org) {
                 return ListTile(
                   title: Text(org.name, style: bodyTextStyle,),
-                  onTap: () {},
+                  onTap: () {Navigator.pushNamed(context, '/organisation-details', arguments: org.id);},
                 );
               }).toList(),
             ),
