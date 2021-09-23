@@ -10,6 +10,7 @@ import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,8 +22,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
+  final fb = FacebookLogin();
   String email = '';
   String password = '';
+  String fbUserId = '';
+  String fbAccessToken = '';
   final SecureStorage secureStorage = SecureStorage();
 
   @override
@@ -83,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
             SignInButton(
               Buttons.FacebookNew,
-              onPressed: (){},
+              onPressed: doLoginFb,
             ),
             SizedBox(
               height: 10.0,
@@ -157,5 +161,71 @@ class _LoginScreenState extends State<LoginScreen> {
   String formatExceptionMessage(String str) {
     int idx = str.indexOf(":");
     return str.substring(idx+1).trim();
+  }
+
+  void doLoginFb() async {
+
+    // Fb Log in
+    final res = await fb.logIn(permissions: [
+      FacebookPermission.publicProfile,
+      FacebookPermission.email,
+    ]);
+
+    // Check Fb Login status
+    switch (res.status) {
+      case FacebookLoginStatus.success:
+      // Logged in
+        final fbUserId = res.accessToken!.userId;
+        final accessToken = res.accessToken!.token;
+
+        setState(() {
+          this.fbUserId = fbUserId;
+          this.fbAccessToken = accessToken;
+        });
+
+        break;
+      case FacebookLoginStatus.cancel:
+      // User cancel log in
+        break;
+      case FacebookLoginStatus.error:
+      // Log in failed
+        print('Error while log in: ${res.error}');
+        break;
+    }
+
+    final body = jsonEncode(<String, String>{
+      'fbUserId': this.fbUserId,
+      'fbAccessToken': this.fbAccessToken,
+    });
+
+    final response = await http.post(
+      Uri.parse('https://eq-lab-dev.me/api/mp/auth/login?type=fb'),
+      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      var token = responseBody['token'];
+
+      secureStorage.writeSecureData('accessToken', token['accessToken']);
+      secureStorage.writeSecureData('refreshToken', token['refreshToken']);
+
+      try {
+        User user = User.fromJson(responseBody);
+        secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (r) => false);
+      }
+      on Exception catch (err) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(title: "Error", desc: formatExceptionMessage(err.toString()),);
+            });
+      }
+    } else {
+
+      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
   }
 }
