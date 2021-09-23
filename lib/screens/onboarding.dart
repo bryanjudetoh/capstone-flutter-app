@@ -217,7 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       try {
         User user = await doRegistration(body, false);
         Navigator.pushNamedAndRemoveUntil(
-            context, '/verification', ModalRoute.withName('/'),
+            context, '/verification', ModalRoute.withName('/welcome'),
             arguments: user);
       } on Exception catch (err) {
         showDialog(
