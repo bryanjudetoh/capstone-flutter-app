@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 
 class AlertPopup extends StatelessWidget {
-  const AlertPopup({Key? key,required this.title, required this.desc}) : super(key: key);
+  AlertPopup({Key? key,required this.title, required this.desc, this.func}) : super(key: key);
 
   final String title;
   final String desc;
+  final VoidCallback? func;
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,12 @@ class AlertPopup extends StatelessWidget {
         TextButton(
           child: Text("Ok", style: bodyTextStyle,),
           onPressed: () {
-            Navigator.of(context).pop();
+            if (this.func == null) {
+              Navigator.of(context).pop();
+            }
+            else {
+              this.func!();
+            }
           },
         )
       ],

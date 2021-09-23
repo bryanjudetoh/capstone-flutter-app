@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
+import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/verification': (context) => VerificationScreen(),
         '/init-home': (context) => InitialiseHomeScreen(),
         '/home': (context) => HomeScreen(),
+        '/edit-account-details': (context) => EditProfileScreen(),
       }
     );
   }
