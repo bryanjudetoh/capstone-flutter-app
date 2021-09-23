@@ -320,7 +320,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             context: context,
             builder: (BuildContext context) {
               return AlertPopup(
-                title: "Error",
+                title: "Unable to Sign Up!",
                 desc: formatExceptionMessage(err.toString()),
               );
             });
