@@ -19,7 +19,6 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-
 class _LoginScreenState extends State<LoginScreen> {
   final _formkey = GlobalKey<FormState>();
   final fb = FacebookLogin();
@@ -47,7 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 PlainTextButton(
                   title: 'Back',
-                  func: () {Navigator.pushNamedAndRemoveUntil(context, '/welcome', (r) => false);},
+                  func: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/welcome', (r) => false);
+                  },
                   textStyle: backButtonBoldItalics,
                   textColor: kBlack,
                 ),
@@ -57,34 +59,34 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 10.0,
             ),
             Form(
-                  key: _formkey,
-                  child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                      child: Column(
-                        children: <Widget>[
-                          FormInput(
-                            placeholder: 'Email',
-                            validator: emailValidator,
-                            func: (value) => this.email = value!,
-                          ),
-                          SizedBox( height: 10.0),
-                          FormInput(
-                            placeholder: 'Password',
-                            validator: passwordValidator,
-                            func: (value) => this.password = value!,
-                            obscureText: true,
-                          ),
-                          SizedBox( height: 10.0),
-                          RoundedButton(
-                              title: "Log In",
-                              func: submit,
-                              colorBG: kLightBlue,
-                              colorFont: kWhite,
-                          ),
-                        ],
-                      ),
-                  ),
+              key: _formkey,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                child: Column(
+                  children: <Widget>[
+                    FormInput(
+                      placeholder: 'Email',
+                      validator: emailValidator,
+                      func: (value) => this.email = value!,
+                    ),
+                    SizedBox(height: 10.0),
+                    FormInput(
+                      placeholder: 'Password',
+                      validator: passwordValidator,
+                      func: (value) => this.password = value!,
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 10.0),
+                    RoundedButton(
+                      title: "Log In",
+                      func: submit,
+                      colorBG: kLightBlue,
+                      colorFont: kWhite,
+                    ),
+                  ],
                 ),
+              ),
+            ),
             SignInButton(
               Buttons.FacebookNew,
               onPressed: doLoginFb,
@@ -101,9 +103,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 PlainTextButton(
                     title: 'Reset here',
-                    func: () {Navigator.pushNamed(context, '/forgotpw');},
-                    textStyle: bodyTextStyle
-                ),
+                    func: () {
+                      Navigator.pushNamed(context, '/forgotpw');
+                    },
+                    textStyle: bodyTextStyle),
               ],
             ),
           ],
@@ -111,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
   void submit() async {
     final form = _formkey.currentState!;
 
@@ -125,23 +129,24 @@ class _LoginScreenState extends State<LoginScreen> {
         User user = await doLogin(body);
         secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
         Navigator.pushNamedAndRemoveUntil(context, '/init-home', (r) => false);
-      }
-      on Exception catch (err) {
+      } on Exception catch (err) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertPopup(title: "Error", desc: formatExceptionMessage(err.toString()),);
+              return AlertPopup(
+                  title: "Login Failed!", desc: 'Invalid Email/Password.');
             });
       }
-
     }
   }
 
   Future<User> doLogin(body) async {
     final response = await http.post(
-        Uri.parse('https://eq-lab-dev.me/api/mp/auth/login?type=email'),
-        headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
-        body: body,
+      Uri.parse('https://eq-lab-dev.me/api/mp/auth/login?type=email'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: body,
     );
 
     if (response.statusCode == 200) {
@@ -153,28 +158,38 @@ class _LoginScreenState extends State<LoginScreen> {
 
       return User.fromJson(responseBody);
     } else {
-
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }
 
   String formatExceptionMessage(String str) {
     int idx = str.indexOf(":");
-    return str.substring(idx+1).trim();
+    return str.substring(idx + 1).trim();
   }
 
   void doLoginFb() async {
-
-    // Fb Log in
-    final res = await fb.logIn(permissions: [
-      FacebookPermission.publicProfile,
-      FacebookPermission.email,
-    ]);
+    var res;
+    try {
+      // Fb Log in
+      res = await fb.logIn(permissions: [
+        FacebookPermission.publicProfile,
+        FacebookPermission.email,
+      ]);
+    } on Exception catch (err) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: "Error",
+              desc: formatExceptionMessage(err.toString()),
+            );
+          });
+    }
 
     // Check Fb Login status
     switch (res.status) {
       case FacebookLoginStatus.success:
-      // Logged in
+        // Logged in
         final fbUserId = res.accessToken!.userId;
         final accessToken = res.accessToken!.token;
 
@@ -185,10 +200,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
         break;
       case FacebookLoginStatus.cancel:
-      // User cancel log in
+        // User cancel log in
         break;
       case FacebookLoginStatus.error:
-      // Log in failed
+        // Log in failed
         print('Error while log in: ${res.error}');
         break;
     }
@@ -200,7 +215,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final response = await http.post(
       Uri.parse('https://eq-lab-dev.me/api/mp/auth/login?type=fb'),
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8',},
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
       body: body,
     );
 
@@ -215,17 +232,25 @@ class _LoginScreenState extends State<LoginScreen> {
         User user = User.fromJson(responseBody);
         secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
         Navigator.pushNamedAndRemoveUntil(context, '/init-home', (r) => false);
-      }
-      on Exception catch (err) {
+      } on Exception catch (err) {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AlertPopup(title: "Error", desc: formatExceptionMessage(err.toString()),);
+              return AlertPopup(
+                title: "Error",
+                desc: formatExceptionMessage(err.toString()),
+              );
             });
       }
     } else {
-
-      throw Exception(jsonDecode(response.body)['error']['message']);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: "Error",
+              desc: jsonDecode(response.body)['error']['message'],
+            );
+          });
     }
   }
 }

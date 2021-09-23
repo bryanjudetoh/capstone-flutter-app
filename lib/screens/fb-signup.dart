@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/utilities/onboardingParams.dart';
+import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -100,10 +101,22 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
 
   void loginToFb() async {
     // Log in
-    final res = await fb.logIn(permissions: [
-      FacebookPermission.publicProfile,
-      FacebookPermission.email,
-    ]);
+    var res;
+    try {
+      res = await fb.logIn(permissions: [
+        FacebookPermission.publicProfile,
+        FacebookPermission.email,
+      ]);
+    } on Exception catch (err) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: "Error",
+              desc: formatExceptionMessage(err.toString()),
+            );
+          });
+    }
 
     // Check result status
     switch (res.status) {
@@ -140,22 +153,35 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
         break;
       case FacebookLoginStatus.error:
         // Log in failed
-        print('Error while log in: ${res.error}');
+
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: "Error",
+                desc: res.error.toString(),
+              );
+            });
         break;
     }
   }
 
   void proceedToOnboarding() {
     if (this.fbLogin) {
-      Navigator.pushNamed(context, '/onboarding', arguments: OnboardingParams(
-        fbUserId: this.fbUserId,
-        fbAccessToken: this.fbAccessToken,
-        firstName: this.firstName,
-        lastName: this.lastName,
-        imageUrl: this.imageUrl,
-        email: this.email,
-        isFbLogin: true
-      ));
+      Navigator.pushNamed(context, '/onboarding',
+          arguments: OnboardingParams(
+              fbUserId: this.fbUserId,
+              fbAccessToken: this.fbAccessToken,
+              firstName: this.firstName,
+              lastName: this.lastName,
+              imageUrl: this.imageUrl,
+              email: this.email,
+              isFbLogin: true));
     }
+  }
+
+  String formatExceptionMessage(String str) {
+    int idx = str.indexOf(":");
+    return str.substring(idx + 1).trim();
   }
 }
