@@ -26,6 +26,14 @@ class _OnboardingDropdownState extends State<OnboardingDropdown> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _currentSelectedValue = widget.input;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
