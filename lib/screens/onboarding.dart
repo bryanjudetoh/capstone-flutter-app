@@ -178,8 +178,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 15,),
             RoundedButton(
-              title: "Register Account",
+              title: "Register",
               func: args.isFbLogin ? submitFb : submit,
               colorBG: kLightBlue,
               colorFont: kWhite,

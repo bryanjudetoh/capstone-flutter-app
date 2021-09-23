@@ -32,6 +32,7 @@ class _OnboardingDatepickerState extends State<OnboardingDatepicker> {
     return Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -49,10 +50,7 @@ class _OnboardingDatepickerState extends State<OnboardingDatepicker> {
             SizedBox( width: 15.0,),
             ElevatedButton(
               onPressed: () => _selectDate(context),
-              child: Text(
-                'Select date',
-                style: bodyTextStyleBold,
-              ),
+              child: Icon(Icons.calendar_today),
               style: ElevatedButton.styleFrom(
                 primary: kLightBlue,
               ),

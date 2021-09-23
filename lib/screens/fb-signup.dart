@@ -44,7 +44,7 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
                       title: 'Back',
                       func: () {
                         Navigator.pushNamedAndRemoveUntil(
-                            context, '/', (r) => false);
+                            context, '/welcome', (r) => false);
                       },
                       textStyle: backButtonBoldItalics,
                       textColor: kBlack,

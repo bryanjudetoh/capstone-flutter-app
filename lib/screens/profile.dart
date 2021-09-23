@@ -152,33 +152,40 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     SizedBox(
                       width: 25,
                     ),
-                    Column(
-                      children: <Widget>[
-                        Text(
-                          "${widget.user.firstName} ${widget.user.lastName}",
-                          textAlign: TextAlign.left,
-                          style: bodyTextStyleBold,
-                        ),
-                        Text(
-                          '${widget.user.school}',
-                          textAlign: TextAlign.left,
-                          style: captionTextStyle,
-                        ),
-                        Text(
-                          '${widget.user.city}',
-                          textAlign: TextAlign.left,
-                          style: captionTextStyle,
-                        ),
-                        Text(
-                          'Born on ${widget.user.dob.toString().split(' ')[0]}',
-                          textAlign: TextAlign.left,
-                          style: captionTextStyle,
-                        ),
-                        Text(
-                          '${widget.user.email}',
-                          style: captionTextStyle,
-                        ),
-                      ],
+                    Flexible(
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            "${widget.user.firstName} ${widget.user.lastName}",
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            style: bodyTextStyleBold,
+                          ),
+                          Text(
+                            '${widget.user.school}',
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            style: captionTextStyle,
+                          ),
+                          Text(
+                            '${widget.user.city}',
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            style: captionTextStyle,
+                          ),
+                          Text(
+                            'Born on ${widget.user.dob.toString().split(' ')[0]}',
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.left,
+                            style: captionTextStyle,
+                          ),
+                          Text(
+                            '${widget.user.email}',
+                            overflow: TextOverflow.ellipsis,
+                            style: captionTextStyle,
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -232,7 +239,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Container(
-                    width: 100,
+                    width: 90,
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: kLightBlue,
@@ -245,10 +252,11 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     child: Text(
                       'Upcoming',
                       style: tabTextStyle,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Container(
-                    width: 100,
+                    width: 90,
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: kGrey,
@@ -261,10 +269,11 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     child: Text(
                       'Progress',
                       style: captionTextStyle,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Container(
-                    width: 100,
+                    width: 90,
                     padding: EdgeInsets.all(10.0),
                     decoration: BoxDecoration(
                       color: kGrey,
@@ -277,6 +286,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     child: Text(
                       'Posts',
                       style: captionTextStyle,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ]),

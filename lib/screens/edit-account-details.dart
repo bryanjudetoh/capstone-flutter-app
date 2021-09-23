@@ -103,8 +103,8 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
                             child: _selectedImage == null ? SizedBox(width: 1,) : Image.file(_selectedImage!, height: 80, width: 80,),
                           ),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-
                               Text('Upload a profile picture:', style: bodyTextStyleBold,),
                               SizedBox( width: 15.0,),
                               ElevatedButton(
@@ -114,10 +114,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
                                     this._selectedImage = temp;
                                   });
                                 },
-                                child: Text(
-                                  'Choose a picture',
-                                  style: bodyTextStyleBold,
-                                ),
+                                child: Icon(Icons.upload_file),
                                 style: ElevatedButton.styleFrom(
                                   primary: kLightBlue,
                                 ),
@@ -204,7 +201,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
                 ),
                 SizedBox( height: 20,),
                 RoundedButton(
-                  title: "Update Details",
+                  title: "Save",
                   func: () {
                     submit(user);
                   },
