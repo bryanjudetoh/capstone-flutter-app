@@ -17,14 +17,14 @@ import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({Key? key}) : super(key: key);
+class EditAccountDetailsScreen extends StatefulWidget {
+  const EditAccountDetailsScreen({Key? key}) : super(key: key);
 
   @override
-  _EditProfileScreenState createState() => _EditProfileScreenState();
+  _EditAccountDetailsScreenState createState() => _EditAccountDetailsScreenState();
 }
 
-class _EditProfileScreenState extends State<EditProfileScreen> {
+class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
 
   final _formkey = GlobalKey<FormState>();
   String firstName = '';

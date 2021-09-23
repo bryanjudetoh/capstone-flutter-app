@@ -63,7 +63,7 @@ class _InitialiseHomeScreenState extends State<InitialiseHomeScreen> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 16),
-                    child: Text('Loading user...', style: titleTwoTextStyleBold,),
+                    child: Text('Loading...', style: titleTwoTextStyleBold,),
                   )
                 ],
               ),

@@ -57,7 +57,7 @@ class _InitProfileScreenBodyState extends State<InitProfileScreenBody> {
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 16),
-                  child: Text('Loading user...', style: titleTwoTextStyleBold,),
+                  child: Text('Loading...', style: titleTwoTextStyleBold,),
                 )
               ],
             ),
@@ -336,7 +336,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                 leading: new Icon(Icons.edit),
                 title: new Text('Change Password'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, 'change-password', arguments: this.user);
+                  Navigator.pushReplacementNamed(context, '/change-password', arguments: user);
                 },
               ),
               ListTile(

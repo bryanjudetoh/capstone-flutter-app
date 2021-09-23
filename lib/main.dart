@@ -8,7 +8,7 @@ import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/fb-signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
-import 'package:youthapp/screens/init.dart';
+import 'package:youthapp/screens/init-home.dart';
 import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -44,8 +44,8 @@ class MyApp extends StatelessWidget {
         '/verification': (context) => VerificationScreen(),
         '/init-home': (context) => InitialiseHomeScreen(),
         '/home': (context) => HomeScreen(),
-        '/edit-account-details': (context) => EditProfileScreen(),
-        'change-password': (context) => ChangePasswordScreen(),
+        '/edit-account-details': (context) => EditAccountDetailsScreen(),
+        '/change-password': (context) => ChangePasswordScreen(),
       }
     );
   }
