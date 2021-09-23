@@ -127,5 +127,19 @@ const backButtonBoldItalics = TextStyle(
     color: Colors.black
 );
 
+const captionTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  color: kDarkGrey,
+);
+
+const tabTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  color: Colors.white,
+);
+
 var countryCodesList = ['MN', 'SG', 'MY'];
 var genderList = ['male', 'female', 'others'];
