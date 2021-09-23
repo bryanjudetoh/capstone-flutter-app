@@ -9,13 +9,13 @@ part of 'organisation.dart';
 Organisation _$OrganisationFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['organisationId', 'name', 'email'],
-    disallowNullValues: const ['organisationId'],
+    requiredKeys: const ['id', 'name'],
+    disallowNullValues: const ['id'],
   );
   return Organisation(
-    organisationId: json['organisationId'] as String,
+    id: json['id'] as String,
     name: json['name'] as String,
-    email: json['email'] as String,
+    email: json['email'] as String?,
     countryCode: json['countryCode'] as String?,
     website: json['website'] as String?,
     roleId: json['roleId'] as String?,
@@ -37,7 +37,7 @@ Organisation _$OrganisationFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$OrganisationToJson(Organisation instance) =>
     <String, dynamic>{
-      'organisationId': instance.organisationId,
+      'id': instance.id,
       'name': instance.name,
       'email': instance.email,
       'countryCode': instance.countryCode,

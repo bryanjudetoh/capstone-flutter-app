@@ -5,13 +5,12 @@ part 'organisation.g.dart';
 @JsonSerializable()
 class Organisation {
   @JsonKey(required: true, disallowNullValue: true)
-  String organisationId;
+  String id;
 
   @JsonKey(required: true)
   String name;
 
-  @JsonKey(required: true)
-  String email;
+  String? email;
 
   String? countryCode;
 
@@ -32,7 +31,7 @@ class Organisation {
 
   String? profilePicUrl;
 
-  Organisation({required this.organisationId, required this.name, required this.email,
+  Organisation({required this.id, required this.name, this.email,
     this.countryCode, this.website,
     this.roleId, this.role, this.userType, this.loginType,
     this.enabled, this.verified, this.createdAt, this.lastLogin, this.profilePicUrl});
