@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Container(
             color: kBackground,
-            child: ProfileScreenBody(user: user),
+            child: InitProfileScreenBody(),
           ),
         ],
         controller: pageController,

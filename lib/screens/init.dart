@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
+import 'package:http/http.dart' as http;
 
 class InitialiseHomeScreen extends StatefulWidget {
   InitialiseHomeScreen({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _InitialiseHomeScreenState extends State<InitialiseHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<User>(
-        future: retrieveUserFromStorage(widget.secureStorage),
+        future: retrieveUser(widget.secureStorage),
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           Widget child = Text('');
           if (snapshot.hasData) {
@@ -76,9 +77,24 @@ class _InitialiseHomeScreenState extends State<InitialiseHomeScreen> {
     );
   }
 
-  Future<User> retrieveUserFromStorage(SecureStorage secureStorage) async {
-    final jsonUser = await secureStorage.readSecureData('user');
-    return User.fromJson(jsonDecode(jsonUser));
+  Future<User> retrieveUser(SecureStorage secureStorage) async {
+    final String accessToken = await secureStorage.readSecureData('accessToken');
+
+    final response = await http.get(
+      Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      secureStorage.writeSecureData('user', response.body);
+      var responseBody = jsonDecode(response.body);
+      return User.fromJson(responseBody);
+    } else {
+      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
   }
 }
 
