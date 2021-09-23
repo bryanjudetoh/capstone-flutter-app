@@ -13,63 +13,70 @@ class InitProfileScreenBody extends StatefulWidget {
 }
 
 class _InitProfileScreenBodyState extends State<InitProfileScreenBody> {
-
   final SecureStorage secureStorage = SecureStorage();
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-      future: this.secureStorage.readSecureData('user'),
-      builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-        if (snapshot.hasData) {
-          User user = User.fromJson(jsonDecode(snapshot.data!));
-          return ProfileScreenBody(user: user, secureStorage: secureStorage,);
-        }
-        else if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 60,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text('Error: ${snapshot.error}' , style: titleTwoTextStyleBold,),
-                ),
-              ],
-            ),
-          );
-        }
-        else {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  child: CircularProgressIndicator(),
-                  width: 60,
-                  height: 60,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text('Loading...', style: titleTwoTextStyleBold,),
-                )
-              ],
-            ),
-          );
-        }
-      }
-    );
+        future: this.secureStorage.readSecureData('user'),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            User user = User.fromJson(jsonDecode(snapshot.data!));
+            return ProfileScreenBody(
+              user: user,
+              secureStorage: secureStorage,
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 60,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: titleTwoTextStyleBold,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Loading...',
+                      style: titleTwoTextStyleBold,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        });
   }
 }
 
 class ProfileScreenBody extends StatefulWidget {
-  const ProfileScreenBody({Key? key, required this.user, required this.secureStorage}) : super(key: key);
+  const ProfileScreenBody(
+      {Key? key, required this.user, required this.secureStorage})
+      : super(key: key);
 
   final User user;
   final SecureStorage secureStorage;
@@ -79,13 +86,12 @@ class ProfileScreenBody extends StatefulWidget {
 }
 
 class _ProfileScreenBodyState extends State<ProfileScreenBody> {
-
   bool rebuildWidget = true;
   String? profilePicUrl = '';
 
   @override
   Widget build(BuildContext context) {
-    if(widget.user.profilePicUrl != null) {
+    if (widget.user.profilePicUrl != null) {
       this.profilePicUrl = widget.user.profilePicUrl;
     }
 
@@ -102,16 +108,18 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     style: titleOneTextStyleBold,
                   ),
                   IconButton(
-                    onPressed: modalBottomSheet(context, widget.secureStorage, widget.user),
+                    onPressed: modalBottomSheet(
+                        context, widget.secureStorage, widget.user),
                     icon: Icon(
                       Icons.settings_outlined,
                       size: 30,
                       color: kDarkGrey,
                     ),
                   )
-                ]
+                ]),
+            SizedBox(
+              height: 20,
             ),
-            SizedBox( height: 20, ),
             Container(
               padding: EdgeInsets.all(10.0),
               margin: EdgeInsets.only(bottom: 30.0),
@@ -127,100 +135,98 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                       color: Colors.grey.withOpacity(0.1),
                       blurRadius: 20, // changes position of shadow
                     ),
-                  ]
-              ),
-              child: Column(
+                  ]),
+              child: Column(children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        CircleAvatar(
-                          backgroundColor: Colors.white,
-                          backgroundImage: this.profilePicUrl!.isNotEmpty ? NetworkImage('https://cdn.eq-lab-dev.me/' + this.profilePicUrl!) : Image.asset('assets/images/default-profilepic.png').image,
-                          maxRadius: 40,
-                        ),
-                        SizedBox(
-                          width: 25,
-                        ),
-                        Column(
-                          children: <Widget>[
-                            Text(
-                              "${widget.user.firstName} ${widget.user.lastName}",
-                              textAlign: TextAlign.left,
-                              style: bodyTextStyleBold,
-                            ),
-                            Text(
-                              '${widget.user.school}',
-                              textAlign: TextAlign.left,
-                              style: captionTextStyle,
-                            ),
-                            Text(
-                              '${widget.user.city}',
-                              textAlign: TextAlign.left,
-                              style: captionTextStyle,
-                            ),
-                            Text(
-                              'Born on ${widget.user.dob.toString().split(' ')[0]}',
-                              textAlign: TextAlign.left,
-                              style: captionTextStyle,
-                            ),
-                            Text(
-                              '${widget.user.email}',
-                              style: captionTextStyle,
-                            ),
-                          ],
-                        )
-                      ],
+                    CircleAvatar(
+                      backgroundColor: Colors.white,
+                      backgroundImage: this.profilePicUrl!.isNotEmpty
+                          ? NetworkImage('https://cdn.eq-lab-dev.me/' +
+                              this.profilePicUrl!)
+                          : Image.asset('assets/images/default-profilepic.png')
+                              .image,
+                      maxRadius: 40,
                     ),
                     SizedBox(
-                      height: 10,
+                      width: 25,
                     ),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Column(
+                      children: <Widget>[
+                        Text(
+                          "${widget.user.firstName} ${widget.user.lastName}",
+                          textAlign: TextAlign.left,
+                          style: bodyTextStyleBold,
+                        ),
+                        Text(
+                          '${widget.user.school}',
+                          textAlign: TextAlign.left,
+                          style: captionTextStyle,
+                        ),
+                        Text(
+                          '${widget.user.city}',
+                          textAlign: TextAlign.left,
+                          style: captionTextStyle,
+                        ),
+                        Text(
+                          'Born on ${widget.user.dob.toString().split(' ')[0]}',
+                          textAlign: TextAlign.left,
+                          style: captionTextStyle,
+                        ),
+                        Text(
+                          '${widget.user.email}',
+                          style: captionTextStyle,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Row(
                         children: <Widget>[
-                          Row(
+                          Image(
+                            image: AssetImage('assets/images/elixir.png'),
+                            height: 40,
+                            width: 40,
+                          ),
+                          SizedBox(
+                            width: 2,
+                          ),
+                          Column(
                             children: <Widget>[
-                              Image(
-                                image: AssetImage('assets/images/elixir.png'),
-                                height: 40,
-                                width: 40,
+                              Text(
+                                'Elixirs',
+                                style: captionTextStyle,
                               ),
-                              SizedBox(
-                                width: 2,
-                              ),
-                              Column(
-                                children: <Widget>[
-                                  Text(
-                                    'Elixirs',
-                                    style: captionTextStyle,
-                                  ),
-                                  Text(
-                                    '1/100',
-                                    style: bodyTextStyleBold,
-                                  ),
-                                ],
+                              Text(
+                                '1/100',
+                                style: bodyTextStyleBold,
                               ),
                             ],
                           ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Column(
-                              children: <Widget>[
-                                Text(
-                                  'Friends',
-                                  style: captionTextStyle,
-                                ),
-                                Text(
-                                  '52',
-                                  style: bodyTextStyleBold,
-                                ),
-                              ]
-                          )
-                        ]
-                    )
-                  ]
-              ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Column(children: <Widget>[
+                        Text(
+                          'Friends',
+                          style: captionTextStyle,
+                        ),
+                        Text(
+                          '52',
+                          style: bodyTextStyleBold,
+                        ),
+                      ])
+                    ])
+              ]),
             ),
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,13 +279,13 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                       style: captionTextStyle,
                     ),
                   ),
-                ]
-            ),
+                ]),
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Image(
-                    image: AssetImage('assets/images/profile-sample-activity.png'),
+                    image:
+                        AssetImage('assets/images/profile-sample-activity.png'),
                     height: 360,
                     width: 300,
                   ),
@@ -306,50 +312,56 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                     ),
                   ]
                 ) */
-                ]
-            )
+                ])
           ],
         ),
       ),
     );
   }
 
-
-
-  VoidCallback modalBottomSheet(BuildContext context, SecureStorage secureStorage, User user) {
-    return () { showModalBottomSheet(context: context,
-        builder: (context) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: new Icon(Icons.edit),
-                title: new Text('Edit Account Details'),
-                onTap: () async {
-                  final value = await Navigator.pushReplacementNamed(context, '/edit-account-details', arguments: user);
-                  setState(() {
-                    this.rebuildWidget = this.rebuildWidget == value ? false : true;
-                  });
-                },
-              ),
-              ListTile(
-                leading: new Icon(Icons.edit),
-                title: new Text('Change Password'),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/change-password', arguments: user);
-                },
-              ),
-              ListTile(
-                leading: new Icon(Icons.logout),
-                title: new Text('Logout'),
-                onTap: () {
-                  doLogout(context, secureStorage);
-                },
-              ),
-            ],
-          );
-        }
-    ); };
+  VoidCallback modalBottomSheet(
+      BuildContext context, SecureStorage secureStorage, User user) {
+    return () {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: new Icon(Icons.edit),
+                  title: new Text('Edit Account Details'),
+                  onTap: () async {
+                    final value = await Navigator.pushReplacementNamed(
+                        context, '/edit-account-details',
+                        arguments: user);
+                    setState(() {
+                      this.rebuildWidget =
+                          this.rebuildWidget == value ? false : true;
+                    });
+                  },
+                ),
+                if (user.loginType == 'email')
+                  ListTile(
+                    leading: new Icon(Icons.edit),
+                    title: new Text('Change Password'),
+                    onTap: () {
+                      Navigator.pushReplacementNamed(
+                          context, '/change-password',
+                          arguments: user);
+                    },
+                  ),
+                ListTile(
+                  leading: new Icon(Icons.logout),
+                  title: new Text('Logout'),
+                  onTap: () {
+                    doLogout(context, secureStorage);
+                  },
+                ),
+              ],
+            );
+          });
+    };
   }
 
   void doLogout(BuildContext context, secureStorage) {
