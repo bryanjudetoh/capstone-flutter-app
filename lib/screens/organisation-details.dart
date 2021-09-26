@@ -126,7 +126,7 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                   children: <Widget>[
                     Text(
                       "Organisation Details",
-                      style: titleOneTextStyleBold,
+                      style: titleTwoTextStyleBold,
                     ),
                     PlainTextButton(
                       title: 'Back',
@@ -184,7 +184,7 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                         ),
                         SizedBox(width: 20,),
                         Text(
-                          'Categories: ${widget.org.orgTags.toString()}',
+                          'Categories: ${widget.org.orgTags!.isNotEmpty ? widget.org.orgTags.toString() : 'None'}',
                           style: captionTextStyle,
                         ),
                       ],
