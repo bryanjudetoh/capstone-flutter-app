@@ -67,150 +67,152 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Container(
-            margin: EdgeInsets.only(left: 35.0, right: 35.0, top: 50.0),
-            child: Column(
-              children: <Widget>[
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "Edit Profile",
-                        style: titleOneTextStyleBold,
-                      ),
-                      PlainTextButton(
-                        title: 'Back',
-                        func: () {
-                          Navigator.of(context).pop(false);
-                        },
-                        textStyle: backButtonBoldItalics,
-                        textColor: kBlack,
-                      ),
-                    ]
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Form(
-                  key: _formkey,
-                  child: Column(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Align(
-                            alignment: Alignment.center,
-                            child: _selectedImage == null ? SizedBox(width: 1,) : Image.file(_selectedImage!, height: 80, width: 80,),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text('Upload a profile picture:', style: bodyTextStyleBold,),
-                              SizedBox( width: 15.0,),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  var temp = await chooseProfilePicture(user);
-                                  setState(() {
-                                    this._selectedImage = temp;
-                                  });
-                                },
-                                child: Icon(Icons.upload_file),
-                                style: ElevatedButton.styleFrom(
-                                  primary: kLightBlue,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      OnboardingTextfield(
-                        title: 'First Name:',
-                        initialValue: user.firstName,
-                        hintText: 'John',
-                        callback: (value) => this.firstName = value!,
-                      ), // FirstName
-                      OnboardingTextfield(
-                          title: 'Last Name:',
-                          initialValue: user.lastName,
-                          hintText: 'Wong',
-                          callback: (value) => this.lastName = value!
-                      ), // LastName
-                      OnboardingDropdown(
-                        title: 'Gender',
-                        input: this.gender,
-                        list: genderList,
-                        callback: (value) => this.gender = value!,
-                      ), // Gender
-                      OnboardingTextfield(
-                        title: 'Age:',
-                        initialValue: user.age.toString(),
-                        hintText: 'Enter your age',
-                        callback: (value) => this.age = value!,
-                      ), // Age
-                      OnboardingDatepicker(
-                        title: 'Date of Birth:',
-                        currentDOB: user.dob,
-                        callback: (value) => this.dob = value!,
-                      ), // DOB
-                      OnboardingTextfield(
-                        title: 'Address Line 1:',
-                        initialValue: user.address1,
-                        hintText: 'Enter your address',
-                        callback: (value) => this.address1 = value!,
-                      ), // Address1
-                      OnboardingTextfield(
-                        title: 'Address Line 2:',
-                        initialValue: user.address2,
-                        hintText: 'Enter your address',
-                        callback: (value) => this.address2 = value!,
-                      ), // Address2
-                      OnboardingTextfield(
-                        title: 'Address Line 3:',
-                        initialValue: user.address3,
-                        hintText: 'Enter your address',
-                        callback: (value) => this.address3 = value!,
-                      ), // Address3
-                      OnboardingTextfield(
-                        title: 'Postal Code:',
-                        initialValue: user.postalCode,
-                        hintText: 'Enter your postal code',
-                        callback: (value) => this.postalCode = value!,
-                      ), // Postal Code
-                      OnboardingDropdown(
-                        title: 'Country Code:',
-                        input: this.countryCode,
-                        list: countryCodesList,
-                        callback: (value) => this.countryCode = value!,
-                      ), // Country Code
-                      OnboardingTextfield(
-                        title: 'City:',
-                        initialValue: user.city,
-                        hintText: 'Enter your city',
-                        callback: (value) => this.city = value!,
-                      ), // City
-                      OnboardingTextfield(
-                        title: 'School:',
-                        initialValue: user.school,
-                        hintText: 'Enter your school',
-                        callback: (value) => this.school = value!,
-                      ),
-
-                      /// School
-                    ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          child: Container(
+              child: Column(
+                children: <Widget>[
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Edit Profile",
+                          style: titleOneTextStyleBold,
+                        ),
+                        PlainTextButton(
+                          title: 'Back',
+                          func: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          textStyle: backButtonBoldItalics,
+                          textColor: kBlack,
+                        ),
+                      ]
                   ),
-                ),
-                SizedBox( height: 20,),
-                RoundedButton(
-                  title: "Save",
-                  func: () {
-                    submit(user);
-                  },
-                  colorBG: kLightBlue,
-                  colorFont: kWhite,
-                ),
-                SizedBox( height: 20,),
-              ],
-            )
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Form(
+                    key: _formkey,
+                    child: Column(
+                      children: <Widget>[
+                        Column(
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.center,
+                              child: _selectedImage == null ? SizedBox(width: 1,) : Image.file(_selectedImage!, height: 80, width: 80,),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text('Upload a profile picture:', style: bodyTextStyleBold,),
+                                SizedBox( width: 15.0,),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    var temp = await chooseProfilePicture(user);
+                                    setState(() {
+                                      this._selectedImage = temp;
+                                    });
+                                  },
+                                  child: Icon(Icons.upload_file),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: kLightBlue,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        OnboardingTextfield(
+                          title: 'First Name:',
+                          initialValue: user.firstName,
+                          hintText: 'John',
+                          callback: (value) => this.firstName = value!,
+                        ), // FirstName
+                        OnboardingTextfield(
+                            title: 'Last Name:',
+                            initialValue: user.lastName,
+                            hintText: 'Wong',
+                            callback: (value) => this.lastName = value!
+                        ), // LastName
+                        OnboardingDropdown(
+                          title: 'Gender',
+                          input: this.gender,
+                          list: genderList,
+                          callback: (value) => this.gender = value!,
+                        ), // Gender
+                        OnboardingTextfield(
+                          title: 'Age:',
+                          initialValue: user.age.toString(),
+                          hintText: 'Enter your age',
+                          callback: (value) => this.age = value!,
+                        ), // Age
+                        OnboardingDatepicker(
+                          title: 'Date of Birth:',
+                          currentDOB: user.dob,
+                          callback: (value) => this.dob = value!,
+                        ), // DOB
+                        OnboardingTextfield(
+                          title: 'Address Line 1:',
+                          initialValue: user.address1,
+                          hintText: 'Enter your address',
+                          callback: (value) => this.address1 = value!,
+                        ), // Address1
+                        OnboardingTextfield(
+                          title: 'Address Line 2:',
+                          initialValue: user.address2,
+                          hintText: 'Enter your address',
+                          callback: (value) => this.address2 = value!,
+                        ), // Address2
+                        OnboardingTextfield(
+                          title: 'Address Line 3:',
+                          initialValue: user.address3,
+                          hintText: 'Enter your address',
+                          callback: (value) => this.address3 = value!,
+                        ), // Address3
+                        OnboardingTextfield(
+                          title: 'Postal Code:',
+                          initialValue: user.postalCode,
+                          hintText: 'Enter your postal code',
+                          callback: (value) => this.postalCode = value!,
+                        ), // Postal Code
+                        OnboardingDropdown(
+                          title: 'Country Code:',
+                          input: this.countryCode,
+                          list: countryCodesList,
+                          callback: (value) => this.countryCode = value!,
+                        ), // Country Code
+                        OnboardingTextfield(
+                          title: 'City:',
+                          initialValue: user.city,
+                          hintText: 'Enter your city',
+                          callback: (value) => this.city = value!,
+                        ), // City
+                        OnboardingTextfield(
+                          title: 'School:',
+                          initialValue: user.school,
+                          hintText: 'Enter your school',
+                          callback: (value) => this.school = value!,
+                        ),
+
+                        /// School
+                      ],
+                    ),
+                  ),
+                  SizedBox( height: 20,),
+                  RoundedButton(
+                    title: "Save",
+                    func: () {
+                      submit(user);
+                    },
+                    colorBG: kLightBlue,
+                    colorFont: kWhite,
+                  ),
+                  SizedBox( height: 20,),
+                ],
+              )
+          ),
         ),
       ),
     );

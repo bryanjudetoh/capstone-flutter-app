@@ -32,84 +32,86 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  'Log In',
-                  style: largeTitleTextStyleBold,
-                ),
-                PlainTextButton(
-                  title: 'Back',
-                  func: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, '/welcome', (r) => false);
-                  },
-                  textStyle: backButtonBoldItalics,
-                  textColor: kBlack,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Form(
-              key: _formkey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: Column(
-                  children: <Widget>[
-                    FormInput(
-                      placeholder: 'Email',
-                      validator: emailValidator,
-                      func: (value) => this.email = value!,
-                    ),
-                    SizedBox(height: 10.0),
-                    FormInput(
-                      placeholder: 'Password',
-                      validator: passwordValidator,
-                      func: (value) => this.password = value!,
-                      obscureText: true,
-                    ),
-                    SizedBox(height: 10.0),
-                    RoundedButton(
-                      title: "Log In",
-                      func: submit,
-                      colorBG: kLightBlue,
-                      colorFont: kWhite,
-                    ),
-                  ],
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    'Log In',
+                    style: largeTitleTextStyleBold,
+                  ),
+                  PlainTextButton(
+                    title: 'Back',
+                    func: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/welcome', (r) => false);
+                    },
+                    textStyle: backButtonBoldItalics,
+                    textColor: kBlack,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Form(
+                key: _formkey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: Column(
+                    children: <Widget>[
+                      FormInput(
+                        placeholder: 'Email',
+                        validator: emailValidator,
+                        func: (value) => this.email = value!,
+                      ),
+                      SizedBox(height: 10.0),
+                      FormInput(
+                        placeholder: 'Password',
+                        validator: passwordValidator,
+                        func: (value) => this.password = value!,
+                        obscureText: true,
+                      ),
+                      SizedBox(height: 10.0),
+                      RoundedButton(
+                        title: "Log In",
+                        func: submit,
+                        colorBG: kLightBlue,
+                        colorFont: kWhite,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SignInButton(
-              Buttons.FacebookNew,
-              onPressed: doLoginFb,
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  "Forgot your password?",
-                  style: bodyTextStyle,
-                ),
-                PlainTextButton(
-                    title: 'Reset here',
-                    func: () {
-                      Navigator.pushNamed(context, '/forgotpw');
-                    },
-                    textStyle: bodyTextStyle),
-              ],
-            ),
-          ],
+              SignInButton(
+                Buttons.FacebookNew,
+                onPressed: doLoginFb,
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Forgot your password?",
+                    style: bodyTextStyle,
+                  ),
+                  PlainTextButton(
+                      title: 'Reset here',
+                      func: () {
+                        Navigator.pushNamed(context, '/forgotpw');
+                      },
+                      textStyle: bodyTextStyle),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

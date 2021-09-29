@@ -116,9 +116,9 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(left: 35.0, right: 35.0, top: 50.0),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           child: Column(
             children: <Widget>[
               Row(
@@ -126,7 +126,7 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                   children: <Widget>[
                     Text(
                       "Organisation Details",
-                      style: titleTwoTextStyleBold,
+                      style: titleOneTextStyle,
                     ),
                     PlainTextButton(
                       title: 'Back',
@@ -150,10 +150,10 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                           backgroundColor: Colors.white,
                           backgroundImage: this.orgDisplayPicUrl!.isNotEmpty
                               ? NetworkImage('https://cdn.eq-lab-dev.me/' +
-                                  this.orgDisplayPicUrl!)
+                              this.orgDisplayPicUrl!)
                               : Image.asset(
-                                      'assets/images/default-profilepic.png')
-                                  .image,
+                              'assets/images/default-profilepic.png')
+                              .image,
                           maxRadius: 40,
                         ),
                         SizedBox(width: 20,),
@@ -184,7 +184,7 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                         ),
                         SizedBox(width: 20,),
                         Text(
-                          'Categories: ${widget.org.orgTags!.isNotEmpty ? widget.org.orgTags.toString() : 'None'}',
+                          'Categories: ${widget.org.orgTags!.isNotEmpty ? widget.org.orgTags.toString().substring(1, widget.org.orgTags.toString().length -1) : 'None'}',
                           style: captionTextStyle,
                         ),
                       ],

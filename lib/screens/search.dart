@@ -26,7 +26,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: buildFloatingSearchBar());
+    return Scaffold(
+        body: SafeArea(
+          child: buildFloatingSearchBar(),
+        )
+    );
   }
 
   Widget buildFloatingSearchBar() {
@@ -43,6 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
       axisAlignment: isPortrait ? 0.0 : -1.0,
       openAxisAlignment: 0.0,
       width: isPortrait ? 600 : 500,
+      height: 65,
       debounceDelay: const Duration(milliseconds: 500),
       onQueryChanged: (query) async {
         List<Organisation>? result = await performQuery(query);
@@ -88,7 +93,7 @@ class _SearchScreenState extends State<SearchScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(height: 100,),
+          SizedBox(height: 85,),
           Padding(
             padding: EdgeInsets.only(left: 20, right: 20),
             child: Row(

@@ -24,23 +24,26 @@ class _HomeScreenState extends State<HomeScreen> {
     final User user = ModalRoute.of(context)!.settings.arguments as User;
 
     return Scaffold(
-      body: PageView(
-        children: <Widget>[
-          Container(
-            color: Colors.white,
-            child: HomeScreenBody(user: user),
-          ),
-          Container(
-            color: Colors.white,
-            child: NotificationsScreenBody(user: user),
-          ),
-          Container(
-            color: kBackground,
-            child: InitProfileScreenBody(),
-          ),
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
+      body: SafeArea(
+        child: PageView(
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: HomeScreenBody(user: user),
+            ),
+            Container(
+              color: Colors.white,
+              child: NotificationsScreenBody(user: user),
+            ),
+            Container(
+              color: kBackground,
+              child: InitProfileScreenBody(),
+            ),
+          ],
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          physics: NeverScrollableScrollPhysics(),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -110,7 +113,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -136,18 +139,6 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           Image(
               image: AssetImage(
                   'assets/images/temp-homescreen-potions-level.png')),
-          ActivitiesCarousel(
-            title: 'For you:',
-            seeAllFunc: () {},
-            imagesList: imagesListForYou,
-            titlesList: titlesListForYou,
-          ),
-          ActivitiesCarousel(
-            title: 'Pride Board:',
-            seeAllFunc: () {},
-            imagesList: imagesListPrideBoard,
-            titlesList: titlesListPrideBoard,
-          ),
           ActivitiesCarousel(
             title: 'Scholarship:',
             seeAllFunc: () {},

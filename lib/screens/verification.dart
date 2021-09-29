@@ -16,46 +16,48 @@ class VerificationScreen extends StatelessWidget {
     String name = user.firstName;
 
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Pending Verification",
-                  style: titleOneTextStyleBold,
-                ),
-                PlainTextButton(
-                  title: 'Back',
-                  func: () {Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);},
-                  textStyle: backButtonBoldItalics,
-                  textColor: kBlack,
-                ),
-              ],
-            ),
-            SizedBox( height: 10.0, ),
-            Column(
-              children: <Widget>[
-                Text(
-                  'Thank you for registering, $name! Please check your email for a verification link before logging in.',
-                  style: bodyTextStyle,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox( height: 20.0, ),
-                RoundedButton(
-                  title: 'Go to email',
-                  func: () {openEmailApp(context);},
-                  colorBG: kLightBlue,
-                  colorFont: kWhite,
-                ),
-              ],
-            ),
-            SizedBox( height: 10.0, ),
-            SizedBox( height: 10.0, ),
-          ],
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "Pending Verification",
+                    style: titleOneTextStyleBold,
+                  ),
+                  PlainTextButton(
+                    title: 'Back',
+                    func: () {Navigator.pushNamedAndRemoveUntil(context, '/login', (r) => false);},
+                    textStyle: backButtonBoldItalics,
+                    textColor: kBlack,
+                  ),
+                ],
+              ),
+              SizedBox( height: 10.0, ),
+              Column(
+                children: <Widget>[
+                  Text(
+                    'Thank you for registering, $name! Please check your email for a verification link before logging in.',
+                    style: bodyTextStyle,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox( height: 20.0, ),
+                  RoundedButton(
+                    title: 'Go to email',
+                    func: () {openEmailApp(context);},
+                    colorBG: kLightBlue,
+                    colorFont: kWhite,
+                  ),
+                ],
+              ),
+              SizedBox( height: 10.0, ),
+              SizedBox( height: 10.0, ),
+            ],
+          ),
         ),
       ),
     );

@@ -79,61 +79,66 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     return Scaffold(
         resizeToAvoidBottomInset: true,
-        body: SingleChildScrollView(
-            child: Container(
-                margin: EdgeInsets.only(left: 35.0, right: 35.0, top: 50.0),
-                child: Column(
-                    children: <Widget>[
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Text(
-                              "Change Password",
-                              style: titleOneTextStyleBold,
-                            ),
-                            PlainTextButton(
-                              title: 'Back',
-                              func: () {
-                                Navigator.pop(context);
-                              },
-                              textStyle: backButtonBoldItalics,
-                              textColor: kBlack,
-                            ),
-                          ]
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Form(
-                          key: _formkey,
-                          child: Column(
-                              children: <Widget>[
-                                OnboardingTextfield(
-                                  title: 'Current Password:',
-                                  hintText: 'Current password',
-                                  obscureText: true,
-                                  validator: passwordValidator,
-                                  callback: (value) => this.oldPassword = value!,
-                                ),
-                                OnboardingTextfield(
-                                  title: 'New Password:',
-                                  hintText: 'New password',
-                                  obscureText: true,
-                                  validator: passwordValidator,
-                                  callback: (value) => this.newPassword = value!,
-                                ),
-                              ]
-                          )
-                      ),
-                      RoundedButton(
-                        title: "Update Details",
-                        func: submit,
-                        colorBG: kLightBlue,
-                        colorFont: kWhite,
-                      ),
-                    ]
-                )
-            )
+        body: SafeArea(
+          child: Container(
+              padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            "Change Password",
+                            style: titleOneTextStyleBold,
+                          ),
+                          PlainTextButton(
+                            title: 'Back',
+                            func: () {
+                              Navigator.pop(context);
+                            },
+                            textStyle: backButtonBoldItalics,
+                            textColor: kBlack,
+                          ),
+                        ]
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Form(
+                            key: _formkey,
+                            child: Column(
+                                children: <Widget>[
+                                  OnboardingTextfield(
+                                    title: 'Current Password:',
+                                    hintText: 'Current password',
+                                    obscureText: true,
+                                    validator: passwordValidator,
+                                    callback: (value) => this.oldPassword = value!,
+                                  ),
+                                  OnboardingTextfield(
+                                    title: 'New Password:',
+                                    hintText: 'New password',
+                                    obscureText: true,
+                                    validator: passwordValidator,
+                                    callback: (value) => this.newPassword = value!,
+                                  ),
+                                ]
+                            )
+                        ),
+                        SizedBox(height: 10,),
+                        RoundedButton(
+                          title: "Update Details",
+                          func: submit,
+                          colorBG: kLightBlue,
+                          colorFont: kWhite,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: MediaQuery.of(context).size.height*0.15,)
+                  ]
+              )
+          ),
         )
     );
   }

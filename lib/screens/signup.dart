@@ -21,85 +21,90 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        "Sign Up",
+                        style: titleOneTextStyleBold,
+                      ),
+                      PlainTextButton(
+                        title: 'Back',
+                        func: () {Navigator.pushNamedAndRemoveUntil(context, '/welcome', (r) => false);},
+                        textStyle: backButtonBoldItalics,
+                        textColor: kBlack,
+                      ),
+                    ]
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Column(
+                  children: <Widget>[
+                    Form(
+                      key: _formkey,
+                      child: FormInput(
+                          placeholder: "Email",
+                          validator: emailValidator,
+                          func: (value) => email = value!,
+                      )
+                    ),
+                    SizedBox( height: 10.0,),
+                    RoundedButton(
+                      title: 'Register',
+                      func: register,
+                      colorBG: kLightBlue,
+                      colorFont: kWhite,
+                    ),
+                  ],
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "Sign Up",
-                      style: titleOneTextStyleBold,
+                      "Or sign up with social media",
+                      style: bodyTextStyle,
                     ),
-                    PlainTextButton(
-                      title: 'Back',
-                      func: () {Navigator.pushNamedAndRemoveUntil(context, '/welcome', (r) => false);},
-                      textStyle: backButtonBoldItalics,
-                      textColor: kBlack,
+                    FractionallySizedBox(
+                      widthFactor: 0.80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          IconButton(
+                            iconSize: 60.0,
+                            icon: new Image.asset("assets/icons/facebook.png"),
+                            onPressed: facebookRegister,
+                          ),
+                        ],
+                      ),
                     ),
-                  ]
-              ),
-              SizedBox(
-                height: 100.0,
-              ),
-              Column(
-                children: <Widget>[
-                  Form(
-                    key: _formkey,
-                    child: FormInput(
-                        placeholder: "Email",
-                        validator: emailValidator,
-                        func: (value) => email = value!,
-                    )
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        "Already have an account?",
+                        style: bodyTextStyle,
+                      ),
+                      PlainTextButton(
+                          title: 'Log In here',
+                          func: () {Navigator.pushNamed(context, '/login');},
+                          textStyle: bodyTextStyle
+                      ),
+                    ],
                   ),
-                  SizedBox( height: 10.0,),
-                  RoundedButton(
-                    title: 'Register',
-                    func: register,
-                    colorBG: kLightBlue,
-                    colorFont: kWhite,
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Or sign up with social media",
-                    style: bodyTextStyle,
-                  ),
-                  FractionallySizedBox(
-                    widthFactor: 0.80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        IconButton(
-                          iconSize: 60.0,
-                          icon: new Image.asset("assets/icons/facebook.png"),
-                          onPressed: facebookRegister,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "Already have an account?",
-                    style: bodyTextStyle,
-                  ),
-                  PlainTextButton(
-                      title: 'Log In here',
-                      func: () {Navigator.pushNamed(context, '/login');},
-                      textStyle: bodyTextStyle
-                  ),
-                ],
-              ),
-            ]
+                ),
+              ]
+          ),
         ),
       ),
     );

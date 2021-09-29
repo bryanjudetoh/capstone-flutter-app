@@ -9,8 +9,8 @@ class NotificationsScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 35.0, right: 35.0, top:50.0),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
         children: <Widget>[
           Row(
