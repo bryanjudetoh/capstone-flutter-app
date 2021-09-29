@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/painting.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
@@ -20,19 +21,21 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final SecureStorage secureStorage = SecureStorage();
   List<Organisation> organisations = [];
+  List<bool> isSelected = [true, false];
+  bool currentSearchTypeIsOrg = true;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: buildFloatingSearchBar()
-    );
+    return Scaffold(body: buildFloatingSearchBar());
   }
 
   Widget buildFloatingSearchBar() {
-    final isPortrait = MediaQuery.of(context).orientation == Orientation.portrait;
+    final isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
 
     return FloatingSearchBar(
       hint: 'Search...',
+      clearQueryOnClose: false,
       scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
       transitionDuration: const Duration(milliseconds: 800),
       transitionCurve: Curves.easeInOut,
@@ -46,20 +49,13 @@ class _SearchScreenState extends State<SearchScreen> {
         if (result != null) {
           setState(() {
             this.organisations = result;
-          });//make api call here
+          }); //make api call here
         }
       },
       // Specify a custom transition to be used for
       // animating between opened and closed stated.
       transition: CircularFloatingSearchBarTransition(),
       actions: [
-        FloatingSearchBarAction(
-          showIfOpened: false,
-          child: CircularButton(
-            icon: const Icon(Icons.clear),
-            onPressed: () {}, //delete all input
-          ),
-        ),
         FloatingSearchBarAction.searchToClear(
           showIfClosed: false,
         ),
@@ -74,19 +70,91 @@ class _SearchScreenState extends State<SearchScreen> {
               mainAxisSize: MainAxisSize.min,
               children: organisations.map((org) {
                 return ListTile(
-                  title: Text(org.name, style: bodyTextStyle,),
-                  onTap: () {Navigator.pushNamed(context, '/organisation-details', arguments: org.id);},
+                  title: Text(
+                    org.name,
+                    style: bodyTextStyle,
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/organisation-details',
+                        arguments: org.id);
+                  },
                 );
               }).toList(),
             ),
           ),
         );
       },
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(height: 100,),
+          Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0),
+                        ),
+                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        primary: currentSearchTypeIsOrg ? kLightBlue : kBluishWhite,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          currentSearchTypeIsOrg = true;
+                          print(currentSearchTypeIsOrg);
+                        });
+                      },
+                      child: Text(
+                        'Organisations',
+                        style: TextStyle(
+                          fontFamily: 'SF Pro Display',
+                          fontSize: 17.0,
+                          height: 1.25,
+                          color: currentSearchTypeIsOrg ? kWhite : kLightBlue,
+                        ),
+                      )),
+                ),
+                SizedBox(width: 20,),
+                Expanded(
+                  child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(10.0),
+                        ),
+                        padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        primary: currentSearchTypeIsOrg ? kBluishWhite : kLightBlue,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          currentSearchTypeIsOrg = false;
+                          print(currentSearchTypeIsOrg);
+                        });
+                      },
+                      child: Text(
+                        'Activities',
+                        style: TextStyle(
+                          fontFamily: 'SF Pro Display',
+                          fontSize: 17.0,
+                          height: 1.25,
+                          color: currentSearchTypeIsOrg ? kLightBlue : kWhite,
+                        ),
+                      )),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Future<List<Organisation>?> performQuery(String query) async {
-    List<Map<String, dynamic>>? result = await doSearch(query);
+    List<Map<String, dynamic>>? result = await doSearchOrganisations(query);
     if (result == null) {
       return null;
     }
@@ -97,16 +165,16 @@ class _SearchScreenState extends State<SearchScreen> {
     return organisations;
   }
 
-  Future<List<Map<String, dynamic>>?> doSearch(String query) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
+  Future<List<Map<String, dynamic>>?> doSearchOrganisations(String query) async {
+    final String accessToken =
+        await secureStorage.readSecureData('accessToken');
 
-    var request = http.Request('GET', Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=' + query));
-    request.headers.addAll(
-        <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $accessToken',
-        }
-    );
+    var request = http.Request('GET',
+        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=' + query));
+    request.headers.addAll(<String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken',
+    });
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
@@ -121,8 +189,7 @@ class _SearchScreenState extends State<SearchScreen> {
       }
 
       return resultList;
-    }
-    else {
+    } else {
       String result = await response.stream.bytesToString();
       print(result);
       throw Exception('A problem occurred during your search');
