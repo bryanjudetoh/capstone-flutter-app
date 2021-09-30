@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 final emailValidator = MultiValidator([
@@ -25,3 +26,15 @@ final mobileNumValidator = MultiValidator([
   RequiredValidator(errorText: 'Mobile Number is required'),
   //PatternValidator(r'(^[0-9]*$)', errorText: 'Please enter only numerical values') mobile number may include '-'
 ]);
+
+class MatchingValidator extends FieldValidator<String?> {
+  final TextEditingController matchText;
+  final String errorText;
+
+  MatchingValidator({required this.matchText, required this.errorText}) : super(errorText);
+
+  @override
+  bool isValid(String? value) {
+    return value == matchText.text ? true : false;
+  }
+}

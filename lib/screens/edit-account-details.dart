@@ -39,6 +39,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
   String countryCode = countryCodesList[0];
   String city = '';
   String school = '';
+  String picUrl = '';
 
   final ImagePicker _picker = ImagePicker();
   File? _selectedImage;
@@ -62,6 +63,12 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
     if (user.countryCode != null) {
       setState(() {
         this.countryCode = user.countryCode!;
+      });
+    }
+
+    if (user.profilePicUrl != null) {
+      setState(() {
+        this.picUrl = user.profilePicUrl!;
       });
     }
 
@@ -270,8 +277,8 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
     if (form.validate()) {
       form.save();
 
-      String? temp = await uploadPicture(_selectedImage!, user);
-      String profilePicUrl = "";
+      String? temp = await uploadPicture(_selectedImage, user);
+      String profilePicUrl = this.picUrl;
       if(temp != null) {
         profilePicUrl = temp;
       }

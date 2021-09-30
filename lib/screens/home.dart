@@ -141,7 +141,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                   'assets/images/temp-homescreen-potions-level.png')),
           ActivitiesCarousel(
             title: 'Scholarship:',
-            seeAllFunc: () {},
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: 'Scholarship');},
             imagesList: imagesListScholarship,
             titlesList: titlesListScholarship,
           ),

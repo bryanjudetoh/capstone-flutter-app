@@ -24,6 +24,9 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _formkey = GlobalKey<FormState>();
+  final TextEditingController _pass = TextEditingController();
+  final TextEditingController _confirmPass = TextEditingController();
+
   String email = '';
   String password = '';
   String firstName = '';
@@ -113,13 +116,29 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       callback: (value) => this.email = value!,
                     ), // Email
                     if (!args.isFbLogin)
-                      OnboardingTextfield(
-                        title: 'Password:',
-                        hintText: 'Enter your password',
-                        obscureText: true,
-                        validator: passwordValidator,
-                        callback: (value) => this.password = value!,
-                      ), // Password
+                      Column(
+                        children: [
+                          OnboardingTextfield(
+                            title: 'Password:',
+                            hintText: 'Enter your password',
+                            obscureText: true,
+                            validator: passwordValidator,
+                            callback: (value) => this.password = value!,
+                            textCon: _pass,
+                          ),// Password
+                          OnboardingTextfield(
+                            title: 'Confirm Password:',
+                            hintText: 'Re-enter your password',
+                            obscureText: true,
+                            validator: MultiValidator([
+                              passwordValidator,
+                              MatchingValidator(matchText: _pass, errorText: 'Does not match the above password'),
+                            ]),
+                            callback: (value) {},
+                            textCon: _confirmPass,
+                          ), // Confirm Password
+                        ],
+                      ),// Passwords
                     OnboardingDropdown(
                       title: 'Gender',
                       input: this.gender,
@@ -194,8 +213,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void submit() async {
-    final form = _formkey.currentState!;
-
+    var form = _formkey.currentState!;
     if (form.validate()) {
       form.save();
 
