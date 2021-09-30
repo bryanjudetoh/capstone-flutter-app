@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationsScreenBody extends StatelessWidget {
   const NotificationsScreenBody({Key? key, required this.user}) : super(key: key);
@@ -17,7 +18,7 @@ class NotificationsScreenBody extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                'Notifications',
+                AppLocalizations.of(context)!.notifications,
                 style: titleOneTextStyleBold,
               ),
               Icon(

@@ -5,6 +5,7 @@ import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Sign Up",
+                        AppLocalizations.of(context)!.signup,
                         style: titleOneTextStyleBold,
                       ),
                       PlainTextButton(

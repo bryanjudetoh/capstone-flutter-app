@@ -17,6 +17,9 @@ import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:youthapp/l10n/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String? currentAccessToken;
 
@@ -29,8 +32,13 @@ Future<void> main() async {
 }
 
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,6 +58,13 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Youth App',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: L10n.all,
       home: SplashScreen(),
       routes: {
         '/welcome': (context) => WelcomeScreen(),

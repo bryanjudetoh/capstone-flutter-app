@@ -5,6 +5,7 @@ import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FbSignUpScreen extends StatefulWidget {
   const FbSignUpScreen({Key? key}) : super(key: key);
@@ -38,7 +39,7 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Sign Up With FB",
+                        AppLocalizations.of(context)!.signupFB,
                         style: titleOneTextStyleBold,
                       ),
                       PlainTextButton(

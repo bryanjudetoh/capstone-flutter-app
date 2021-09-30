@@ -14,6 +14,7 @@ import 'package:youthapp/utilities/validators.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -71,7 +72,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Onboarding",
+                      AppLocalizations.of(context)!.register,
                       style: titleOneTextStyleBold,
                     ),
                     PlainTextButton(

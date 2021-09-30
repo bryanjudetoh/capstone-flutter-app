@@ -12,10 +12,10 @@ import 'package:youthapp/widgets/onboarding-textfield.dart';
 import 'package:youthapp/widgets/onboarding-dropdown.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'dart:io';
-import 'package:async/async.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditAccountDetailsScreen extends StatefulWidget {
   const EditAccountDetailsScreen({Key? key}) : super(key: key);
@@ -84,7 +84,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Text(
-                          "Edit Profile",
+                          AppLocalizations.of(context)!.editProfile,
                           style: titleOneTextStyleBold,
                         ),
                         PlainTextButton(
@@ -236,7 +236,8 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
 
   Future<String?> uploadPicture(File? imageFile, User user) async {
     if (imageFile != null) {
-      var stream = new http.ByteStream(DelegatingStream.typed(imageFile.openRead()));
+      var stream = new http.ByteStream(imageFile.openRead());
+      stream.cast();
       var length = await imageFile.length();
       var request = http.MultipartRequest("POST", Uri.parse("https://eq-lab-dev.me/upload/image/profile-pic"));
       var multipartFile = new http.MultipartFile('image', stream, length,

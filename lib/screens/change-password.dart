@@ -11,6 +11,7 @@ import 'package:youthapp/widgets/onboarding-textfield.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
@@ -42,7 +43,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           Text(
-                            "Change Password",
+                            AppLocalizations.of(context)!.changePassword,
                             style: titleOneTextStyleBold,
                           ),
                           PlainTextButton(

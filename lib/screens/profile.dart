@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import '../constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InitProfileScreenBody extends StatefulWidget {
   const InitProfileScreenBody({Key? key}) : super(key: key);
@@ -106,7 +107,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Profile',
+                    AppLocalizations.of(context)!.profile,
                     style: titleOneTextStyleBold,
                   ),
                   IconButton(

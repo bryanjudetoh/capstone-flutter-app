@@ -1,0 +1,23 @@
+{
+  "language": "Монгол",
+  "signup": "Бүртгүүлэх",
+  "register": "Бүртгүүлэх",
+  "signupFB": "Фэйсбүүкээр бүртгүүлнэ үү",
+  "verification": "баталгаажуулалт хүлээж байна",
+  "login": "Нэвтрэх",
+  "forgotPassword": "Нууц үгээ мартсан",
+  "changePassword": "Нууц үгээ өөрчлөх",
+  "profile": "Профайл",
+  "editProfile": "Засах Профайл",
+  "notifications": "Мэдэгдэл",
+  "activities": "Үйл ажиллагаа",
+  "organisation": "Байгууллага",
+  "organisationDetails": "Байгууллагын дэлгэрэнгүй мэдээлэл",
+  "scholarship": "Тэтгэлэг",
+  "internship": "Дадлага ажил",
+  "mentorship": "Менторшип",
+  "enrichmentCourses": "Сургалт",
+  "volunteering": "Сайн дурын ажил хийх",
+  "sports": "Спорт",
+  "seeMore": "Бүгдийг харах"
+}

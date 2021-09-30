@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:youthapp/models/organisation.dart';
 import 'package:youthapp/utilities/securestorage.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../constants.dart';
 
@@ -115,7 +116,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         });
                       },
                       child: Text(
-                        'Organisations',
+                        AppLocalizations.of(context)!.organisation,
                         style: TextStyle(
                           fontFamily: 'SF Pro Display',
                           fontSize: 17.0,
@@ -141,7 +142,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         });
                       },
                       child: Text(
-                        'Activities',
+                        AppLocalizations.of(context)!.activities,
                         style: TextStyle(
                           fontFamily: 'SF Pro Display',
                           fontSize: 17.0,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:youthapp/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivitiesCarousel extends StatefulWidget {
   const ActivitiesCarousel({Key? key, required this.title, required this.seeAllFunc, required this.imagesList, required this.titlesList}) : super(key: key);
@@ -31,7 +32,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                 onPressed: widget.seeAllFunc,
                 child: Row(
                   children: <Widget>[
-                    Text('See more', style: smallBodyTextStyleBold,),
+                    Text(AppLocalizations.of(context)!.seeMore, style: smallBodyTextStyleBold,),
                     Icon(Icons.navigate_next_rounded),
                   ],
                 ),

@@ -28,11 +28,12 @@ class WelcomeScreen extends StatelessWidget {
                   height: 10.0,
                 ),
                 RoundedButton(
-                  title: "Log In",
+                  title: "  Log In  ",
                   func: () => Navigator.pushNamed(context, '/login'),
                   colorBG: kGrey,
                   colorFont: kLightBlue,
                 ),
+                SizedBox(height: 100,),
               ],
             ),
           ],

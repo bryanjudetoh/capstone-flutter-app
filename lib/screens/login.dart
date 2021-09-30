@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Log In',
+                    AppLocalizations.of(context)!.login,
                     style: largeTitleTextStyleBold,
                   ),
                   PlainTextButton(

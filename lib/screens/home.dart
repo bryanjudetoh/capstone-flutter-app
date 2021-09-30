@@ -7,6 +7,7 @@ import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youthapp/utilities/images-titles-lists.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -140,32 +141,38 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
               image: AssetImage(
                   'assets/images/temp-homescreen-potions-level.png')),
           ActivitiesCarousel(
-            title: 'Scholarship:',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: 'Scholarship');},
+            title: AppLocalizations.of(context)!.scholarship + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.scholarship);},
             imagesList: imagesListScholarship,
             titlesList: titlesListScholarship,
           ),
           ActivitiesCarousel(
-            title: 'Internship:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.internship + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.internship);},
             imagesList: imagesListInternship,
             titlesList: titlesListInternship,
           ),
           ActivitiesCarousel(
-            title: 'Mentorship:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.mentorship + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.mentorship);},
             imagesList: imagesListMentorship,
             titlesList: titlesListMentorship,
           ),
           ActivitiesCarousel(
-            title: 'Training:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.enrichmentCourses + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.enrichmentCourses);},
             imagesList: imagesListTraining,
             titlesList: titlesListTraining,
           ),
           ActivitiesCarousel(
-            title: 'Activities:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.volunteering + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.volunteering);},
+            imagesList: imagesListActivities,
+            titlesList: titlesListActivities,
+          ),
+          ActivitiesCarousel(
+            title: AppLocalizations.of(context)!.sports + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.sports);},
             imagesList: imagesListActivities,
             titlesList: titlesListActivities,
           ),

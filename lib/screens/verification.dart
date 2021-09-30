@@ -4,6 +4,7 @@ import 'package:youthapp/models/user.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class VerificationScreen extends StatelessWidget {
   const VerificationScreen({Key? key}) : super(key: key);
@@ -26,7 +27,7 @@ class VerificationScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    "Pending Verification",
+                    AppLocalizations.of(context)!.verification,
                     style: titleOneTextStyleBold,
                   ),
                   PlainTextButton(

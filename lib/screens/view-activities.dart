@@ -15,6 +15,7 @@ class ViewActivitiesScreen extends StatelessWidget {
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +39,9 @@ class ViewActivitiesScreen extends StatelessWidget {
                     title,
                     style: titleOneTextStyleBold,
                   ),
-                  SizedBox(width: MediaQuery.of(context).size.width*0.15,)
+                  Flexible(
+                    child: SizedBox(width: 65),
+                  )
                 ],
               ),
             ],

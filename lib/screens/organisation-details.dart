@@ -7,6 +7,7 @@ import 'package:youthapp/models/organisation.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InitOrganisationDetailsScreen extends StatelessWidget {
   InitOrganisationDetailsScreen({Key? key}) : super(key: key);
@@ -125,7 +126,7 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Organisation Details",
+                      AppLocalizations.of(context)!.organisationDetails,
                       style: titleOneTextStyle,
                     ),
                     PlainTextButton(

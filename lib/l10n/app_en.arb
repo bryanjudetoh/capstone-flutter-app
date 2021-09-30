@@ -1,0 +1,86 @@
+{
+  "language": "English",
+  "@language": {
+    "description": "The current language"
+  },
+  "signup": "Sign Up",
+  "@signup": {
+    "description": "Sign Up Title"
+  },
+  "register": "Register",
+  "@sregister": {
+    "description": "Register Title"
+  },
+  "signupFB": "Sign Up With Facebook",
+  "@signupFB": {
+    "description": "Sign Up With Facebook Title"
+  },
+  "verification": "Pending Verification",
+  "@verification": {
+    "description": "Pending Verification Title"
+  },
+  "login": "Log In",
+  "@login": {
+    "description": "Log In Title"
+  },
+  "forgotPassword": "Forgot Password",
+  "@forgotPassword": {
+    "description": "Forgot Password Title"
+  },
+  "changePassword": "Change Password",
+  "@changePassword": {
+    "description": "Change Password Title"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile Title"
+  },
+  "editProfile": "Edit Profile",
+  "@editPprofile": {
+    "description": "Edit Profile Title"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications Title"
+  },
+  "activities": "Activities",
+  "@activities": {
+    "description": "Activities Title"
+  },
+  "organisation": "Organisation",
+  "@organisation": {
+    "description": "Organisation Title"
+  },
+  "organisationDetails": "Organisation Details",
+  "@organisationDetails": {
+    "description": "Organisation Details Title"
+  },
+  "scholarship": "Scholarship",
+  "@scholarship": {
+    "description": "Scholarship Title"
+  },
+  "internship": "Internship",
+  "@internship": {
+    "description": "Internship Title"
+  },
+  "mentorship": "Mentorship",
+  "@mentorship": {
+    "description": "Mentorship Title"
+  },
+  "enrichmentCourses": "Enrichment Courses",
+  "@enrichmentCourses": {
+    "description": "Enrichment Courses Title"
+  },
+  "volunteering": "Volunteering",
+  "@volunteering": {
+    "description": "Volunteering Title"
+  },
+  "sports": "Sports",
+  "@sports": {
+    "description": "Sports Title"
+  },
+  "seeMore": "See more",
+  "@seeMore": {
+    "description": "See more Title"
+  }
+}
