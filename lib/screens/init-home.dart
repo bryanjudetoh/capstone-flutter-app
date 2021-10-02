@@ -26,15 +26,15 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: FutureBuilder<Map<String, dynamic>>(
+        child: FutureBuilder<User>(
           future: initHomeData(widget.secureStorage),
-          builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
             Widget child = Text('');
             if (snapshot.hasData) {
-              Map<String, dynamic> data = snapshot.data!;
+              User user = snapshot.data!;
               Future.microtask(() {Navigator.pushReplacement(context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => HomeScreen(data: data),
+                    builder: (BuildContext context) => HomeScreen(user: user),
                   )
               );});
             }
@@ -85,9 +85,7 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
     );
   }
 
-  Future<Map<String, dynamic>> initHomeData(SecureStorage secureStorage) async {
-    Map<String, dynamic> data = {};
-
+  Future<User> initHomeData(SecureStorage secureStorage) async {
     final String accessToken = await secureStorage.readSecureData('accessToken');
 
     final response = await http.get(
@@ -102,14 +100,9 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
       secureStorage.writeSecureData('user', response.body);
       var responseBody = jsonDecode(response.body);
 
-      data['user'] = User.fromJson(responseBody);
+      User user = User.fromJson(responseBody);
 
-      for (String type in activityTypesList) {
-        print(type);
-        data[type] = await getActivityTypeList(type, accessToken);
-      }
-
-      return data;
+      return user;
     } else {
       throw Exception(jsonDecode(response.body)['error']['message']);
     }

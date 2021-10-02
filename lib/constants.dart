@@ -143,4 +143,3 @@ const tabTextStyle = TextStyle(
 
 var countryCodesList = ['MN', 'SG', 'MY'];
 var genderList = ['male', 'female', 'others'];
-var activityTypesList = ['scholarship', 'internship', 'mentorship', 'onlineCourse', 'offlineCourse', 'volunteering', 'sports',];
