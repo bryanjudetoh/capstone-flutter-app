@@ -1,9 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import '../constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InitProfileScreenBody extends StatefulWidget {
   const InitProfileScreenBody({Key? key}) : super(key: key);
@@ -96,15 +98,16 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
     }
 
     return Container(
-      margin: EdgeInsets.only(left: 35.0, right: 35.0, top: 50.0),
+      color: Colors.white,
       child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         child: Column(
           children: <Widget>[
             Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
                   Text(
-                    'Profile',
+                    AppLocalizations.of(context)!.profile,
                     style: titleOneTextStyleBold,
                   ),
                   IconButton(
@@ -132,13 +135,13 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody> {
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.1),
+                      color: Colors.grey.withOpacity(0.5),
                       blurRadius: 20, // changes position of shadow
                     ),
                   ]),
               child: Column(children: <Widget>[
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     CircleAvatar(
                       backgroundColor: Colors.white,

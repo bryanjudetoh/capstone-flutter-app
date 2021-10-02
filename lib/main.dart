@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
+import 'package:youthapp/screens/view-activities.dart';
 import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/home.dart';
@@ -15,6 +16,10 @@ import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
+import 'package:responsive_framework/responsive_framework.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:youthapp/l10n/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 String? currentAccessToken;
 
@@ -27,13 +32,39 @@ Future<void> main() async {
 }
 
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
 
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: (context, widget) => ResponsiveWrapper.builder(
+        BouncingScrollWrapper.builder(context, widget!),
+        maxWidth: 1200,
+        minWidth: 450,
+        defaultScale: true,
+        breakpoints: [
+          ResponsiveBreakpoint.resize(450, name: MOBILE),
+          ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          ResponsiveBreakpoint.autoScale(1000, name: TABLET),
+          ResponsiveBreakpoint.resize(1200, name: DESKTOP),
+          ResponsiveBreakpoint.autoScale(2460, name: "4K"),
+        ],
+        background: Container(color: Colors.white)
+      ),
       title: 'Youth App',
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: L10n.all,
       home: SplashScreen(),
       routes: {
         '/welcome': (context) => WelcomeScreen(),
@@ -50,6 +81,7 @@ class MyApp extends StatelessWidget {
         '/change-password': (context) => ChangePasswordScreen(),
         '/search': (context) => SearchScreen(),
         '/organisation-details': (context) => InitOrganisationDetailsScreen(),
+        '/view-activities': (context) => ViewActivitiesScreen()
       }
     );
   }

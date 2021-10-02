@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationsScreenBody extends StatelessWidget {
   const NotificationsScreenBody({Key? key, required this.user}) : super(key: key);
@@ -9,15 +10,15 @@ class NotificationsScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(left: 35.0, right: 35.0, top:50.0),
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               Text(
-                'Notifications',
+                AppLocalizations.of(context)!.notifications,
                 style: titleOneTextStyleBold,
               ),
               Icon(

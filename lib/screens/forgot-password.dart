@@ -8,6 +8,7 @@ import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key? key}) : super(key: key);
@@ -24,64 +25,66 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Forgot Password",
-                  style: titleOneTextStyleBold,
-                ),
-                PlainTextButton(
-                  title: 'Back',
-                  func: () {Navigator.pop(context);},
-                  textStyle: backButtonBoldItalics,
-                  textColor: kBlack,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            Form(
-              key: _formkey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                child: Column(
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        'Recovery password will be sent to your email address:',
-                        style: smallBodyTextStyle,
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    AppLocalizations.of(context)!.forgotPassword,
+                    style: titleOneTextStyleBold,
+                  ),
+                  PlainTextButton(
+                    title: 'Back',
+                    func: () {Navigator.pop(context);},
+                    textStyle: backButtonBoldItalics,
+                    textColor: kBlack,
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Form(
+                key: _formkey,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: Column(
+                    children: <Widget>[
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          'Recovery password will be sent to your email address:',
+                          style: smallBodyTextStyle,
+                        ),
                       ),
-                    ),
-                    SizedBox( height: 5.0,),
-                    FormInput(
-                        placeholder: 'Enter your email',
-                        validator: emailValidator,
-                        func: (value) => email = value!,
-                    ),
-                    SizedBox( height: 10.0,),
-                    RoundedButton(
-                        title: "Reset Password",
-                        func: submit,
-                        colorBG: kLightBlue,
-                        colorFont: kWhite,
-                    ),
-                  ],
+                      SizedBox( height: 5.0,),
+                      FormInput(
+                          placeholder: 'Enter your email',
+                          validator: emailValidator,
+                          func: (value) => email = value!,
+                      ),
+                      SizedBox( height: 10.0,),
+                      RoundedButton(
+                          title: "Reset Password",
+                          func: submit,
+                          colorBG: kLightBlue,
+                          colorFont: kWhite,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),
-            SizedBox( height: 10.0,),
-          ],
+              SizedBox(
+                height: 10.0,
+              ),
+              SizedBox( height: 10.0,),
+            ],
+          ),
         ),
       ),
     );

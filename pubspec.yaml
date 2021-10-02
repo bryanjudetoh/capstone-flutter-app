@@ -23,6 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   http: ^0.13.3
   form_field_validator: ^1.0.1
   json_annotation: ^4.1.0
@@ -37,6 +39,7 @@ dependencies:
   material_floating_search_bar: ^0.3.4
   flutter_svg: ^0.22.0
   flutter_signin_button: ^2.0.0
+  responsive_framework: ^0.1.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -57,6 +60,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  generate: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

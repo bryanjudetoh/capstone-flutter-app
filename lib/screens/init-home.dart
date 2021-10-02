@@ -23,56 +23,58 @@ class _InitialiseHomeScreenState extends State<InitialiseHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<User>(
-        future: retrieveUser(widget.secureStorage),
-        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-          Widget child = Text('');
-          if (snapshot.hasData) {
-            User user = snapshot.data!;
-            Future.microtask(() {Navigator.pushReplacementNamed(context, '/home', arguments: user);});
-          }
-          else if (snapshot.hasError) {
-            child = Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 60,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text('Error: ${snapshot.error}' , style: titleTwoTextStyleBold,),
-                  ),
-                ],
-              ),
+      body: SafeArea(
+        child: FutureBuilder<User>(
+          future: retrieveUser(widget.secureStorage),
+          builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+            Widget child = Text('');
+            if (snapshot.hasData) {
+              User user = snapshot.data!;
+              Future.microtask(() {Navigator.pushReplacementNamed(context, '/home', arguments: user);});
+            }
+            else if (snapshot.hasError) {
+              child = Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 60,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Text('Error: ${snapshot.error}' , style: titleTwoTextStyleBold,),
+                    ),
+                  ],
+                ),
+              );
+            }
+            else {
+              child = Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      child: CircularProgressIndicator(),
+                      width: 60,
+                      height: 60,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 16),
+                      child: Text('Loading...', style: titleTwoTextStyleBold,),
+                    )
+                  ],
+                ),
+              );
+            }
+            return Container(
+              child: child,
             );
-          }
-          else {
-            child = Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    child: CircularProgressIndicator(),
-                    width: 60,
-                    height: 60,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text('Loading...', style: titleTwoTextStyleBold,),
-                  )
-                ],
-              ),
-            );
-          }
-          return Container(
-            child: child,
-          );
-        },
+          },
+        ),
       ),
     );
   }

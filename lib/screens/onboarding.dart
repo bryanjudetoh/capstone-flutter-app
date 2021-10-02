@@ -14,6 +14,7 @@ import 'package:youthapp/utilities/validators.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -24,6 +25,9 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final _formkey = GlobalKey<FormState>();
+  final TextEditingController _pass = TextEditingController();
+  final TextEditingController _confirmPass = TextEditingController();
+
   String email = '';
   String password = '';
   String firstName = '';
@@ -59,141 +63,158 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-        child: Column(
-          children: <Widget>[
-            Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Onboarding",
-                    style: titleOneTextStyleBold,
-                  ),
-                  PlainTextButton(
-                    title: 'Back',
-                    func: () {
-                      Navigator.pop(context);
-                    },
-                    textStyle: backButtonBoldItalics,
-                    textColor: kBlack,
-                  ),
-                ]),
-            SizedBox(
-              height: 10.0,
-            ),
-            Form(
-              key: _formkey,
-              child: Column(
-                children: <Widget>[
-                  OnboardingTextfield(
-                    title: 'First Name:',
-                    hintText: 'John',
-                    initialValue: this.firstName,
-                    validator: RequiredValidator(errorText: "* Required"),
-                    callback: (value) => this.firstName = value!,
-                  ), // FirstName
-                  OnboardingTextfield(
-                      title: 'Last Name:',
-                      hintText: 'Wong',
-                      initialValue: this.lastName,
-                      validator: RequiredValidator(errorText: "* Required"),
-                      callback: (value) => this.lastName = value!), // LastName
-                  OnboardingTextfield(
-                      title: 'Mobile Number:',
-                      hintText: 'Enter your mobile number',
-                      validator: mobileNumValidator,
-                      callback: (value) => this.mobile = value!), // Mobile
-                  OnboardingTextfield(
-                    title: 'Email:',
-                    hintText: 'Enter your email',
-                    initialValue: this.email,
-                    validator: emailValidator,
-                    callback: (value) => this.email = value!,
-                  ), // Email
-                  if (!args.isFbLogin)
-                    OnboardingTextfield(
-                      title: 'Password:',
-                      hintText: 'Enter your password',
-                      obscureText: true,
-                      validator: passwordValidator,
-                      callback: (value) => this.password = value!,
-                    ), // Password
-                  OnboardingDropdown(
-                    title: 'Gender',
-                    input: this.gender,
-                    list: genderList,
-                    callback: (value) => this.gender = value!,
-                  ), // Gender
-                  OnboardingTextfield(
-                    title: 'Age:',
-                    hintText: 'Enter your age',
-                    validator: ageValidator,
-                    callback: (value) => this.age = value!,
-                  ), // Age
-                  OnboardingDatepicker(
-                    title: 'Date of Birth:',
-                    callback: (value) => this.dob = value!,
-                  ), // DOB
-                  OnboardingTextfield(
-                    title: 'Address Line 1:',
-                    hintText: 'Enter your address',
-                    validator: RequiredValidator(errorText: "* Required"),
-                    callback: (value) => this.address1 = value!,
-                  ), // Address1
-                  OnboardingTextfield(
-                    title: 'Address Line 2:',
-                    hintText: 'Enter your address',
-                    callback: (value) => this.address2 = value!,
-                  ), // Address2
-                  OnboardingTextfield(
-                    title: 'Address Line 3:',
-                    hintText: 'Enter your address',
-                    callback: (value) => this.address3 = value!,
-                  ), // Address3
-                  OnboardingTextfield(
-                    title: 'Postal Code:',
-                    hintText: 'Enter your postal code',
-                    validator: postalCodeValidator,
-                    callback: (value) => this.postalCode = value!,
-                  ), // Postal Code
-                  OnboardingDropdown(
-                    title: 'Country Code:',
-                    input: this.countryCode,
-                    list: countryCodesList,
-                    callback: (value) => this.countryCode = value!,
-                  ), // Country Code
-                  OnboardingTextfield(
-                    title: 'City:',
-                    hintText: 'Enter your city',
-                    validator: RequiredValidator(errorText: "* Required"),
-                    callback: (value) => this.city = value!,
-                  ), // City
-                  OnboardingTextfield(
-                    title: 'School:',
-                    hintText: 'Enter your school',
-                    validator: RequiredValidator(errorText: "* Required"),
-                    callback: (value) => this.school = value!,
-                  ), // School
-                ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      AppLocalizations.of(context)!.register,
+                      style: titleOneTextStyleBold,
+                    ),
+                    PlainTextButton(
+                      title: 'Back',
+                      func: () {
+                        Navigator.pop(context);
+                      },
+                      textStyle: backButtonBoldItalics,
+                      textColor: kBlack,
+                    ),
+                  ]),
+              SizedBox(
+                height: 10.0,
               ),
-            ),
-            SizedBox(height: 15,),
-            RoundedButton(
-              title: "Register",
-              func: args.isFbLogin ? submitFb : submit,
-              colorBG: kLightBlue,
-              colorFont: kWhite,
-            ),
-          ],
+              Form(
+                key: _formkey,
+                child: Column(
+                  children: <Widget>[
+                    OnboardingTextfield(
+                      title: 'First Name:',
+                      hintText: 'John',
+                      initialValue: this.firstName,
+                      validator: RequiredValidator(errorText: "* Required"),
+                      callback: (value) => this.firstName = value!,
+                    ), // FirstName
+                    OnboardingTextfield(
+                        title: 'Last Name:',
+                        hintText: 'Wong',
+                        initialValue: this.lastName,
+                        validator: RequiredValidator(errorText: "* Required"),
+                        callback: (value) => this.lastName = value!), // LastName
+                    OnboardingTextfield(
+                        title: 'Mobile Number:',
+                        hintText: 'Enter your mobile number',
+                        validator: mobileNumValidator,
+                        callback: (value) => this.mobile = value!), // Mobile
+                    OnboardingTextfield(
+                      title: 'Email:',
+                      hintText: 'Enter your email',
+                      initialValue: this.email,
+                      validator: emailValidator,
+                      callback: (value) => this.email = value!,
+                    ), // Email
+                    if (!args.isFbLogin)
+                      Column(
+                        children: [
+                          OnboardingTextfield(
+                            title: 'Password:',
+                            hintText: 'Enter your password',
+                            obscureText: true,
+                            validator: passwordValidator,
+                            callback: (value) => this.password = value!,
+                            textCon: _pass,
+                          ),// Password
+                          OnboardingTextfield(
+                            title: 'Confirm Password:',
+                            hintText: 'Re-enter your password',
+                            obscureText: true,
+                            validator: MultiValidator([
+                              passwordValidator,
+                              MatchingValidator(matchText: _pass, errorText: 'Does not match the above password'),
+                            ]),
+                            callback: (value) {},
+                            textCon: _confirmPass,
+                          ), // Confirm Password
+                        ],
+                      ),// Passwords
+                    OnboardingDropdown(
+                      title: 'Gender',
+                      input: this.gender,
+                      list: genderList,
+                      callback: (value) => this.gender = value!,
+                    ), // Gender
+                    OnboardingTextfield(
+                      title: 'Age:',
+                      hintText: 'Enter your age',
+                      validator: ageValidator,
+                      callback: (value) => this.age = value!,
+                    ), // Age
+                    OnboardingDatepicker(
+                      title: 'Date of Birth:',
+                      callback: (value) => this.dob = value!,
+                    ), // DOB
+                    OnboardingTextfield(
+                      title: 'Address Line 1:',
+                      hintText: 'Enter your address',
+                      validator: RequiredValidator(errorText: "* Required"),
+                      callback: (value) => this.address1 = value!,
+                    ), // Address1
+                    OnboardingTextfield(
+                      title: 'Address Line 2:',
+                      hintText: 'Enter your address',
+                      callback: (value) => this.address2 = value!,
+                    ), // Address2
+                    OnboardingTextfield(
+                      title: 'Address Line 3:',
+                      hintText: 'Enter your address',
+                      callback: (value) => this.address3 = value!,
+                    ), // Address3
+                    OnboardingTextfield(
+                      title: 'Postal Code:',
+                      hintText: 'Enter your postal code',
+                      validator: postalCodeValidator,
+                      callback: (value) => this.postalCode = value!,
+                    ), // Postal Code
+                    OnboardingDropdown(
+                      title: 'Country Code:',
+                      input: this.countryCode,
+                      list: countryCodesList,
+                      callback: (value) => this.countryCode = value!,
+                    ), // Country Code
+                    OnboardingTextfield(
+                      title: 'City:',
+                      hintText: 'Enter your city',
+                      validator: RequiredValidator(errorText: "* Required"),
+                      callback: (value) => this.city = value!,
+                    ), // City
+                    OnboardingTextfield(
+                      title: 'School:',
+                      hintText: 'Enter your school',
+                      validator: RequiredValidator(errorText: "* Required"),
+                      callback: (value) => this.school = value!,
+                    ), // School
+                  ],
+                ),
+              ),
+              SizedBox(height: 15,),
+              RoundedButton(
+                title: "Register",
+                func: args.isFbLogin ? submitFb : submit,
+                colorBG: kLightBlue,
+                colorFont: kWhite,
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   void submit() async {
-    final form = _formkey.currentState!;
-
+    var form = _formkey.currentState!;
     if (form.validate()) {
       form.save();
 

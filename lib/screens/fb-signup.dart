@@ -5,6 +5,7 @@ import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FbSignUpScreen extends StatefulWidget {
   const FbSignUpScreen({Key? key}) : super(key: key);
@@ -27,74 +28,76 @@ class _FbSignUpScreenState extends State<FbSignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
-        width: 600,
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          width: 600,
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        AppLocalizations.of(context)!.signupFB,
+                        style: titleOneTextStyleBold,
+                      ),
+                      PlainTextButton(
+                        title: 'Back',
+                        func: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                              context, '/welcome', (r) => false);
+                        },
+                        textStyle: backButtonBoldItalics,
+                        textColor: kBlack,
+                      ),
+                    ]),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "Sign Up With FB",
-                      style: titleOneTextStyleBold,
+                      this.fbLogin
+                          ? "Logged in as: "
+                          : "Retrieve Facebook Profile",
+                      style: bodyTextStyle,
                     ),
-                    PlainTextButton(
-                      title: 'Back',
-                      func: () {
-                        Navigator.pushNamedAndRemoveUntil(
-                            context, '/welcome', (r) => false);
-                      },
-                      textStyle: backButtonBoldItalics,
-                      textColor: kBlack,
+                    Text(
+                      this.fbLogin ? "${this.firstName} ${this.lastName}" : "",
+                      style: bodyTextStyle,
                     ),
-                  ]),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    this.fbLogin
-                        ? "Logged in as: "
-                        : "Retrieve Facebook Profile",
-                    style: bodyTextStyle,
-                  ),
-                  Text(
-                    this.fbLogin ? "${this.firstName} ${this.lastName}" : "",
-                    style: bodyTextStyle,
-                  ),
-                  FractionallySizedBox(
-                    widthFactor: 0.80,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: <Widget>[
-                        if (!this.fbLogin)
-                          SignInButton(
-                            Buttons.FacebookNew,
-                            onPressed: loginToFb,
-                          ),
-                        if (this.fbLogin)
-                          IconButton(
-                            iconSize: 150.0,
-                            icon: Image.network(this.imageUrl),
-                            onPressed: () {},
-                          ),
-                      ],
+                    FractionallySizedBox(
+                      widthFactor: 0.80,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          if (!this.fbLogin)
+                            SignInButton(
+                              Buttons.FacebookNew,
+                              onPressed: loginToFb,
+                            ),
+                          if (this.fbLogin)
+                            IconButton(
+                              iconSize: 150.0,
+                              icon: Image.network(this.imageUrl),
+                              onPressed: () {},
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
-                  if (this.fbLogin)
-                    SignInButton(
-                      Buttons.FacebookNew,
-                      text: "Continue With Facebook",
-                      onPressed: proceedToOnboarding,
-                    )
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[],
-              ),
-            ]),
+                    if (this.fbLogin)
+                      SignInButton(
+                        Buttons.FacebookNew,
+                        text: "Continue With Facebook",
+                        onPressed: proceedToOnboarding,
+                      )
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[],
+                ),
+              ]),
+        ),
       ),
     );
   }

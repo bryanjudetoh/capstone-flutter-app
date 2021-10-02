@@ -7,6 +7,7 @@ import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:youthapp/utilities/images-titles-lists.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -24,23 +25,26 @@ class _HomeScreenState extends State<HomeScreen> {
     final User user = ModalRoute.of(context)!.settings.arguments as User;
 
     return Scaffold(
-      body: PageView(
-        children: <Widget>[
-          Container(
-            color: Colors.white,
-            child: HomeScreenBody(user: user),
-          ),
-          Container(
-            color: Colors.white,
-            child: NotificationsScreenBody(user: user),
-          ),
-          Container(
-            color: kBackground,
-            child: InitProfileScreenBody(),
-          ),
-        ],
-        controller: pageController,
-        onPageChanged: onPageChanged,
+      body: SafeArea(
+        child: PageView(
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: HomeScreenBody(user: user),
+            ),
+            Container(
+              color: Colors.white,
+              child: NotificationsScreenBody(user: user),
+            ),
+            Container(
+              color: kBackground,
+              child: InitProfileScreenBody(),
+            ),
+          ],
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          physics: NeverScrollableScrollPhysics(),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -110,7 +114,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 40.0),
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -137,44 +141,38 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
               image: AssetImage(
                   'assets/images/temp-homescreen-potions-level.png')),
           ActivitiesCarousel(
-            title: 'For you:',
-            seeAllFunc: () {},
-            imagesList: imagesListForYou,
-            titlesList: titlesListForYou,
-          ),
-          ActivitiesCarousel(
-            title: 'Pride Board:',
-            seeAllFunc: () {},
-            imagesList: imagesListPrideBoard,
-            titlesList: titlesListPrideBoard,
-          ),
-          ActivitiesCarousel(
-            title: 'Scholarship:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.scholarship + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.scholarship);},
             imagesList: imagesListScholarship,
             titlesList: titlesListScholarship,
           ),
           ActivitiesCarousel(
-            title: 'Internship:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.internship + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.internship);},
             imagesList: imagesListInternship,
             titlesList: titlesListInternship,
           ),
           ActivitiesCarousel(
-            title: 'Mentorship:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.mentorship + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.mentorship);},
             imagesList: imagesListMentorship,
             titlesList: titlesListMentorship,
           ),
           ActivitiesCarousel(
-            title: 'Training:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.enrichmentCourses + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.enrichmentCourses);},
             imagesList: imagesListTraining,
             titlesList: titlesListTraining,
           ),
           ActivitiesCarousel(
-            title: 'Activities:',
-            seeAllFunc: () {},
+            title: AppLocalizations.of(context)!.volunteering + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.volunteering);},
+            imagesList: imagesListActivities,
+            titlesList: titlesListActivities,
+          ),
+          ActivitiesCarousel(
+            title: AppLocalizations.of(context)!.sports + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.sports);},
             imagesList: imagesListActivities,
             titlesList: titlesListActivities,
           ),

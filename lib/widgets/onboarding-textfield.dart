@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
-class OnboardingTextfield extends StatelessWidget {
-  const OnboardingTextfield({Key? key, required this.title, required this.hintText, this.initialValue, this.obscureText, this.validator, required this.callback}) : super(key: key);
+class OnboardingTextfield extends StatefulWidget {
+  OnboardingTextfield({Key? key, required this.title, required this.hintText, this.initialValue, this.obscureText, this.validator, required this.callback, this.textCon}) : super(key: key);
 
   final String title;
   final String hintText;
@@ -11,7 +11,13 @@ class OnboardingTextfield extends StatelessWidget {
   final bool? obscureText;
   final FieldValidator? validator;
   final void Function(String?)? callback;
+  final TextEditingController? textCon;
 
+  @override
+  _OnboardingTextfieldState createState() => _OnboardingTextfieldState();
+}
+
+class _OnboardingTextfieldState extends State<OnboardingTextfield> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,7 +26,7 @@ class OnboardingTextfield extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              this.title,
+              widget.title,
               style: bodyTextStyleBold,
             ),
             SizedBox( height: 5.0,),
@@ -30,22 +36,32 @@ class OnboardingTextfield extends StatelessWidget {
                 borderRadius: new BorderRadius.circular(16.0),
               ),
               child: TextFormField(
-                initialValue: this.initialValue,
-                obscureText: this.obscureText ?? false,
+                onChanged: (value) {
+                  if (widget.textCon != null) {
+                    widget.textCon!.value = TextEditingValue(
+                      text: value,
+                      selection: TextSelection.fromPosition(
+                        TextPosition(offset: value.length),
+                      ),
+                    );
+                  }
+                },
+                controller: widget.textCon,
+                initialValue: widget.initialValue,
+                obscureText: widget.obscureText ?? false,
                 decoration: InputDecoration(
                   border: InputBorder.none,
-                  hintText: this.hintText,
+                  hintText: widget.hintText,
                   contentPadding: EdgeInsets.all(12),
                 ),
-                validator: validatorCheck(this.validator),
-                onSaved: this.callback,
+                validator: validatorCheck(widget.validator),
+                onSaved: widget.callback,
               ),
             )
           ],
         )
     );
   }
-
   String? Function(String?)? validatorCheck(validator) {
     if (validator == null) {
       return null;
