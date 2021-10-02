@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
+import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/notifications.dart';
 import 'package:youthapp/screens/profile.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:youthapp/utilities/images-titles-lists.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key, required this.data}) : super(key: key);
+
+  final Map<String, dynamic> data;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -22,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = ModalRoute.of(context)!.settings.arguments as User;
+    final User user = widget.data['user'];
 
     return Scaffold(
       body: SafeArea(
@@ -30,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Container(
               color: Colors.white,
-              child: HomeScreenBody(user: user),
+              child: HomeScreenBody(user: user, data: widget.data,),
             ),
             Container(
               color: Colors.white,
@@ -100,9 +102,10 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class HomeScreenBody extends StatefulWidget {
-  const HomeScreenBody({Key? key, required this.user}) : super(key: key);
+  const HomeScreenBody({Key? key, required this.user, required this.data}) : super(key: key);
 
   final User user;
+  final Map<String, dynamic> data;
 
   @override
   _HomeScreenBodyState createState() => _HomeScreenBodyState();
@@ -113,6 +116,14 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Activity> scholarshipList = widget.data['scholarship'];
+    final List<Activity> internshipList = widget.data['internship'];
+    final List<Activity> mentorshipList = widget.data['mentorship'];
+    final List<Activity> onlineCourseList = widget.data['onlineCourse'];
+    final List<Activity> offlineCourseList = widget.data['offlineCourse'];
+    final List<Activity> volunteerList = widget.data['volunteering'];
+    final List<Activity> sportsList = widget.data['sports'];
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
@@ -143,38 +154,37 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.scholarship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.scholarship);},
-            imagesList: imagesListScholarship,
-            titlesList: titlesListScholarship,
+            activityList: scholarshipList,
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.internship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.internship);},
-            imagesList: imagesListInternship,
-            titlesList: titlesListInternship,
+            activityList: internshipList,
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.mentorship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.mentorship);},
-            imagesList: imagesListMentorship,
-            titlesList: titlesListMentorship,
+            activityList: mentorshipList,
           ),
           ActivitiesCarousel(
-            title: AppLocalizations.of(context)!.enrichmentCourses + ':',
+            title: AppLocalizations.of(context)!.onlineCourses + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.enrichmentCourses);},
-            imagesList: imagesListTraining,
-            titlesList: titlesListTraining,
+            activityList: onlineCourseList,
+          ),
+          ActivitiesCarousel(
+            title: AppLocalizations.of(context)!.offlineCourses + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.enrichmentCourses);},
+            activityList: offlineCourseList,
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.volunteering + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.volunteering);},
-            imagesList: imagesListActivities,
-            titlesList: titlesListActivities,
+            activityList: volunteerList,
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.sports + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.sports);},
-            imagesList: imagesListActivities,
-            titlesList: titlesListActivities,
+            activityList: sportsList,
           ),
         ],
       ),

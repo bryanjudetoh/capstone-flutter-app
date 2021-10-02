@@ -71,6 +71,14 @@
   "@enrichmentCourses": {
     "description": "Enrichment Courses Title"
   },
+  "onlineCourses": "Online Courses",
+  "@onlineCourses": {
+    "description": "Online Courses Title"
+  },
+  "offlineCourses": "Offline Courses",
+  "@offlineCourses": {
+    "description": "Offline Courses Title"
+  },
   "volunteering": "Volunteering",
   "@volunteering": {
     "description": "Volunteering Title"
