@@ -23,9 +23,9 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     activityEndTime: json['activityEndTime'] == null
         ? null
         : DateTime.parse(json['activityEndTime'] as String),
-    registrationPrice: (json['registrationPrice']['\$numberDecimal'] as num?)?.toDouble(),
+    registrationPrice: (json['registrationPrice'] as num?)?.toDouble(),
     applicantPax: json['applicantPax'] as int?,
-    attendanceReqPercent: (json['attendanceReqPercent']['\$numberDecimal'] as num?)?.toDouble(),
+    attendanceReqPercent: (json['attendanceReqPercent'] as num?)?.toDouble(),
     potions: json['potions'] as int?,
     mediaContentUrls: (json['mediaContentUrls'] as List<dynamic>?)
         ?.map((e) => e as String)
