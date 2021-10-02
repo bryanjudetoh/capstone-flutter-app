@@ -54,6 +54,14 @@ class _SearchScreenState extends State<SearchScreen> {
       width: isPortrait ? 600 : 500,
       height: 65,
       debounceDelay: const Duration(milliseconds: 500),
+      onFocusChanged: (isFocused) {
+        if (!isFocused) {
+          setState(() {
+            this.organisations = [];
+            this.activities = [];
+          });
+        }
+      },
       onQueryChanged: (query) async {
         if (currentSearchTypeIsOrg) {
           List<Organisation>? result = await performOrganisationsQuery(query);
