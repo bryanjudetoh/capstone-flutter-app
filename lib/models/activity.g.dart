@@ -9,11 +9,11 @@ part of 'activity.dart';
 Activity _$ActivityFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['id', 'name'],
-    disallowNullValues: const ['id'],
+    requiredKeys: const ['activityId', 'name'],
+    disallowNullValues: const ['activityId'],
   );
   return Activity(
-    id: json['id'] as String,
+    activityId: json['activityId'] as String,
     name: json['name'] as String,
     description: json['description'] as String?,
     type: json['type'] as String?,
@@ -47,7 +47,7 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
-      'id': instance.id,
+      'activityId': instance.activityId,
       'name': instance.name,
       'description': instance.description,
       'type': instance.type,

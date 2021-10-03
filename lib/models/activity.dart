@@ -6,7 +6,7 @@ part 'activity.g.dart';
 @JsonSerializable(explicitToJson: true)
 class Activity{
   @JsonKey(required: true, disallowNullValue: true)
-  String id;
+  String activityId;
 
   @JsonKey(required: true)
   String name;
@@ -30,7 +30,7 @@ class Activity{
   DateTime? approvedDate;
   Organisation? organisation;
 
-  Activity({required this.id, required this.name, this.description, this.type, this.activityStartTime, this.activityEndTime,
+  Activity({required this.activityId, required this.name, this.description, this.type, this.activityStartTime, this.activityEndTime,
     this.registrationPrice, this.applicantPax, this.attendanceReqPercent, this.potions,
     this.mediaContentUrls, this.enabled, this.approved, this.status, this.activitySessionList,
     this.participantCount, this.approvedDate, this.organisation

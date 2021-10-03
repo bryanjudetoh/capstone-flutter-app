@@ -285,7 +285,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         onTap: () {
           Navigator.pushNamed(context, '/organisation-details',
-              arguments: org.id);
+              arguments: org.organisationId);
         },
       );
     }).toList();
@@ -300,7 +300,7 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         onTap: () {
           Navigator.pushNamed(context, '/activity-details',
-              arguments: act.id);
+              arguments: act.activityId);
         },
       );
     }).toList();

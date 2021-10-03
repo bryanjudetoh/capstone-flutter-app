@@ -10,7 +10,7 @@ import 'package:youthapp/utilities/securestorage.dart';
 import 'package:http/http.dart' as http;
 
 class ActivitiesCarousel extends StatefulWidget {
-  const ActivitiesCarousel({
+  ActivitiesCarousel({
     Key? key,
     required this.title,
     required this.type,
@@ -22,7 +22,8 @@ class ActivitiesCarousel extends StatefulWidget {
   final VoidCallback seeAllFunc;
   final String placeholderPicUrl =
       'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
-
+  final SecureStorage secureStorage = new SecureStorage();
+  
   @override
   _ActivitiesCarouselState createState() => _ActivitiesCarouselState();
 }
@@ -153,7 +154,8 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                   ),
                 ],
               );
-            } else if (snapshot.hasError) {
+            }
+            else if (snapshot.hasError) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -176,27 +178,28 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                   )
                 ],
               );
-            } else {
+            }
+            else {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    child: CircularProgressIndicator(),
-                    width: 20,
-                    height: 20,
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 16),
-                      child: Text(
-                        'Loading...',
-                        style: titleThreeTextStyleBold,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  )
+                  // SizedBox(
+                  //   child: CircularProgressIndicator(),
+                  //   width: 20,
+                  //   height: 20,
+                  // ),
+                  // Align(
+                  //   alignment: Alignment.center,
+                  //   child: Padding(
+                  //     padding: EdgeInsets.only(top: 16),
+                  //     child: Text(
+                  //       'Loading...',
+                  //       style: titleThreeTextStyleBold,
+                  //       textAlign: TextAlign.center,
+                  //     ),
+                  //   ),
+                  // )
                 ],
               );
             }
@@ -223,7 +226,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
 
     if (response.statusCode == 200) {
       String result = await response.stream.bytesToString();
-      print(jsonDecode(result));
+      print('this is $type featured activity list: ${jsonDecode(result)}');
 
       List<dynamic> resultList = jsonDecode(result);
       List<Map<String, dynamic>> mapList = [];
@@ -235,7 +238,34 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
           mapList.map((act) => Activity.fromJson(act)).toList();
 
       return activityResultList;
-    } else {
+    }
+    else if (response.statusCode == 401) {
+      final String refreshToken = await widget.secureStorage.readSecureData('refreshToken');
+      final refreshResponse = await http.post(
+        Uri.parse('https://eq-lab-dev.me/api/auth/refresh'),
+        body: <String, String>{
+          "token": refreshToken,
+        },
+      );
+
+      if (refreshResponse.statusCode == 200) {
+        var refreshResponseBody = jsonDecode(refreshResponse.body);
+        var token = refreshResponseBody['token'];
+
+        widget.secureStorage.writeSecureData('accessToken', token['accessToken']);
+        widget.secureStorage.writeSecureData('refreshToken', token['refreshToken']);
+
+        return await getFeaturedActivityList(type);
+      }
+      else {
+        print('from activities carousel forcing logout due to expired refresh token');
+        widget.secureStorage.deleteAllData();
+        Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+        throw Exception('Refresh token has expired, please log in again!');
+      }
+
+    }
+    else {
       String result = await response.stream.bytesToString();
       print(result);
       throw Exception('A problem occurred during intialising activity data');

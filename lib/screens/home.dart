@@ -24,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: PageView(
           children: <Widget>[
@@ -178,10 +179,5 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
         ],
       ),
     );
-  }
-
-  void doLogout(secureStorage) {
-    secureStorage.deleteAllData();
-    Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
   }
 }
