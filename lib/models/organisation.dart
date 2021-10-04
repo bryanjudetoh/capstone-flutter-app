@@ -5,7 +5,7 @@ part 'organisation.g.dart';
 @JsonSerializable()
 class Organisation {
   @JsonKey(required: true, disallowNullValue: true)
-  String id;
+  String organisationId;
 
   @JsonKey(required: true)
   String name;
@@ -20,7 +20,7 @@ class Organisation {
 
   String? orgDisplayPicUrl;
 
-  Organisation({required this.id, required this.name, this.email,
+  Organisation({required this.organisationId, required this.name, this.email,
     this.countryCode, this.website, this.orgDisplayPicUrl});
 
   factory Organisation.fromJson(Map<String, dynamic> json) => _$OrganisationFromJson(json);

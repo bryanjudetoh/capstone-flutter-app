@@ -6,11 +6,12 @@ import 'package:youthapp/screens/profile.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:youthapp/utilities/images-titles-lists.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  HomeScreen({Key? key, required this.user}) : super(key: key);
+
+  final User user;
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -22,19 +23,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final User user = ModalRoute.of(context)!.settings.arguments as User;
-
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: PageView(
           children: <Widget>[
             Container(
               color: Colors.white,
-              child: HomeScreenBody(user: user),
+              child: HomeScreenBody(user: widget.user),
             ),
             Container(
               color: Colors.white,
-              child: NotificationsScreenBody(user: user),
+              child: NotificationsScreenBody(user: widget.user),
             ),
             Container(
               color: kBackground,
@@ -113,6 +113,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
 
   @override
   Widget build(BuildContext context) {
+
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
@@ -143,46 +144,40 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.scholarship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.scholarship);},
-            imagesList: imagesListScholarship,
-            titlesList: titlesListScholarship,
+            type: 'scholarship',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.internship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.internship);},
-            imagesList: imagesListInternship,
-            titlesList: titlesListInternship,
+            type: 'internship',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.mentorship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.mentorship);},
-            imagesList: imagesListMentorship,
-            titlesList: titlesListMentorship,
+            type: 'mentorship',
           ),
           ActivitiesCarousel(
-            title: AppLocalizations.of(context)!.enrichmentCourses + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.enrichmentCourses);},
-            imagesList: imagesListTraining,
-            titlesList: titlesListTraining,
+            title: AppLocalizations.of(context)!.onlineCourses + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.onlineCourses);},
+            type: 'onlineCourse',
+          ),
+          ActivitiesCarousel(
+            title: AppLocalizations.of(context)!.offlineCourses + ':',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.offlineCourses);},
+            type: 'offlineCourse',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.volunteering + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.volunteering);},
-            imagesList: imagesListActivities,
-            titlesList: titlesListActivities,
+            type: 'volunteering',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.sports + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.sports);},
-            imagesList: imagesListActivities,
-            titlesList: titlesListActivities,
+            type: 'sports',
           ),
         ],
       ),
     );
-  }
-
-  void doLogout(secureStorage) {
-    secureStorage.deleteAllData();
-    Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
   }
 }

@@ -10,6 +10,7 @@ import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/models/organisation.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:loadmore/loadmore.dart';
 
 import '../constants.dart';
 
@@ -27,6 +28,8 @@ class _SearchScreenState extends State<SearchScreen> {
   List<bool> isSelected = [true, false];
   bool currentSearchTypeIsOrg = true;
   bool currentActivitySearchTypeIsActivity = true;
+  int skip = 0;
+  String currentQuery = '';
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +71,7 @@ class _SearchScreenState extends State<SearchScreen> {
           if (result != null) {
             setState(() {
               this.organisations = result;
+              skip = 0;
             });
           }
         } else {
@@ -75,6 +79,7 @@ class _SearchScreenState extends State<SearchScreen> {
           if (result != null) {
             setState(() {
               this.activities = result;
+              skip = 0;
             });
           }
         }
@@ -91,6 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
               onPressed: () {
                 setState(() {
                   currentActivitySearchTypeIsActivity = !currentActivitySearchTypeIsActivity;
+                  skip = 0;
                 });
               },
             ),
@@ -108,12 +114,13 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: currentSearchTypeIsOrg ?
-              getOrganisationsResultList(this.organisations) :
-              getActivitiesResultList(this.activities),
+              displayOrganisationsResultList(this.organisations) :
+              [displayActivitiesResultList()],
             ),
           ),
         );
       },
+      isScrollControlled: true,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,6 +143,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       onPressed: () {
                         setState(() {
                           currentSearchTypeIsOrg = true;
+                          skip = 0;
                           print(currentSearchTypeIsOrg);
                         });
                       },
@@ -162,6 +170,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       onPressed: () {
                         setState(() {
                           currentSearchTypeIsOrg = false;
+                          skip = 0;
                           print(currentSearchTypeIsOrg);
                         });
                       },
@@ -184,6 +193,9 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<List<Organisation>?> performOrganisationsQuery(String query) async {
+    setState(() {
+      this.currentQuery = query;
+    });
     List<Map<String, dynamic>>? result = await doSearchOrganisations(query);
     if (result == null) {
       return null;
@@ -217,7 +229,6 @@ class _SearchScreenState extends State<SearchScreen> {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
         orgResultList.add(i);
       }
-
       return orgResultList;
     } else {
       String result = await response.stream.bytesToString();
@@ -240,13 +251,14 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<List<Map<String, dynamic>>?> doSearchActivities(String query) async {
+    print('presearch skip: $skip');
     final String accessToken = await secureStorage.readSecureData('accessToken');
     String uri = '';
 
     if (currentActivitySearchTypeIsActivity) {
-      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=' + query + '&orgName=';
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=$query&orgName=&skip=${skip.toString()}';
     } else {
-      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=' + query;
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=$query&skip=${skip.toString()}';
     }
 
     var request = http.Request('GET',
@@ -267,7 +279,10 @@ class _SearchScreenState extends State<SearchScreen> {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
         activityResultList.add(i);
       }
-
+      setState(() {
+        skip = activityResultList.length;
+        print('postsearch skip: $skip');
+      });
       return activityResultList;
     } else {
       String result = await response.stream.bytesToString();
@@ -276,7 +291,52 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  List<ListTile> getOrganisationsResultList(List<Organisation> organisations) {
+  Future<bool> loadMoreActivities() async {
+    print('pre-loadmore skip: $skip');
+    final String accessToken = await secureStorage.readSecureData('accessToken');
+    String uri = '';
+
+    if (currentActivitySearchTypeIsActivity) {
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=${this.currentQuery}&orgName=&skip=${skip.toString()}';
+    } else {
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=${this.currentQuery}&skip=${skip.toString()}';
+    }
+    var request = http.Request('GET',
+        Uri.parse(uri));
+    request.headers.addAll(<String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken',
+    });
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String result = await response.stream.bytesToString();
+      print(jsonDecode(result));
+
+      List<dynamic> activityList = jsonDecode(result);
+      List<Map<String, dynamic>> activityResultList = [];
+      for (dynamic item in activityList) {
+        Map<String, dynamic> i = Map<String, dynamic>.from(item);
+        activityResultList.add(i);
+      }
+      List<Activity> activities = [];
+      for (Map<String, dynamic> act in activityResultList) {
+        activities.add(Activity.fromJson(act));
+      }
+      setState(() {
+        skip = activityResultList.length;
+        print('postsearch skip: $skip');
+        this.activities.addAll(activities);
+      });
+      return true;
+    } else {
+      String result = await response.stream.bytesToString();
+      print(result);
+      return false;
+    }
+  }
+
+  List<ListTile> displayOrganisationsResultList(List<Organisation> organisations) {
     return organisations.map((org) {
       return ListTile(
         title: Text(
@@ -285,24 +345,30 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
         onTap: () {
           Navigator.pushNamed(context, '/organisation-details',
-              arguments: org.id);
+              arguments: org.organisationId);
         },
       );
     }).toList();
   }
 
-  List<ListTile> getActivitiesResultList(List<Activity> activities) {
-    return activities.map((act) {
-      return ListTile(
-        title: Text(
-          act.name,
-          style: bodyTextStyle,
-        ),
-        onTap: () {
-          Navigator.pushNamed(context, '/activity-details',
-              arguments: act.id);
-        },
-      );
-    }).toList();
+  LoadMore displayActivitiesResultList() {
+    return LoadMore(
+      child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(
+                activities[index].name,
+                style: bodyTextStyle,
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, '/activity-details', arguments: activities[index].activityId);
+              },
+            );
+          }
+      ),
+      onLoadMore: loadMoreActivities,
+      whenEmptyLoad: false,
+      delegate: DefaultLoadMoreDelegate(),
+    );
   }
 }
