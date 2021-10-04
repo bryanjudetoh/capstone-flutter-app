@@ -5,11 +5,10 @@ import 'package:youthapp/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivitiesCarousel extends StatefulWidget {
-  const ActivitiesCarousel({Key? key, required this.title, required this.seeAllFunc, required this.viewActivityDetailsFunc, required this.imagesList, required this.titlesList}) : super(key: key);
+  const ActivitiesCarousel({Key? key, required this.title, required this.seeAllFunc, required this.imagesList, required this.titlesList}) : super(key: key);
 
   final String title;
   final VoidCallback seeAllFunc;
-  final VoidCallback viewActivityDetailsFunc;
   final List<String> imagesList;
   final List<String> titlesList;
 
@@ -108,20 +107,17 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: widget.imagesList.map((urlOfItem) {
                 int index = widget.imagesList.indexOf(urlOfItem);
-                return GestureDetector(
-                  onTap: widget.viewActivityDetailsFunc,
-                  child: Container(
-                    width: 10.0,
-                    height: 10.0,
-                    margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentIndex == index
-                          ? Color.fromRGBO(0, 0, 0, 0.8)
-                          : Color.fromRGBO(0, 0, 0, 0.3),
-                    ),
-                  );
-                )
+                return Container(
+                  width: 10.0,
+                  height: 10.0,
+                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentIndex == index
+                        ? Color.fromRGBO(0, 0, 0, 0.8)
+                        : Color.fromRGBO(0, 0, 0, 0.3),
+                  ),
+                );
               }).toList(),
             ),
           ],
