@@ -46,6 +46,8 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     organisation: json['organisation'] == null
         ? null
         : Organisation.fromJson(json['organisation'] as Map<String, dynamic>),
+    isBump: json['isBump'] as bool?,
+    isFeatured: json['isFeatured'] as bool?,
   );
 }
 
@@ -70,4 +72,6 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'participantCount': instance.participantCount,
       'approvedDate': instance.approvedDate?.toIso8601String(),
       'organisation': instance.organisation?.toJson(),
+      'isBump': instance.isBump,
+      'isFeatured': instance.isFeatured,
     };

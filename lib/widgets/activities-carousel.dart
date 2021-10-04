@@ -271,7 +271,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
 
     if (response.statusCode == 200) {
       String result = await response.stream.bytesToString();
-      print('this is $type featured activity list: ${jsonDecode(result)}');
+      //print('this is $type featured activity list: ${jsonDecode(result)}');
 
       List<dynamic> resultList = jsonDecode(result);
       List<Map<String, dynamic>> mapList = [];
