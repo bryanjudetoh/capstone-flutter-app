@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -20,10 +21,9 @@ class ActivitiesCarousel extends StatefulWidget {
   final String title;
   final String type;
   final VoidCallback seeAllFunc;
-  final String placeholderPicUrl =
-      'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
   final SecureStorage secureStorage = new SecureStorage();
-  
+
   @override
   _ActivitiesCarouselState createState() => _ActivitiesCarouselState();
 }
@@ -63,9 +63,9 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
               (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
             if (snapshot.hasData) {
               List<Activity> activityList = snapshot.data!;
-              return Column(
-                children: [
-                  if (activityList.length > 0)
+              if (activityList.length > 0) {
+                return Column(
+                  children: [
                     CarouselSlider(
                       options: CarouselOptions(
                         autoPlay: false,
@@ -73,7 +73,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                         // enlargeCenterPage: true,
                         onPageChanged: (index, reason) {
                           setState(
-                            () {
+                                () {
                               _currentIndex = index;
                             },
                           );
@@ -82,80 +82,130 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                       items: activityList
                           .map(
                             (item) => Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  print('tapped');
-                                },
-                                child: Card(
-                                  margin: EdgeInsets.only(
-                                    top: 10.0,
-                                    bottom: 10.0,
-                                  ),
-                                  elevation: 6.0,
-                                  shadowColor: Colors.black,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30.0),
+                          padding: const EdgeInsets.all(8.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              print('tapped');
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Flexible(
+                                  child: Card(
+                                    margin: EdgeInsets.only(
+                                      top: 10.0,
+                                      bottom: 10.0,
                                     ),
-                                    child: Stack(
-                                      children: <Widget>[
-                                        Image.network(
-                                          //need to change to Image.network, where item = url string
-                                          item.mediaContentUrls!.isEmpty
-                                              ? widget.placeholderPicUrl
-                                              : item.mediaContentUrls![0],
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: Text(
-                                            '${item.name}',
-                                            style: TextStyle(
-                                              //need to change to constant TextStyles
-                                              fontFamily: 'SF Display Pro',
-                                              fontSize: 16.0,
-                                              backgroundColor: Colors.black45,
-                                              color: Colors.white,
-                                            ),
-                                            textAlign: TextAlign.center,
+                                    elevation: 6.0,
+                                    shadowColor: Colors.black,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.all(
+                                        Radius.circular(30.0),
+                                      ),
+                                      child: Stack(
+                                        children: <Widget>[
+                                          Image.network(
+                                            item.mediaContentUrls!.isEmpty
+                                                ? widget.placeholderPicUrl
+                                                : item.mediaContentUrls![0],
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
                                           ),
-                                        ),
-                                      ],
+                                          Container(
+                                            alignment: Alignment.bottomLeft,
+                                            padding: EdgeInsets.only(
+                                                left: 16, bottom: 16),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              gradient: LinearGradient(
+                                                begin: FractionalOffset.topCenter,
+                                                end: FractionalOffset.bottomCenter,
+                                                colors: [
+                                                  Colors.transparent,
+                                                  Colors.black54
+                                                ],
+                                              ),
+                                            ),
+                                            child: Text(
+                                              'Currently ${item.participantCount} have joined',
+                                              style: TextStyle(
+                                                //need to change to constant TextStyles
+                                                fontFamily: 'Nunito',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14.0,
+                                                color: Colors.white,
+                                              ),
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Text(
+                                      '${item.name}',
+                                      style: carouselActivityTitleTextStyle,
+                                      textAlign: TextAlign.left,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Image(
+                                          image: AssetImage(
+                                              'assets/images/elixir.png'),
+                                          height: 25,
+                                          width: 25,
+                                        ),
+                                        Text('${item.potions}',
+                                          style: TextStyle(
+                                            fontFamily: 'Nunito',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Color(0xFF5EC8D8),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          )
+                          ),
+                        ),
+                      )
                           .toList(),
                     ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: activityList.map((urlOfItem) {
-                      int index = activityList.indexOf(urlOfItem);
-                      return Container(
-                        width: 10.0,
-                        height: 10.0,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 2.0),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: _currentIndex == index
-                              ? Color.fromRGBO(0, 0, 0, 0.8)
-                              : Color.fromRGBO(0, 0, 0, 0.3),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              );
-            }
-            else if (snapshot.hasError) {
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: activityList.map((urlOfItem) {
+                        int index = activityList.indexOf(urlOfItem);
+                        return Container(
+                          width: 10.0,
+                          height: 10.0,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 2.0),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentIndex == index
+                                ? Color.fromRGBO(0, 0, 0, 0.8)
+                                : Color.fromRGBO(0, 0, 0, 0.3),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                );
+              }
+              return Container();
+            } else if (snapshot.hasError) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -178,8 +228,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                   )
                 ],
               );
-            }
-            else {
+            } else {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -210,14 +259,10 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
   }
 
   Future<List<Activity>> getFeaturedActivityList(String type) async {
-    final String accessToken =
-        await secureStorage.readSecureData('accessToken');
+    final String accessToken = await secureStorage.readSecureData('accessToken');
 
-    var request = http.Request(
-        'GET',
-        Uri.parse(
-            'https://eq-lab-dev.me/api/activity-svc/mp/activity/featured/list?actType=' +
-                type));
+    var request = http.Request('GET',
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/featured/list?actType=' + type));
     request.headers.addAll(<String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $accessToken',
@@ -234,36 +279,15 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
         mapList.add(i);
       }
-      List<Activity> activityResultList =
-          mapList.map((act) => Activity.fromJson(act)).toList();
+      List<Activity> activityResultList = mapList.map((act) => Activity.fromJson(act)).toList();
 
       return activityResultList;
     }
     else if (response.statusCode == 401) {
-      final String refreshToken = await widget.secureStorage.readSecureData('refreshToken');
-      final refreshResponse = await http.post(
-        Uri.parse('https://eq-lab-dev.me/api/auth/refresh'),
-        body: <String, String>{
-          "token": refreshToken,
-        },
-      );
-
-      if (refreshResponse.statusCode == 200) {
-        var refreshResponseBody = jsonDecode(refreshResponse.body);
-        var token = refreshResponseBody['token'];
-
-        widget.secureStorage.writeSecureData('accessToken', token['accessToken']);
-        widget.secureStorage.writeSecureData('refreshToken', token['refreshToken']);
-
-        return await getFeaturedActivityList(type);
-      }
-      else {
-        print('from activities carousel forcing logout due to expired refresh token');
-        widget.secureStorage.deleteAllData();
-        Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
-        throw Exception('Refresh token has expired, please log in again!');
-      }
-
+      widget.secureStorage.deleteAllData();
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/welcome', (route) => false);
+      throw Exception('Access token has expired, please log in again!');
     }
     else {
       String result = await response.stream.bytesToString();

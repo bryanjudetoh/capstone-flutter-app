@@ -15,6 +15,7 @@ class Activity{
   String? type;
   DateTime? activityStartTime;
   DateTime? activityEndTime;
+  DateTime? registrationEndTime;
 
   double? registrationPrice;
   int? applicantPax;
@@ -30,7 +31,8 @@ class Activity{
   DateTime? approvedDate;
   Organisation? organisation;
 
-  Activity({required this.activityId, required this.name, this.description, this.type, this.activityStartTime, this.activityEndTime,
+  Activity({required this.activityId, required this.name, this.description, this.type,
+    this.activityStartTime, this.activityEndTime, this.registrationEndTime,
     this.registrationPrice, this.applicantPax, this.attendanceReqPercent, this.potions,
     this.mediaContentUrls, this.enabled, this.approved, this.status, this.activitySessionList,
     this.participantCount, this.approvedDate, this.organisation

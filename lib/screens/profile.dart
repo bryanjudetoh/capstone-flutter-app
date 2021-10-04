@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/models/activity.dart';
+import 'package:youthapp/models/participant.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import '../constants.dart';
@@ -289,12 +290,12 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
               controller: tabController,
               physics: NeverScrollableScrollPhysics(),
               children: [
-                FutureBuilder<List<Activity>>(
+                FutureBuilder<List<Participant>>(
                     future: getParticipantActivities(isRegistered: true),
                     builder: (BuildContext context,
-                        AsyncSnapshot<List<Activity>> snapshot) {
+                        AsyncSnapshot<List<Participant>> snapshot) {
                       if (snapshot.hasData) {
-                        List<Activity> registeredList = snapshot.data!;
+                        List<Participant> registeredList = snapshot.data!;
                         print('displaying registered list: $registeredList');
                         if (registeredList.length > 0) {
                           return Center(
@@ -358,12 +359,12 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                       }
                     }
                 ),
-                FutureBuilder<List<Activity>>(
+                FutureBuilder<List<Participant>>(
                     future: getParticipantActivities(isRegistered: false),
                     builder: (BuildContext context,
-                        AsyncSnapshot<List<Activity>> snapshot) {
+                        AsyncSnapshot<List<Participant>> snapshot) {
                       if (snapshot.hasData) {
-                        List<Activity> historyList = snapshot.data!;
+                        List<Participant> historyList = snapshot.data!;
                         print('displaying history list: $historyList');
                         if (historyList.length > 0) {
                           return Center(
@@ -434,14 +435,14 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
     );
   }
 
-  Future<List<Activity>> getParticipantActivities({required bool isRegistered}) async {
+  Future<List<Participant>> getParticipantActivities({required bool isRegistered}) async {
     final String accessToken = await widget.secureStorage.readSecureData(
         'accessToken');
 
     var request = http.Request(
         'GET',
         Uri.parse(
-            'https://eq-lab-dev.me/api/activity-svc/mp/participant/activity-history?registered=' + isRegistered.toString()
+            'https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history?registered=' + isRegistered.toString()
         )
     );
     request.headers.addAll(<String, String>{
@@ -458,39 +459,17 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
       List<Map<String, dynamic>> mapList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        Map<String, dynamic> j = Map<String, dynamic>.from(i['activity']);
-        mapList.add(j);
+        mapList.add(i);
       }
-      List<Activity> activityResultList =
-        mapList.map((act) => Activity.fromJson(act)).toList();
+      List<Participant> participantResultList =
+        mapList.map((act) => Participant.fromJson(act)).toList();
 
-      return activityResultList;
+      return participantResultList;
     }
     else if (response.statusCode == 401) {
-      final String refreshToken = await widget.secureStorage.readSecureData('refreshToken');
-      final refreshResponse = await http.post(
-        Uri.parse('https://eq-lab-dev.me/api/auth/refresh'),
-        body: <String, String>{
-          "token": refreshToken,
-        },
-      );
-
-      if (refreshResponse.statusCode == 200) {
-        var refreshResponseBody = jsonDecode(refreshResponse.body);
-        var token = refreshResponseBody['token'];
-
-        widget.secureStorage.writeSecureData('accessToken', token['accessToken']);
-        widget.secureStorage.writeSecureData('refreshToken', token['refreshToken']);
-
-        return await getParticipantActivities(isRegistered: isRegistered);
-      }
-      else {
-        print('from profile forcing logout due to expired refresh token');
-        widget.secureStorage.deleteAllData();
-        Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
-        throw Exception('Refresh token has expired, please log in again!');
-      }
-
+      widget.secureStorage.deleteAllData();
+      Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+      throw Exception('Refresh token has expired, please log in again!');
     }
     else {
       String result = await response.stream.bytesToString();

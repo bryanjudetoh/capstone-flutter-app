@@ -23,6 +23,9 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     activityEndTime: json['activityEndTime'] == null
         ? null
         : DateTime.parse(json['activityEndTime'] as String),
+    registrationEndTime: json['registrationEndTime'] == null
+        ? null
+        : DateTime.parse(json['registrationEndTime'] as String),
     registrationPrice: (json['registrationPrice'] as num?)?.toDouble(),
     applicantPax: json['applicantPax'] as int?,
     attendanceReqPercent: (json['attendanceReqPercent'] as num?)?.toDouble(),
@@ -53,6 +56,7 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'type': instance.type,
       'activityStartTime': instance.activityStartTime?.toIso8601String(),
       'activityEndTime': instance.activityEndTime?.toIso8601String(),
+      'registrationEndTime': instance.registrationEndTime?.toIso8601String(),
       'registrationPrice': instance.registrationPrice,
       'applicantPax': instance.applicantPax,
       'attendanceReqPercent': instance.attendanceReqPercent,
