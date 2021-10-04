@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
-import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/utilities/securestorage.dart';
@@ -27,7 +26,7 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<User>(
-          future: initHomeData(widget.secureStorage),
+          future: initHomeData(),
           builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
             Widget child = Text('');
             if (snapshot.hasData) {
@@ -85,8 +84,8 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
     );
   }
 
-  Future<User> initHomeData(SecureStorage secureStorage) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
+  Future<User> initHomeData() async {
+    final String accessToken = await widget.secureStorage.readSecureData('accessToken');
 
     final response = await http.get(
       Uri.parse('https://eq-lab-dev.me/api/mp/user'),
@@ -97,7 +96,7 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
     );
 
     if (response.statusCode == 200) {
-      secureStorage.writeSecureData('user', response.body);
+      widget.secureStorage.writeSecureData('user', response.body);
       var responseBody = jsonDecode(response.body);
 
       User user = User.fromJson(responseBody);
@@ -105,34 +104,6 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
       return user;
     } else {
       throw Exception(jsonDecode(response.body)['error']['message']);
-    }
-  }
-
-  Future<List<Activity>> getActivityTypeList(String type, String accessToken) async {
-    var request = http.Request('GET', Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/featured/list?actType=' + type));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
-
-    if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
-      print(jsonDecode(result));
-
-      List<dynamic> resultList = jsonDecode(result);
-      List<Map<String, dynamic>> mapList = [];
-      for (dynamic item in resultList) {
-        Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        mapList.add(i);
-      }
-      List<Activity> activityResultList = mapList.map((act) => Activity.fromJson(act)).toList();
-
-      return activityResultList;
-    } else {
-      String result = await response.stream.bytesToString();
-      print(result);
-      throw Exception('A problem occurred during intialising activity data');
     }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
-import 'package:youthapp/screens/view-activities.dart';
+import 'package:youthapp/screens/browse-activities.dart';
 import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/onboarding.dart';
@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
         '/change-password': (context) => ChangePasswordScreen(),
         '/search': (context) => SearchScreen(),
         '/organisation-details': (context) => InitOrganisationDetailsScreen(),
-        '/view-activities': (context) => ViewActivitiesScreen()
+        '/browse-activities': (context) => InitBrowseActivitiesScreen()
       }
     );
   }
