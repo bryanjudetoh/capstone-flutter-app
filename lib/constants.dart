@@ -80,6 +80,14 @@ const titleThreeTextStyleBold = TextStyle(
     fontWeight: FontWeight.bold,
 );
 
+const subtitleTextStyleBold = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 17.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
+  color: kDarkGrey,
+);
+
 const bodyTextStyle = TextStyle(
     fontFamily: 'SF Pro Display',
     fontSize: 17.0,

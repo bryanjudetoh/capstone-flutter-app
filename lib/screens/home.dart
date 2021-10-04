@@ -143,6 +143,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.scholarship + ':',
             seeAllFunc: () {Navigator.of(context).pushNamed('/view-activities', arguments: AppLocalizations.of(context)!.scholarship);},
+            viewActivityDetailsFunc: () {Navigator.of(context).pushNamed('/activity-details', arguments: activity.id);},
             imagesList: imagesListScholarship,
             titlesList: titlesListScholarship,
           ),
