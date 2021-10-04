@@ -24,9 +24,31 @@ class _SearchScreenState extends State<SearchScreen> {
   final SecureStorage secureStorage = SecureStorage();
   List<Organisation> organisations = [];
   List<Activity> activities = [];
-  List<bool> isSelected = [true, false];
   bool currentSearchTypeIsOrg = true;
   bool currentActivitySearchTypeIsActivity = true;
+  int skip = 0;
+  late bool isEndOfList;
+  String currentQuery = '';
+  ScrollController organisationsScrollController = new ScrollController();
+  ScrollController activitiesScrollController = new ScrollController();
+  ScrollController searchbarScrollController = new ScrollController();
+  FloatingSearchBarController fsbController = FloatingSearchBarController();
+
+  @override
+  void initState() {
+    super.initState();
+    isEndOfList = false;
+    searchbarScrollController.addListener(_scrollListener);
+  }
+
+  @override
+  void dispose() {
+    searchbarScrollController.removeListener(_scrollListener);
+    activitiesScrollController.dispose();
+    organisationsScrollController.dispose();
+    searchbarScrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,33 +76,66 @@ class _SearchScreenState extends State<SearchScreen> {
       width: isPortrait ? 600 : 500,
       height: 65,
       debounceDelay: const Duration(milliseconds: 500),
+      controller: fsbController,
+      scrollController: searchbarScrollController,
       onFocusChanged: (isFocused) {
         if (!isFocused) {
           setState(() {
             this.organisations = [];
             this.activities = [];
+            this.skip = 0;
+            this.isEndOfList = false;
           });
         }
       },
       onQueryChanged: (query) async {
+        setState(() {
+          this.skip = 0;
+          this.isEndOfList = false;
+        });
         if (currentSearchTypeIsOrg) {
           List<Organisation>? result = await performOrganisationsQuery(query);
           if (result != null) {
             setState(() {
               this.organisations = result;
+              this.currentQuery = query;
             });
           }
-        } else {
+        }
+        else {
           List<Activity>? result = await performActivitiesQuery(query);
           if (result != null) {
             setState(() {
               this.activities = result;
+              this.currentQuery = query;
             });
           }
         }
       },
-      // Specify a custom transition to be used for
-      // animating between opened and closed stated.
+      onSubmitted: (query) async {
+        if (currentSearchTypeIsOrg) {
+          List<Organisation>? result = await performOrganisationsQuery(query);
+          if (result != null) {
+            setState(() {
+              this.organisations = result;
+              this.currentQuery = query;
+              this.skip = 0;
+              this.isEndOfList = false;
+            });
+          }
+        }
+        else {
+          List<Activity>? result = await performActivitiesQuery(query);
+          if (result != null) {
+            setState(() {
+              this.activities = result;
+              this.currentQuery = query;
+              this.skip = 0;
+              this.isEndOfList = false;
+            });
+          }
+        }
+      },
       transition: CircularFloatingSearchBarTransition(),
       actions: [
         if (!currentSearchTypeIsOrg)
@@ -91,7 +146,9 @@ class _SearchScreenState extends State<SearchScreen> {
               onPressed: () {
                 setState(() {
                   currentActivitySearchTypeIsActivity = !currentActivitySearchTypeIsActivity;
+                  skip = 0;
                 });
+                fsbController.clear();
               },
             ),
           ),
@@ -105,15 +162,12 @@ class _SearchScreenState extends State<SearchScreen> {
           child: Material(
             color: Colors.white,
             elevation: 4.0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: currentSearchTypeIsOrg ?
-              getOrganisationsResultList(this.organisations) :
-              getActivitiesResultList(this.activities),
-            ),
+            child: currentSearchTypeIsOrg ?
+              displayOrganisationsResultList() : displayActivitiesResultList(),
           ),
         );
       },
+      isScrollControlled: true,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -136,8 +190,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       onPressed: () {
                         setState(() {
                           currentSearchTypeIsOrg = true;
-                          print(currentSearchTypeIsOrg);
+                          skip = 0;
                         });
+                        fsbController.clear();
                       },
                       child: Text(
                         AppLocalizations.of(context)!.organisation,
@@ -162,8 +217,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       onPressed: () {
                         setState(() {
                           currentSearchTypeIsOrg = false;
-                          print(currentSearchTypeIsOrg);
+                          skip = 0;
                         });
+                        fsbController.clear();
                       },
                       child: Text(
                         AppLocalizations.of(context)!.activities,
@@ -183,24 +239,33 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  void _scrollListener() {
+    if (searchbarScrollController.position.pixels == searchbarScrollController.position.maxScrollExtent && !isEndOfList) {
+      currentSearchTypeIsOrg ? loadMoreOrganisations() : loadMoreActivities();
+    }
+  }
+
   Future<List<Organisation>?> performOrganisationsQuery(String query) async {
+    setState(() {
+      this.currentQuery = query;
+    });
     List<Map<String, dynamic>>? result = await doSearchOrganisations(query);
+
     if (result == null) {
       return null;
     }
-    List<Organisation> organisations = [];
+    List<Organisation> organisationsList = [];
     for (Map<String, dynamic> org in result) {
-      organisations.add(Organisation.fromJson(org));
+      organisationsList.add(Organisation.fromJson(org));
     }
-    return organisations;
+    return organisationsList;
   }
 
   Future<List<Map<String, dynamic>>?> doSearchOrganisations(String query) async {
-    final String accessToken =
-        await secureStorage.readSecureData('accessToken');
+    final String accessToken = await secureStorage.readSecureData('accessToken');
 
     var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=' + query));
+        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=$query&skip=${skip.toString()}'));
     request.headers.addAll(<String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $accessToken',
@@ -209,16 +274,21 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (response.statusCode == 200) {
       String result = await response.stream.bytesToString();
-      print(jsonDecode(result));
 
-      List<dynamic> orgList = jsonDecode(result);
-      List<Map<String, dynamic>> orgResultList = [];
-      for (dynamic item in orgList) {
+      List<dynamic> resultList = jsonDecode(result);
+      List<Map<String, dynamic>> mapList = [];
+      for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        orgResultList.add(i);
+        mapList.add(i);
       }
+      setState(() {
+        this.skip = resultList.length;
+        if (resultList.length < backendSkipLimit) {
+          isEndOfList = true;
+        }
+      });
 
-      return orgResultList;
+      return mapList;
     } else {
       String result = await response.stream.bytesToString();
       print(result);
@@ -226,17 +296,87 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
+  void loadMoreOrganisations() async {
+    final String accessToken = await secureStorage.readSecureData('accessToken');
+
+    var request = http.Request('GET',
+        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=${this.currentQuery}&skip=${skip.toString()}'));
+    request.headers.addAll(<String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken',
+    });
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String result = await response.stream.bytesToString();
+
+      List<dynamic> resultList = jsonDecode(result);
+      if (resultList.length > 0) {
+        List<Map<String, dynamic>> mapList = [];
+        for (dynamic item in resultList) {
+          Map<String, dynamic> i = Map<String, dynamic>.from(item);
+          mapList.add(i);
+        }
+        List<Organisation> organisationsList = [];
+        for (Map<String, dynamic> org in mapList) {
+          organisationsList.add(Organisation.fromJson(org));
+        }
+        setState(() {
+          this.organisations.addAll(organisationsList);
+          skip = this.organisations.length;
+        });
+      }
+      else {
+        setState(() {
+          this.isEndOfList = true;
+        });
+      }
+    }
+    else {
+      String result = await response.stream.bytesToString();
+      print(result);
+      throw Exception('A problem occured while loading more organisations for search results');
+    }
+  }
+
+  ListView displayOrganisationsResultList() {
+    return ListView.builder(
+      controller: organisationsScrollController,
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: organisations.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text(
+              this.organisations[index].name,
+              style: bodyTextStyle,
+            ),
+          ),
+          onTap: () {
+            Navigator.pushNamed(context, '/organisation-details', arguments: organisations[index].organisationId);
+          },
+        );
+      },
+    );
+  }
+
   Future<List<Activity>?> performActivitiesQuery(String query) async {
+    setState(() {
+      this.currentQuery = query;
+    });
     List<Map<String, dynamic>>? result = await doSearchActivities(query);
 
     if (result == null) {
       return null;
     }
-    List<Activity> activities = [];
+    List<Activity> activityList = [];
     for (Map<String, dynamic> act in result) {
-      activities.add(Activity.fromJson(act));
+      activityList.add(Activity.fromJson(act));
     }
-    return activities;
+
+    return activityList;
   }
 
   Future<List<Map<String, dynamic>>?> doSearchActivities(String query) async {
@@ -244,9 +384,9 @@ class _SearchScreenState extends State<SearchScreen> {
     String uri = '';
 
     if (currentActivitySearchTypeIsActivity) {
-      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=' + query + '&orgName=';
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=$query&orgName=&skip=${skip.toString()}';
     } else {
-      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=' + query;
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=$query&skip=${skip.toString()}';
     }
 
     var request = http.Request('GET',
@@ -259,50 +399,99 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (response.statusCode == 200) {
       String result = await response.stream.bytesToString();
-      print(jsonDecode(result));
 
-      List<dynamic> activityList = jsonDecode(result);
-      List<Map<String, dynamic>> activityResultList = [];
-      for (dynamic item in activityList) {
+      List<dynamic> resultList = jsonDecode(result);
+      List<Map<String, dynamic>> mapList = [];
+      for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        activityResultList.add(i);
+        mapList.add(i);
       }
+      setState(() {
+        this.skip = resultList.length;
+        if (resultList.length < backendSkipLimit) {
+          isEndOfList = true;
+        }
+      });
 
-      return activityResultList;
-    } else {
+      return mapList;
+    }
+    else {
       String result = await response.stream.bytesToString();
       print(result);
       throw Exception('A problem occurred during your search');
     }
   }
 
-  List<ListTile> getOrganisationsResultList(List<Organisation> organisations) {
-    return organisations.map((org) {
-      return ListTile(
-        title: Text(
-          org.name,
-          style: bodyTextStyle,
-        ),
-        onTap: () {
-          Navigator.pushNamed(context, '/organisation-details',
-              arguments: org.id);
-        },
-      );
-    }).toList();
+  void loadMoreActivities() async {
+    final String accessToken = await secureStorage.readSecureData('accessToken');
+    String uri = '';
+
+    if (currentActivitySearchTypeIsActivity) {
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=${this.currentQuery}&orgName=&skip=${skip.toString()}';
+    } else {
+      uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=${this.currentQuery}&skip=${skip.toString()}';
+    }
+
+    var request = http.Request('GET',
+        Uri.parse(uri));
+    request.headers.addAll(<String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+      'Authorization': 'Bearer $accessToken',
+    });
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      String result = await response.stream.bytesToString();
+
+      List<dynamic> resultList = jsonDecode(result);
+      if (resultList.length > 0) {
+        List<Map<String, dynamic>> mapList = [];
+        for (dynamic item in resultList) {
+          Map<String, dynamic> i = Map<String, dynamic>.from(item);
+          mapList.add(i);
+        }
+        List<Activity> activityList = [];
+        for (Map<String, dynamic> act in mapList) {
+          activityList.add(Activity.fromJson(act));
+        }
+        setState(() {
+          this.activities.addAll(activityList);
+          skip = this.activities.length;
+        });
+      }
+      else {
+        setState(() {
+          this.isEndOfList = true;
+        });
+      }
+    }
+    else {
+      String result = await response.stream.bytesToString();
+      print(result);
+      throw Exception('A problem occured while loading more activities for search results');
+    }
   }
 
-  List<ListTile> getActivitiesResultList(List<Activity> activities) {
-    return activities.map((act) {
-      return ListTile(
-        title: Text(
-          act.name,
-          style: bodyTextStyle,
-        ),
-        onTap: () {
-          Navigator.pushNamed(context, '/activity-details',
-              arguments: act.id);
-        },
-      );
-    }).toList();
+  ListView displayActivitiesResultList() {
+    return ListView.builder(
+        controller: activitiesScrollController,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: activities.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Text(
+                this.activities[index].name,
+                style: bodyTextStyle,
+              ),
+            ),
+            onTap: () {
+              Navigator.pushNamed(context, '/activity-details', arguments: activities[index].activityId);
+            },
+          );
+        }
+    );
   }
 }

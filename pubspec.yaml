@@ -70,13 +70,6 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
-    - assets/images/temp-homescreen-carousel-images/for-you/
-    - assets/images/temp-homescreen-carousel-images/pride-board/
-    - assets/images/temp-homescreen-carousel-images/scholarship/
-    - assets/images/temp-homescreen-carousel-images/internship/
-    - assets/images/temp-homescreen-carousel-images/mentorship/
-    - assets/images/temp-homescreen-carousel-images/training/
-    - assets/images/temp-homescreen-carousel-images/activities/
     - assets/icons/
 
   # An image asset can refer to one or more resolution-specific "variants", see

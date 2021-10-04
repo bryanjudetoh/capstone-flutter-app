@@ -9,11 +9,11 @@ part of 'activity.dart';
 Activity _$ActivityFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['id', 'name'],
-    disallowNullValues: const ['id'],
+    requiredKeys: const ['activityId', 'name'],
+    disallowNullValues: const ['activityId'],
   );
   return Activity(
-    id: json['id'] as String,
+    activityId: json['activityId'] as String,
     name: json['name'] as String,
     description: json['description'] as String?,
     type: json['type'] as String?,
@@ -23,6 +23,9 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     activityEndTime: json['activityEndTime'] == null
         ? null
         : DateTime.parse(json['activityEndTime'] as String),
+    registrationEndTime: json['registrationEndTime'] == null
+        ? null
+        : DateTime.parse(json['registrationEndTime'] as String),
     registrationPrice: (json['registrationPrice'] as num?)?.toDouble(),
     applicantPax: json['applicantPax'] as int?,
     attendanceReqPercent: (json['attendanceReqPercent'] as num?)?.toDouble(),
@@ -43,16 +46,19 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     organisation: json['organisation'] == null
         ? null
         : Organisation.fromJson(json['organisation'] as Map<String, dynamic>),
+    isBump: json['isBump'] as bool?,
+    isFeatured: json['isFeatured'] as bool?,
   );
 }
 
 Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
-      'id': instance.id,
+      'activityId': instance.activityId,
       'name': instance.name,
       'description': instance.description,
       'type': instance.type,
       'activityStartTime': instance.activityStartTime?.toIso8601String(),
       'activityEndTime': instance.activityEndTime?.toIso8601String(),
+      'registrationEndTime': instance.registrationEndTime?.toIso8601String(),
       'registrationPrice': instance.registrationPrice,
       'applicantPax': instance.applicantPax,
       'attendanceReqPercent': instance.attendanceReqPercent,
@@ -66,4 +72,6 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'participantCount': instance.participantCount,
       'approvedDate': instance.approvedDate?.toIso8601String(),
       'organisation': instance.organisation?.toJson(),
+      'isBump': instance.isBump,
+      'isFeatured': instance.isFeatured,
     };

@@ -128,18 +128,28 @@ const backButtonBoldItalics = TextStyle(
 );
 
 const captionTextStyle = TextStyle(
-  fontFamily: 'SF Pro Display',
-  fontSize: 15.0,
-  height: 1.25,
-  color: kDarkGrey,
+    fontFamily: 'SF Pro Display',
+    fontSize: 15.0,
+    height: 1.25,
+    color: kDarkGrey,
 );
 
 const tabTextStyle = TextStyle(
-  fontFamily: 'SF Pro Display',
-  fontSize: 15.0,
-  height: 1.25,
-  color: Colors.white,
+    fontFamily: 'SF Pro Display',
+    fontSize: 15.0,
+    height: 1.25,
+    color: Colors.white,
+);
+
+const carouselActivityTitleTextStyle = TextStyle(
+    fontFamily: 'Nunito',
+    fontWeight: FontWeight.bold,
+    fontSize: 18.0,
+    height: 1.25,
+    color: Color(0xFF616161),
 );
 
 var countryCodesList = ['MN', 'SG', 'MY'];
 var genderList = ['male', 'female', 'others'];
+
+const int backendSkipLimit = 10;

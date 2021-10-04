@@ -4,7 +4,6 @@ import 'package:youthapp/Screens/login.dart';
 import 'package:youthapp/screens/view-activities.dart';
 import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
-import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/organisation-details.dart';
 import 'package:youthapp/screens/search.dart';
@@ -75,8 +74,7 @@ class _MyAppState extends State<MyApp> {
         '/fb-signup': (context) => FbSignUpScreen(),
         '/onboarding': (context) => OnboardingScreen(),
         '/verification': (context) => VerificationScreen(),
-        '/init-home': (context) => InitialiseHomeScreen(),
-        '/home': (context) => HomeScreen(),
+        '/init-home': (context) => InitHomeScreen(),
         '/edit-account-details': (context) => EditAccountDetailsScreen(),
         '/change-password': (context) => ChangePasswordScreen(),
         '/search': (context) => SearchScreen(),
@@ -95,7 +93,7 @@ class SplashScreen extends StatelessWidget {
     return AnimatedSplashScreen(
       duration: 1000,
       splash: Image(image: AssetImage('assets/images/equity-lab-logo.png'),), //ask Temy to provide a SVG icon for this
-      nextScreen: currentAccessToken!.isEmpty || JwtDecoder.isExpired(currentAccessToken!) ? WelcomeScreen() : InitialiseHomeScreen(),
+      nextScreen: currentAccessToken!.isEmpty || JwtDecoder.isExpired(currentAccessToken!) ? WelcomeScreen() : InitHomeScreen(),
       splashTransition: SplashTransition.fadeTransition,
       backgroundColor: Colors.white,
     );
