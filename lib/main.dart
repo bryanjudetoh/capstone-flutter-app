@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
         '/change-password': (context) => ChangePasswordScreen(),
         '/search': (context) => SearchScreen(),
         '/organisation-details': (context) => InitOrganisationDetailsScreen(),
-        '/browse-activities': (context) => InitBrowseActivitiesScreen()
+        '/browse-activities': (context) => InitBrowseActivitiesScreen(),
         '/activity-details': (context) => InitActivityDetailsScreen(),
       }
     );

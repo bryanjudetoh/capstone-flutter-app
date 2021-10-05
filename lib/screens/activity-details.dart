@@ -92,9 +92,9 @@ class InitActivityDetailsScreen extends StatelessWidget {
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       print(responseBody);
-      return Activity.fromJson(responseBody);
+      return Activity.fromJson(Map<String, dynamic>.from(responseBody));
     } else {
-      print(jsonDecode(response.body));
+      //print(jsonDecode(response.body));
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }

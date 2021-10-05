@@ -41,43 +41,43 @@ const largeTitleTextStyleBold = TextStyle(
 );
 
 const titleOneTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 28.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 28.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const titleOneTextStyleBold = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 28.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 28.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const titleTwoTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 22.0,
-    height: 1.25,
+  fontFamily: 'SF Pro Display',
+  fontSize: 22.0,
+  height: 1.25,
 );
 
 const titleTwoTextStyleBold = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 22.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 22.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const titleThreeTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 20.0,
-    height: 1.25,
+  fontFamily: 'SF Pro Display',
+  fontSize: 20.0,
+  height: 1.25,
 );
 
 const titleThreeTextStyleBold = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 20.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 20.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const subtitleTextStyleBold = TextStyle(
@@ -89,42 +89,42 @@ const subtitleTextStyleBold = TextStyle(
 );
 
 const bodyTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 17.0,
-    height: 1.25,
+  fontFamily: 'SF Pro Display',
+  fontSize: 17.0,
+  height: 1.25,
 );
 
 const bodyTextStyleBold = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 17.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 17.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const smallBodyTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 15.0,
-    height: 1.25,
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
 );
 
 const smallBodyTextStyleBold = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 15.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const xSmallBodyTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 13.0,
-    height: 1.25,
+  fontFamily: 'SF Pro Display',
+  fontSize: 13.0,
+  height: 1.25,
 );
 
 const xSmallBodyTextStyleBold = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 13.0,
-    height: 1.25,
-    fontWeight: FontWeight.bold,
+  fontFamily: 'SF Pro Display',
+  fontSize: 13.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
 );
 
 const backButtonBoldItalics = TextStyle(
@@ -132,34 +132,33 @@ const backButtonBoldItalics = TextStyle(
     fontSize: 22.0,
     fontStyle: FontStyle.italic,
     fontWeight: FontWeight.bold,
-    color: Colors.black
-);
+    color: Colors.black);
 
 const captionTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 15.0,
-    height: 1.25,
-    color: kDarkGrey,
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  color: kDarkGrey,
 );
 
 const tabTextStyle = TextStyle(
-    fontFamily: 'SF Pro Display',
-    fontSize: 15.0,
-    height: 1.25,
-    color: Colors.white,
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  color: Colors.white,
 );
 
 const carouselActivityTitleTextStyle = TextStyle(
-    fontFamily: 'Nunito',
-    fontWeight: FontWeight.bold,
-    fontSize: 18.0,
-    height: 1.25,
-    color: Color(0xFF616161),
+  fontFamily: 'Nunito',
+  fontWeight: FontWeight.bold,
+  fontSize: 18.0,
+  height: 1.25,
+  color: Color(0xFF616161),
 );
 
 var countryCodesList = ['MN', 'SG', 'MY'];
 var genderList = ['male', 'female', 'others'];
-var activityTypeMap = <String,String> {
+var activityTypeMap = <String, String>{
   'Scholarship': 'scholarship',
   'Internship': 'internship',
   'Mentorship': 'mentorship',
@@ -170,3 +169,45 @@ var activityTypeMap = <String,String> {
 };
 
 const int backendSkipLimit = 10;
+
+var map = <String, dynamic>{
+  'name': 'DA4 - Demo Act 4',
+  'description': 'Description for DA4',
+  'type': 'mentorship',
+  'activityStartTime': '2022-01-31T19:00:00.000Z',
+  'activityEndTime': '2022-02-05T23:00:00.000Z',
+  'registrationEndTime': '2022-01-24T19:00:00.000Z',
+  'registrationPrice': 80,
+  'applicantPax': 20,
+  'attendanceReqPercent': 80,
+  'potions': 5,
+  'mediaContentUrls': [],
+  'activitySessionList': [
+    {
+      'name': 'DA4 - S1',
+      'venue': 'Venue for DA4 - S1',
+      'description': 'Description DA4 - S1',
+      'seqNum': 1,
+      'startTime': '2022-01-31T19:00:00.000Z',
+      'endTime': '2022-01-31T21:00:00.000Z',
+      'sessionId': '615abae5f674ab1fd1d23389'
+    },
+    {
+      'name': 'DA4 - S2',
+      'venue': 'Venue for DA4 - S2',
+      'description': 'Description DA4 - S2',
+      'seqNum': 2,
+      'startTime': '2022-02-05T21:00:00.000Z',
+      'endTime': '2022-02-05T23:00:00.000Z',
+      'sessionId': '615abae5f674ab1fd1d2338b'
+    }
+  ],
+  'activityId': '615abae5f674ab1fd1d23387',
+  'organisation': {
+    'name': 'Equity Lab',
+    'organisationId': '6156c975cff0f14072dffdfc'
+  },
+  'activityRating': 0,
+  'participantCount': 0,
+  'isRegistered': false
+};
