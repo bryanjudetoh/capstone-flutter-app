@@ -4,7 +4,7 @@ part 'session.g.dart';
 @JsonSerializable()
 class Session {
   @JsonKey(required: true, disallowNullValue: true)
-  String id;
+  String sessionId;
 
   String? name;
   String? venue;
@@ -14,7 +14,7 @@ class Session {
   DateTime? startTime;
   DateTime? endTime;
 
-  Session({required this.id, this.name, this.venue, this.description, this.seqNum,
+  Session({required this.sessionId, this.name, this.venue, this.description, this.seqNum,
     this.startTime, this.endTime
   });
 

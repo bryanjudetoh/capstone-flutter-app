@@ -2,14 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
-import 'package:youthapp/widgets/text-button.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class InitActivityDetailsScreen extends StatelessWidget {
@@ -91,10 +88,8 @@ class InitActivityDetailsScreen extends StatelessWidget {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print(responseBody);
       return Activity.fromJson(Map<String, dynamic>.from(responseBody));
     } else {
-      //print(jsonDecode(response.body));
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }
