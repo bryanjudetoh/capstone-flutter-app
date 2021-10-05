@@ -28,6 +28,7 @@ class InitActivityDetailsScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<Activity> snapshot) {
           if (snapshot.hasData) {
             Activity activity = snapshot.data!;
+            //if activity is registered
             return ActivityDetailsScreen(activity: activity);
           } else if (snapshot.hasError) {
             return Center(
@@ -93,6 +94,7 @@ class InitActivityDetailsScreen extends StatelessWidget {
       print(responseBody);
       return Activity.fromJson(responseBody);
     } else {
+      print(jsonDecode(response.body));
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }

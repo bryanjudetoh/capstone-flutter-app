@@ -85,7 +85,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
                             onTap: () {
-                              print('tapped');
+                              Navigator.pushNamed(context, '/activity-details', arguments: item.activityId);
                             },
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
