@@ -7,6 +7,7 @@ import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/organisation-details.dart';
+import 'package:youthapp/screens/registered-activity-details.dart';
 import 'package:youthapp/screens/search.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/fb-signup.dart';
@@ -82,6 +83,7 @@ class _MyAppState extends State<MyApp> {
         '/organisation-details': (context) => InitOrganisationDetailsScreen(),
         '/browse-activities': (context) => InitBrowseActivitiesScreen(),
         '/activity-details': (context) => InitActivityDetailsScreen(),
+        '/registered-activity-details': (context) => InitRegisteredActivityDetails(),
       }
     );
   }

@@ -16,13 +16,13 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activityTypeName = ModalRoute.of(context)!.settings.arguments as String;
+    final activityType = ModalRoute.of(context)!.settings.arguments as String;
     return FutureBuilder<List<Activity>>(
-      future: initActivityData(activityTypeName),
+      future: initActivityData(activityType),
       builder: (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
         if (snapshot.hasData) {
           List<Activity> activities = snapshot.data!;
-          return BrowseActivitiesScreen(initActivitiesList: activities, activityTypeName: activityTypeName,);
+          return BrowseActivitiesScreen(initActivitiesList: activities, activityType: activityType,);
         }
         else if (snapshot.hasError) {
           return Center(
@@ -72,12 +72,12 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
     );
   }
 
-  Future<List<Activity>> initActivityData(String activityTypeName) async {
+  Future<List<Activity>> initActivityData(String activityType) async {
 
     final String accessToken = await secureStorage.readSecureData('accessToken');
 
     var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=${activityTypeMap[activityTypeName]}&skip=${skip.toString()}'));
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}'));
     request.headers.addAll(<String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $accessToken',
@@ -105,10 +105,10 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
 
 
 class BrowseActivitiesScreen extends StatefulWidget {
-  BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityTypeName}) : super(key: key);
+  BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityType}) : super(key: key);
 
   final List<Activity> initActivitiesList;
-  final String activityTypeName;
+  final String activityType;
   final SecureStorage secureStorage = SecureStorage();
   final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
 
@@ -118,7 +118,6 @@ class BrowseActivitiesScreen extends StatefulWidget {
 
 class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
 
-  String activityType = '';
   late List<Activity> activities;
   int skip = 0;
   late bool isEndOfList;
@@ -127,7 +126,6 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
   @override
   void initState() {
     super.initState();
-    this.activityType = activityTypeMap[widget.activityTypeName]!;
     isEndOfList = false;
     this.activities = widget.initActivitiesList;
     this.activitiesScrollController.addListener(_scrollListener);
@@ -168,7 +166,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                     ),
                   ),
                   Text(
-                    widget.activityTypeName,
+                    activityTypeMap[widget.activityType]!,
                     style: titleOneTextStyleBold,
                   ),
                   Flexible(
@@ -198,7 +196,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
     final String accessToken = await widget.secureStorage.readSecureData('accessToken');
 
     var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}')
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=${widget.activityType}&skip=${skip.toString()}')
     );
     request.headers.addAll(<String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
@@ -248,7 +246,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
               padding: const EdgeInsets.all(15.0),
               child: GestureDetector(
                 onTap: () {
-                  print('tapped');
+                  Navigator.pushNamed(context, '/activity-details', arguments: activities[index].activityId);
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
