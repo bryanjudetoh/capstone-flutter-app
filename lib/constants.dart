@@ -159,3 +159,14 @@ const carouselActivityTitleTextStyle = TextStyle(
 
 var countryCodesList = ['MN', 'SG', 'MY'];
 var genderList = ['male', 'female', 'others'];
+var activityTypeMap = <String,String> {
+  'Scholarship': 'scholarship',
+  'Internship': 'internship',
+  'Mentorship': 'mentorship',
+  'Online Courses': 'onlineCourse',
+  'Offline Courses': 'offlineCourse',
+  'Volunteering': 'volunteering',
+  'Sports': 'sports',
+};
+
+const int backendSkipLimit = 10;

@@ -271,7 +271,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
 
     if (response.statusCode == 200) {
       String result = await response.stream.bytesToString();
-      print('this is $type featured activity list: ${jsonDecode(result)}');
+      //print('this is $type featured activity list: ${jsonDecode(result)}');
 
       List<dynamic> resultList = jsonDecode(result);
       List<Map<String, dynamic>> mapList = [];
@@ -282,12 +282,6 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
       List<Activity> activityResultList = mapList.map((act) => Activity.fromJson(act)).toList();
 
       return activityResultList;
-    }
-    else if (response.statusCode == 401) {
-      widget.secureStorage.deleteAllData();
-      Navigator.pushNamedAndRemoveUntil(
-          context, '/welcome', (route) => false);
-      throw Exception('Access token has expired, please log in again!');
     }
     else {
       String result = await response.stream.bytesToString();

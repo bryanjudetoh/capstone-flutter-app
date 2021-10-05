@@ -31,11 +31,14 @@ class Activity{
   DateTime? approvedDate;
   Organisation? organisation;
 
+  bool? isBump;
+  bool? isFeatured;
+
   Activity({required this.activityId, required this.name, this.description, this.type,
     this.activityStartTime, this.activityEndTime, this.registrationEndTime,
     this.registrationPrice, this.applicantPax, this.attendanceReqPercent, this.potions,
     this.mediaContentUrls, this.enabled, this.approved, this.status, this.activitySessionList,
-    this.participantCount, this.approvedDate, this.organisation
+    this.participantCount, this.approvedDate, this.organisation, this.isBump, this.isFeatured
   });
 
   factory Activity.fromJson(Map<String, dynamic> json) => _$ActivityFromJson(json);
