@@ -16,7 +16,10 @@ class InitActivityDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String activityId = ModalRoute.of(context)!.settings.arguments as String;
+    final String activityId = ModalRoute
+        .of(context)!
+        .settings
+        .arguments as String;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -79,7 +82,8 @@ class InitActivityDetailsScreen extends StatelessWidget {
     final String accessToken =
     await secureStorage.readSecureData('accessToken');
     final response = await http.get(
-      Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/' + activityId),
+      Uri.parse(
+          'https://eq-lab-dev.me/api/activity-svc/mp/activity/' + activityId),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': 'Bearer $accessToken',
@@ -100,6 +104,7 @@ class ActivityDetailsScreen extends StatefulWidget {
       : super(key: key);
 
   final Activity activity;
+  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
 
   @override
   _ActivityDetailsScreenState createState() =>
@@ -107,7 +112,10 @@ class ActivityDetailsScreen extends StatefulWidget {
 }
 
 class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
-  String formattedDate = DateFormat('yyyy-MM-dd – kk:mm').format(new DateTime.now());
+  DateFormat dateFormat = DateFormat.yMMMd(
+      'en_US'
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -117,50 +125,68 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
         child: SingleChildScrollView(
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
           child: Column(
-            children: <Widget>[
-              Row(
+              children: <Widget>[
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundColor: kBluishWhite,
-                      child: BackButton(
-                        color: kBlack,
-                      )
+                    ElevatedButton(
+                      onPressed: () {Navigator.of(context).pop();},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.arrow_back_ios, color: kBlack, size: 25,)
+                        ],
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+                        primary: kGrey,
+                      ),
                     ),
                     Text(
-                      'Volunteering',
-                      style: titleOneTextStyle,
+                      '${widget.activity.type}',
+                      style: titleOneTextStyleBold,
                     ),
-                    CircleAvatar(
-                        radius: 30,
-                        backgroundColor: kBluishWhite,
-                        child: IconButton(
-                          color: kBlack,
-                          icon: Icon(Icons.favorite_border),
-                          onPressed: () {},
-                        )
-                    ),
-                  ]),
-              SizedBox(
-                height: 20.0,
-              ),
-              Column(
+                    Flexible(
+                      child: SizedBox(width: 65),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    Image(
-                      image: AssetImage('assets/images/temp-homescreen-carousel-images/pride-board/pride-board-1.png',),
-                      height: 360,
-                      width: 300,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Image.network(
+                        widget.activity.mediaContentUrls!.isEmpty
+                            ? widget.placeholderPicUrl
+                            : widget.activity.mediaContentUrls![0],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 220,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Mangrove forest cleanup 2021',
-                          style: titleOneTextStyleBold,
-                        ),
-                        Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 300,
+                            child: Text(
+                              '${widget.activity.name}',
+                              style: titleOneTextStyleBold,
+                            ),
+                          ),
+                          Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               Image(
@@ -172,143 +198,160 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                 width: 2,
                               ),
                               Text(
-                                '15',
-                                style: titleOneTextStyle,
-                              ),
+                                '${widget.activity.potions}',
+                                style: TextStyle(
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Color(0xFF5EC8D8),
+                                ),
+                              )
                             ],
-                        )
-                      ]
+                          )
+                        ]
                     ),
                     SizedBox(
                       height: 2,
                     ),
-                    Text(
-                      'Equity Lab',
-                      style: subtitleTextStyleBold,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '${widget.activity.organisation!.name}',
+                        textAlign: TextAlign.left,
+                        style: subtitleTextStyleBold,
+                      ),
                     ),
                     SizedBox(
-                      height: 3,
+                      height: 10,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Column(
+                              children: [
+                                Text(
+                                  'Start date',
+                                  style: captionTextStyle,
+                                ),
+                                SizedBox(
+                                  height: 1,
+                                ),
+                                Text(
+                                    '${widget.activity.activityStartTime.toString().split(' ')[0]}',
+                                    style: bodyTextStyleBold,
+                                )
+                              ]
+                          ),
+                          SizedBox(
+                            width: 70,
+                          ),
+                          Column(
+                              children: [
+                                Text(
+                                  'End date',
+                                  style: captionTextStyle,
+                                ),
+                                SizedBox(
+                                  height: 1,
+                                ),
+                                Text(
+                                  '${widget.activity.activityEndTime.toString().split(' ')[0]}',
+                                  style: bodyTextStyleBold,
+                                )
+                              ]
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  padding: EdgeInsets.all(20.0),
+                  margin: EdgeInsets.only(bottom: 30.0),
+                  decoration: BoxDecoration(
+                      color: kBluishWhite,
+                      border: Border.all(
+                        width: 3,
+                        color: kBluishWhite,
+                      ),
+                      borderRadius: BorderRadius.circular(15),
+                  ),
+                  width: 500,
+                  child:
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
                           children: [
                             Text(
-                              'Start date',
+                              'Registration ends',
                               style: captionTextStyle,
                             ),
                             SizedBox(
                               height: 1,
                             ),
                             Text(
-                              '${formattedDate}'
+                              '${widget.activity.registrationEndTime.toString().split(' ')[0]}',
+                              style: bodyTextStyleBold,
                             )
                           ]
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Column(
-                            children: [
-                              Text(
-                                'End date',
-                                style: captionTextStyle,
-                              ),
-                              SizedBox(
-                                height: 1,
-                              ),
-                              Text(
-                                  '${formattedDate}'
-                              )
-                            ]
-                        ),
-                      ],
-                    ),
-                    Container(
-                        padding: EdgeInsets.all(10.0),
-                        margin: EdgeInsets.only(bottom: 30.0),
-                        decoration: BoxDecoration(
-                            color: kBluishWhite,
-                            border: Border.all(
-                              width: 3,
-                              color: kBluishWhite,
+                      ),
+                      SizedBox(
+                        width: 70,
+                      ),
+                      Column(
+                          children: [
+                            Text(
+                              'No. of participants',
+                              style: captionTextStyle,
                             ),
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.5),
-                                blurRadius: 20, // changes position of shadow
-                              ),
-                            ]),
-                        child:
-                          Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(
-                                  children: [
-                                    Text(
-                                      'Registration ends',
-                                      style: captionTextStyle,
-                                    ),
-                                    SizedBox(
-                                      height: 1,
-                                    ),
-                                    Text(
-                                        '${formattedDate}'
-                                    )
-                                  ]
-                              ),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Column(
-                                  children: [
-                                    Text(
-                                      'No. of participants',
-                                      style: captionTextStyle,
-                                    ),
-                                    SizedBox(
-                                      height: 1,
-                                    ),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          '23',
-                                          style: bodyTextStyleBold
-                                        ),
-                                        Text(
-                                          ' / ',
-                                          style: bodyTextStyleBold
-                                        ),
-                                        Text(
-                                          '50',
-                                          style: bodyTextStyleBold
-                                        ),
-                                      ]
-                                    ),
-                                  ]
-                              ),
-                            ],
-                          ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      'This is a description',
-                      style: bodyTextStyle,
-                    ),
-                    RoundedButton(
-                      title: 'Register',
-                      colorBG: kLightBlue,
-                      colorFont: kWhite,
-                      func: () {},
-                    ),
-                  ]
-              )
-            ],
-          ),
+                            SizedBox(
+                              height: 1,
+                            ),
+                            Row(
+                                children: [
+                                  Text(
+                                      '${widget.activity.participantCount}',
+                                      style: bodyTextStyleBold
+                                  ),
+                                  Text(
+                                      ' / ',
+                                      style: bodyTextStyleBold
+                                  ),
+                                  Text(
+                                      '${widget.activity.applicantPax}',
+                                      style: bodyTextStyleBold
+                                  ),
+                                ]
+                            ),
+                          ]
+                      ),
+                    ],
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                  '${widget.activity.description}',
+                  style: bodyTextStyle,
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                RoundedButton(
+                  title: 'Register',
+                  colorBG: kLightBlue,
+                  colorFont: kWhite,
+                  func: () {},
+                ),
+              ]
+          )
         ),
       ),
     );
