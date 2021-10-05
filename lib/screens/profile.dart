@@ -279,7 +279,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                   indicatorColor: kLightBlue,
                   labelColor: kLightBlue,
                   tabs: [
-                    Tab(child: Text('Registered', style: bodyTextStyle,)),
+                    Tab(child: Text('Upcoming', style: bodyTextStyle,)),
                     Tab(child: Text('History', style: bodyTextStyle,)),
                   ],
                   controller: tabController,
@@ -451,7 +451,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
     var request = http.Request(
         'GET',
         Uri.parse(
-            'https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history?registered=' + isRegistered.toString()
+            'https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history?upcoming=' + isRegistered.toString()
         )
     );
     request.headers.addAll(<String, String>{
@@ -661,7 +661,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
       })
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 401) {
       print('doing log out');
       widget.secureStorage.deleteAllData();
       Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
