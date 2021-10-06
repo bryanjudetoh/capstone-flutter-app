@@ -119,7 +119,34 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    Future<Activity> register(String activityId) async {
+      final SecureStorage secureStorage = SecureStorage();
+
+      final String accessToken = await secureStorage.readSecureData('accessToken');
+
+      final response = await http.post(
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $accessToken',
+        },
+        body: activityId,
+      );
+
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+      else if (response.statusCode == 400) {
+        print(jsonDecode(response.body)['error']['message']);
+        throw Exception(jsonDecode(response.body)['error']['message']);
+      }
+      else {
+        print(response.body);
+        throw Exception('Unforeseen error occured');
+      }
+    }
+
+      return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -348,12 +375,14 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   title: 'Register',
                   colorBG: kLightBlue,
                   colorFont: kWhite,
-                  func: () {},
+                  func: () {
+                    register(widget.activity.activityId);
+                  },
                 ),
               ]
           )
         ),
       ),
     );
+    }
   }
-}
