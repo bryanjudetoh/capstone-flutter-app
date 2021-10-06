@@ -282,7 +282,7 @@ class _SearchScreenState extends State<SearchScreen> {
         mapList.add(i);
       }
       setState(() {
-        this.skip = resultList.length;
+        this.skip += resultList.length;
         if (resultList.length < backendSkipLimit) {
           isEndOfList = true;
         }
@@ -322,8 +322,8 @@ class _SearchScreenState extends State<SearchScreen> {
           organisationsList.add(Organisation.fromJson(org));
         }
         setState(() {
-          this.organisations.addAll(organisationsList);
-          skip = this.organisations.length;
+          this.organisations.addAll(organisationsList.where((a) => this.organisations.every((b) => a.organisationId != b.organisationId)));
+          skip += organisationsList.length;
         });
       }
       else {
@@ -375,7 +375,6 @@ class _SearchScreenState extends State<SearchScreen> {
     for (Map<String, dynamic> act in result) {
       activityList.add(Activity.fromJson(act));
     }
-
     return activityList;
   }
 
@@ -407,7 +406,7 @@ class _SearchScreenState extends State<SearchScreen> {
         mapList.add(i);
       }
       setState(() {
-        this.skip = resultList.length;
+        this.skip += resultList.length;
         if (resultList.length < backendSkipLimit) {
           isEndOfList = true;
         }
@@ -455,13 +454,14 @@ class _SearchScreenState extends State<SearchScreen> {
           activityList.add(Activity.fromJson(act));
         }
         setState(() {
-          this.activities.addAll(activityList);
-          skip = this.activities.length;
+          this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          skip += activityList.length;
         });
       }
       else {
         setState(() {
           this.isEndOfList = true;
+          print('isEndOfList set to true');
         });
       }
     }

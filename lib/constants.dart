@@ -80,6 +80,13 @@ const titleThreeTextStyleBold = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+const subtitleTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 17.0,
+  height: 1.25,
+  color: kDarkGrey,
+);
+
 const subtitleTextStyleBold = TextStyle(
   fontFamily: 'SF Pro Display',
   fontSize: 17.0,
@@ -158,56 +165,19 @@ const carouselActivityTitleTextStyle = TextStyle(
 
 var countryCodesList = ['MN', 'SG', 'MY'];
 var genderList = ['male', 'female', 'others'];
-var activityTypeMap = <String, String>{
-  'Scholarship': 'scholarship',
-  'Internship': 'internship',
-  'Mentorship': 'mentorship',
-  'Online Courses': 'onlineCourse',
-  'Offline Courses': 'offlineCourse',
-  'Volunteering': 'volunteering',
-  'Sports': 'sports',
+const activityTypeMap = <String, String>{
+  'scholarship': 'Scholarship',
+  'internship': 'Internship',
+  'mentorship': 'Mentorship',
+  'onlineCourse': 'Online Courses',
+  'offlineCourse': 'Offline Courses',
+  'volunteering': 'Volunteering',
+  'sports': 'Sports',
 };
 
 const int backendSkipLimit = 10;
 
-var map = <String, dynamic>{
-  'name': 'DA4 - Demo Act 4',
-  'description': 'Description for DA4',
-  'type': 'mentorship',
-  'activityStartTime': '2022-01-31T19:00:00.000Z',
-  'activityEndTime': '2022-02-05T23:00:00.000Z',
-  'registrationEndTime': '2022-01-24T19:00:00.000Z',
-  'registrationPrice': 80,
-  'applicantPax': 20,
-  'attendanceReqPercent': 80,
-  'potions': 5,
-  'mediaContentUrls': [],
-  'activitySessionList': [
-    {
-      'name': 'DA4 - S1',
-      'venue': 'Venue for DA4 - S1',
-      'description': 'Description DA4 - S1',
-      'seqNum': 1,
-      'startTime': '2022-01-31T19:00:00.000Z',
-      'endTime': '2022-01-31T21:00:00.000Z',
-      'sessionId': '615abae5f674ab1fd1d23389'
-    },
-    {
-      'name': 'DA4 - S2',
-      'venue': 'Venue for DA4 - S2',
-      'description': 'Description DA4 - S2',
-      'seqNum': 2,
-      'startTime': '2022-02-05T21:00:00.000Z',
-      'endTime': '2022-02-05T23:00:00.000Z',
-      'sessionId': '615abae5f674ab1fd1d2338b'
-    }
-  ],
-  'activityId': '615abae5f674ab1fd1d23387',
-  'organisation': {
-    'name': 'Equity Lab',
-    'organisationId': '6156c975cff0f14072dffdfc'
-  },
-  'activityRating': 0,
-  'participantCount': 0,
-  'isRegistered': false
-};
+String getCapitalizeString({required String str}) {
+  if (str.length <= 1) { return str.toUpperCase(); }
+  return '${str[0].toUpperCase()}${str.substring(1)}';
+}

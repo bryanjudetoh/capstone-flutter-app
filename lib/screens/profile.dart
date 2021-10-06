@@ -492,7 +492,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
             padding: const EdgeInsets.all(20.0),
             child: GestureDetector(
               onTap: () {
-                print('tapped');
+                Navigator.pushNamed(context, '/registered-activity-details', arguments: participantList[index].participantId);
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -537,7 +537,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                 ),
                               ),
                               child: Text(
-                                'Status: ${participantList[index].status}',
+                                'Status: ${getCapitalizeString(str: participantList[index].status!)}',
                                 style: TextStyle(
                                   //need to change to constant TextStyles
                                   fontFamily: 'Nunito',

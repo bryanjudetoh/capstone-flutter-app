@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:http/http.dart' as http;
+import 'package:loadmore/loadmore.dart';
 
 import '../constants.dart';
 
@@ -16,68 +17,70 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activityTypeName = ModalRoute.of(context)!.settings.arguments as String;
-    return FutureBuilder<List<Activity>>(
-      future: initActivityData(activityTypeName),
-      builder: (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
-        if (snapshot.hasData) {
-          List<Activity> activities = snapshot.data!;
-          return BrowseActivitiesScreen(initActivitiesList: activities, activityTypeName: activityTypeName,);
-        }
-        else if (snapshot.hasError) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 60,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: titleTwoTextStyleBold,
+    final activityType = ModalRoute.of(context)!.settings.arguments as String;
+    return Container(
+      color: Colors.white,
+      child: FutureBuilder<List<Activity>>(
+        future: initActivityData(activityType),
+        builder: (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
+          if (snapshot.hasData) {
+            List<Activity> activities = snapshot.data!;
+            return BrowseActivitiesScreen(initActivitiesList: activities, activityType: activityType,);
+          }
+          else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 60,
                   ),
-                ),
-              ],
-            ),
-          );
-        }
-        else {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  child: CircularProgressIndicator(),
-                  width: 60,
-                  height: 60,
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 16),
-                  child: Text(
-                    'Loading...',
-                    style: titleTwoTextStyleBold,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: titleTwoTextStyleBold,
+                    ),
                   ),
-                )
-              ],
-            ),
-          );
-        }
-      },
+                ],
+              ),
+            );
+          }
+          else {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Loading...',
+                      style: titleTwoTextStyleBold,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 
-  Future<List<Activity>> initActivityData(String activityTypeName) async {
-
+  Future<List<Activity>> initActivityData(String activityType) async {
     final String accessToken = await secureStorage.readSecureData('accessToken');
 
     var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=${activityTypeMap[activityTypeName]}&skip=${skip.toString()}'));
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}'));
     request.headers.addAll(<String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
       'Authorization': 'Bearer $accessToken',
@@ -105,10 +108,10 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
 
 
 class BrowseActivitiesScreen extends StatefulWidget {
-  BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityTypeName}) : super(key: key);
+  BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityType}) : super(key: key);
 
   final List<Activity> initActivitiesList;
-  final String activityTypeName;
+  final String activityType;
   final SecureStorage secureStorage = SecureStorage();
   final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
 
@@ -118,18 +121,20 @@ class BrowseActivitiesScreen extends StatefulWidget {
 
 class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
 
-  String activityType = '';
   late List<Activity> activities;
-  int skip = 0;
+  late int skip;
   late bool isEndOfList;
   ScrollController activitiesScrollController = new ScrollController();
 
   @override
   void initState() {
     super.initState();
-    this.activityType = activityTypeMap[widget.activityTypeName]!;
     isEndOfList = false;
     this.activities = widget.initActivitiesList;
+    skip = activities.length;
+    if (activities.length < backendSkipLimit) {
+      isEndOfList = true;
+    }
     this.activitiesScrollController.addListener(_scrollListener);
   }
 
@@ -168,7 +173,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                     ),
                   ),
                   Text(
-                    widget.activityTypeName,
+                    activityTypeMap[widget.activityType]!,
                     style: titleOneTextStyleBold,
                   ),
                   Flexible(
@@ -178,7 +183,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
               ),
               SizedBox(height: 10,),
               Expanded(
-                child: activities.length == 0 ? displayNoActivities() : displayBrowseActivities(),
+                child: activities.length == 0 ? displayNoActivities() : alternativeDisplayBrowseActivities(),
               ),
             ],
           ),
@@ -198,7 +203,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
     final String accessToken = await widget.secureStorage.readSecureData('accessToken');
 
     var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}')
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=${widget.activityType}&skip=${skip.toString()}')
     );
     request.headers.addAll(<String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
@@ -217,8 +222,8 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
         }
 
         setState(() {
-          this.activities.addAll(activityList);
-          skip = this.activities.length;
+          this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          skip += resultList.length;
         });
       }
       else {
@@ -231,7 +236,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
     else {
       String result = await response.stream.bytesToString();
       print(result);
-      throw Exception('A problem occured while loading more activities for search results');
+      throw Exception('A problem occured while loading more activities for browse activities');
     }
   }
 
@@ -248,7 +253,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
               padding: const EdgeInsets.all(15.0),
               child: GestureDetector(
                 onTap: () {
-                  print('tapped');
+                  Navigator.pushNamed(context, '/activity-details', arguments: activities[index].activityId);
                 },
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -298,7 +303,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                     //need to change to constant TextStyles
                                     fontFamily: 'Nunito',
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 14.0,
+                                    fontSize: 18.0,
                                     color: Colors.white,
                                   ),
                                   textAlign: TextAlign.left,
@@ -346,6 +351,130 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
           );
         }
     );
+  }
+
+  Widget alternativeDisplayBrowseActivities() {
+    return Container(
+      child: LoadMore(
+        isFinish: isEndOfList,
+        onLoadMore: _loadMore,
+        textBuilder: DefaultLoadMoreTextBuilder.english,
+        child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemCount: activities.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                height: 300,
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/activity-details', arguments: activities[index].activityId);
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Flexible(
+                          child: Card(
+                            margin: EdgeInsets.only(
+                              top: 10.0,
+                              bottom: 10.0,
+                            ),
+                            elevation: 6.0,
+                            shadowColor: Colors.black,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30.0),
+                              ),
+                              child: Stack(
+                                children: <Widget>[
+                                  Image.network(
+                                    activities[index].mediaContentUrls!.isEmpty
+                                        ? widget.placeholderPicUrl
+                                        : activities[index].mediaContentUrls![0],
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                  ),
+                                  Container(
+                                    alignment: Alignment.bottomLeft,
+                                    padding: EdgeInsets.only(
+                                        left: 16, bottom: 16),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      gradient: LinearGradient(
+                                        begin: FractionalOffset.topCenter,
+                                        end: FractionalOffset.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black54
+                                        ],
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Currently ${activities[index].participantCount} have joined',
+                                      style: TextStyle(
+                                        //need to change to constant TextStyles
+                                        fontFamily: 'Nunito',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18.0,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Text(
+                              '${activities[index].name}',
+                              style: carouselActivityTitleTextStyle,
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Image(
+                                  image: AssetImage(
+                                      'assets/images/elixir.png'),
+                                  height: 25,
+                                  width: 25,
+                                ),
+                                Text('${activities[index].potions}',
+                                  style: TextStyle(
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Color(0xFF5EC8D8),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _loadMore() async {
+    await Future.delayed(Duration(seconds: 0, milliseconds: 500));
+    loadMoreActivities();
+    return true;
   }
 
   Widget displayNoActivities() {
