@@ -5,13 +5,20 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/home.dart';
 import 'package:youthapp/utilities/securestorage.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 class InitHomeScreen extends StatefulWidget {
   InitHomeScreen({Key? key}) : super(key: key);
 
-
   final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _InitHomeScreenState createState() => _InitHomeScreenState();
@@ -85,14 +92,9 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
   }
 
   Future<User> initHomeData() async {
-    final String accessToken = await widget.secureStorage.readSecureData('accessToken');
 
-    final response = await http.get(
+    final response = await widget.http.get(
       Uri.parse('https://eq-lab-dev.me/api/mp/user'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
-      },
     );
 
     if (response.statusCode == 200) {

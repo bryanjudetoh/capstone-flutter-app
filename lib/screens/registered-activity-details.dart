@@ -5,15 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/participant.dart';
 import 'package:youthapp/models/session.dart';
-import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:intl/intl.dart';
 
 class InitRegisteredActivityDetails extends StatelessWidget {
   InitRegisteredActivityDetails({Key? key}) : super(key: key);
-
-  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +30,7 @@ class InitRegisteredActivityDetails extends StatelessWidget {
           builder: (BuildContext context, AsyncSnapshot<Participant> snapshot) {
             if (snapshot.hasData) {
               final Participant participant = snapshot.data!;
-              return RegisteredActivitiesScreen(participant: participant, secureStorage: secureStorage);
+              return RegisteredActivitiesScreen(participant: participant);
             }
             else if (snapshot.hasError) {
               return Center(
@@ -77,14 +82,9 @@ class InitRegisteredActivityDetails extends StatelessWidget {
   }
 
   Future<Participant> initParticipantData(String participantId) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
     final response = await http.get(
       Uri.parse(
           'https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history/$participantId'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
-      },
     );
 
     if (response.statusCode == 200) {
@@ -97,12 +97,17 @@ class InitRegisteredActivityDetails extends StatelessWidget {
 }
 
 class RegisteredActivitiesScreen extends StatefulWidget {
-  const RegisteredActivitiesScreen({Key? key, required this.participant, required this.secureStorage}) : super(key: key);
+  RegisteredActivitiesScreen({Key? key, required this.participant}) : super(key: key);
 
   final Participant participant;
-  final SecureStorage secureStorage;
   final String placeholderPicUrl =
       'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _RegisteredActivitiesScreenState createState() => _RegisteredActivitiesScreenState();
@@ -519,27 +524,18 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
   }
 
   Future<List<Session>> retrieveSessions() async {
-    final String accessToken = await widget.secureStorage.readSecureData(
-        'accessToken');
 
-    var request = http.Request(
-        'GET',
+    var response = await widget.http.get(
         Uri.parse(
             'https://eq-lab-dev.me/api/activity-svc/mp/activity/attendance?'
                 'activityId=${widget.participant.activity.activityId}'
                 '&participantId=${widget.participant.participantId}'
         )
     );
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
 
-      List<dynamic> resultList = jsonDecode(result);
+      List<dynamic> resultList = jsonDecode(response.body);
       List<Session> sessionResultList = [];
       for (dynamic item in resultList) {
         sessionResultList.add(Session.fromJson(Map<String, dynamic>.from(item)));
@@ -548,7 +544,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
       return sessionResultList;
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising activity data');
     }

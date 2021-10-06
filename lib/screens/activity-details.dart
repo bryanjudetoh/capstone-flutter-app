@@ -4,15 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/activity.dart';
-import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:intl/intl.dart';
 
 class InitActivityDetailsScreen extends StatelessWidget {
   InitActivityDetailsScreen({Key? key}) : super(key: key);
 
-  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +88,9 @@ class InitActivityDetailsScreen extends StatelessWidget {
   }
 
   Future<Activity> retrieveActivity(String activityId) async {
-    final String accessToken =
-        await secureStorage.readSecureData('accessToken');
     final response = await http.get(
       Uri.parse(
-          'https://eq-lab-dev.me/api/activity-svc/mp/activity/' + activityId),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
-      },
+          'https://eq-lab-dev.me/api/activity-svc/mp/activity/$activityId'),
     );
 
     if (response.statusCode == 200) {
