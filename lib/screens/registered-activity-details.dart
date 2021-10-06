@@ -110,8 +110,8 @@ class RegisteredActivitiesScreen extends StatefulWidget {
 
 class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen> {
 
-  DateFormat dateFormat = DateFormat.yMMMd('en_US');
-  DateFormat timeFormat = DateFormat.jm('en-US');
+  DateFormat dateFormat = DateFormat.yMd();
+  DateFormat timeFormat = DateFormat.jm();
 
   @override
   Widget build(BuildContext context) {
@@ -273,73 +273,80 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                 child: Column(
                   children: <Widget>[
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(children: [
-                          Text(
-                            'You registered on: ',
-                            style: captionTextStyle,
-                          ),
-                          SizedBox(
-                            height: 1,
-                          ),
-                          Text(
-                            '${widget.participant.registeredDate.toString().split(' ')[0]}',
-                            style: bodyTextStyleBold,
-                          )
-                        ]),
-                        SizedBox(
-                          width: 70,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(children: [
+                              Text(
+                                'You registered on: ',
+                                style: captionTextStyle,
+                              ),
+                              SizedBox(
+                                height: 1,
+                              ),
+                              Text(
+                                '${widget.participant.registeredDate.toString().split(' ')[0]}',
+                                style: bodyTextStyleBold,
+                              )
+                            ]),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Column(children: [
+                              Text(
+                                'Current Status: ',
+                                style: captionTextStyle,
+                              ),
+                              SizedBox(
+                                height: 1,
+                              ),
+                              Text(
+                                getCapitalizeString(str: '${widget.participant.status}'),
+                                style: bodyTextStyleBold,
+                              )
+                            ]),
+                          ],
                         ),
-                        Column(children: [
-                          Text(
-                            'No. of participants',
-                            style: captionTextStyle,
-                          ),
-                          SizedBox(
-                            height: 1,
-                          ),
-                          Row(children: [
-                            Text('${widget.participant.activity.participantCount}',
-                                style: bodyTextStyleBold),
-                            Text(' / ', style: bodyTextStyleBold),
-                            Text('${widget.participant.activity.applicantPax}',
-                                style: bodyTextStyleBold),
-                          ]),
-                        ]),
-                      ],
-                    ),
-                    SizedBox(height: 20,),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(children: [
-                          Text(
-                            'Current Status: ',
-                            style: captionTextStyle,
-                          ),
-                          SizedBox(
-                            height: 1,
-                          ),
-                          Text(
-                            getCapitalizeString(str: '${widget.participant.status}'),
-                            style: bodyTextStyleBold,
-                          )
-                        ]),
-                        SizedBox(
-                          width: 70,
+                        SizedBox(width: 50,),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Column(children: [
+                              Text(
+                                'No. of participants',
+                                style: captionTextStyle,
+                              ),
+                              SizedBox(
+                                height: 1,
+                              ),
+                              Row(children: [
+                                Text('${widget.participant.activity.participantCount}',
+                                    style: bodyTextStyleBold),
+                                Text(' / ', style: bodyTextStyleBold),
+                                Text('${widget.participant.activity.applicantPax}',
+                                    style: bodyTextStyleBold),
+                              ]),
+                            ]),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Column(children: [
+                              Text(
+                                'Your attendance: ',
+                                style: captionTextStyle,
+                              ),
+                              SizedBox(
+                                height: 1,
+                              ),
+                              Text('${widget.participant.attendancePercent}%',
+                                  style: bodyTextStyleBold),
+                            ]),
+                          ],
                         ),
-                        Column(children: [
-                          Text(
-                            'Your attendance: ',
-                            style: captionTextStyle,
-                          ),
-                          SizedBox(
-                            height: 1,
-                          ),
-                          Text('${widget.participant.attendancePercent}%',
-                              style: bodyTextStyleBold),
-                        ]),
                       ],
                     ),
                     SizedBox(height: 20,),
@@ -376,6 +383,9 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                 colorBG: kLightBlue,
                 colorFont: kWhite,
                 func: modalBottomSheet(context),
+              ),
+              SizedBox(
+                height: 20,
               ),
             ],
           ),
@@ -417,14 +427,42 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  'Session ${index+1}',
-                                  style: titleThreeTextStyleBold,
-                                ),
-                                SizedBox(height: 3,),
-                                Text(
-                                  '${sessionsList[index].venue}',
-                                  style: subtitleTextStyleBold,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Column(
+                                      children: <Widget>[
+                                        Text(
+                                          'Session ${index+1}',
+                                          style: titleThreeTextStyleBold,
+                                        ),
+                                        SizedBox(height: 3,),
+                                        Text(
+                                          '${sessionsList[index].venue}',
+                                          style: subtitleTextStyleBold,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text('Attended:',
+                                          style: titleThreeTextStyleBold,
+                                        ),
+                                        SizedBox(width: 3,),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 3),
+                                          child: Icon(
+                                            sessionsList[index].attended! ?
+                                            Icons.check_circle_outline : Icons.cancel_outlined,
+                                            size: 20,
+                                            color: sessionsList[index].attended! ?
+                                            Colors.green : Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  ],
                                 ),
                                 SizedBox(height: 3,),
                                 Row(

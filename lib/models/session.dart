@@ -13,9 +13,10 @@ class Session {
 
   DateTime? startTime;
   DateTime? endTime;
+  bool? attended;
 
   Session({required this.sessionId, this.name, this.venue, this.description, this.seqNum,
-    this.startTime, this.endTime
+    this.startTime, this.endTime, this.attended,
   });
 
   factory Session.fromJson(Map<String, dynamic> json) => _$SessionFromJson(json);
