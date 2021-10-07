@@ -37,7 +37,7 @@ class RefreshTokenRetryPolicy extends RetryPolicy {
         print('successfully refreshed token');
         return true;
       }
-      return false; //TODO need to figure out how to do a force logout here
+      return false;
     }
     return false;
   }

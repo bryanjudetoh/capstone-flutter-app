@@ -539,22 +539,23 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                 textAlign: TextAlign.left,
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.bottomRight,
-                              padding: EdgeInsets.only(
-                                  right: 16, bottom: 16),
-                              child: Text(
-                                'Attendance: ${participantList[index].attendancePercent}%',
-                                style: TextStyle(
-                                  //need to change to constant TextStyles
-                                  fontFamily: 'Nunito',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                  color: Colors.white,
+                            if (participantList[index].status! != 'registered')
+                              Container(
+                                alignment: Alignment.bottomRight,
+                                padding: EdgeInsets.only(
+                                    right: 16, bottom: 16),
+                                child: Text(
+                                  'Attendance: ${participantList[index].attendancePercent}%',
+                                  style: TextStyle(
+                                    //need to change to constant TextStyles
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.right,
                                 ),
-                                textAlign: TextAlign.right,
                               ),
-                            )
                           ],
                         ),
                       ),

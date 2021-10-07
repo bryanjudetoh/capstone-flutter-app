@@ -354,22 +354,23 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                         ),
                       ],
                     ),
-                    SizedBox(height: 20,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text('Testimonial:',
-                          style: bodyTextStyleBold,
-                        ),
-                        Text(
-                          '${widget.participant.testimonial != null ?
+                    if (widget.participant.status != "registered")
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(height: 20,),
+                          Text('Testimonial:',
+                            style: bodyTextStyleBold,
+                          ),
+                          Text(
+                            '${widget.participant.testimonial != null ?
                             widget.participant.testimonial : 'Your testimonial from the organisers is not available yet!'
-                          }',
-                          style: captionTextStyle,
-                          textAlign: TextAlign.center,
-                        )
-                      ],
-                    ),
+                            }',
+                            style: captionTextStyle,
+                            textAlign: TextAlign.center,
+                          )
+                        ],
+                      ),
                   ],
                 ),
               ),
@@ -387,7 +388,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                 title: 'View Session Attendance',
                 colorBG: kLightBlue,
                 colorFont: kWhite,
-                func: modalBottomSheet(context),
+                func: viewAttendanceModalBottomSheet(context),
               ),
               SizedBox(
                 height: 20,
@@ -399,7 +400,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
     );
   }
 
-  VoidCallback modalBottomSheet(BuildContext context) {
+  VoidCallback viewAttendanceModalBottomSheet(BuildContext context) {
     return () {
       showModalBottomSheet(
         context: context,
