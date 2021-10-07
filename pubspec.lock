@@ -7,14 +7,14 @@ packages:
       name: _fe_analyzer_shared
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "27.0.0"
+    version: "28.0.0"
   analyzer:
     dependency: transitive
     description:
       name: analyzer
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.0"
+    version: "2.5.0"
   animated_splash_screen:
     dependency: "direct main"
     description:
@@ -307,7 +307,14 @@ packages:
       name: http
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.13.3"
+    version: "0.13.4"
+  http_interceptor:
+    dependency: "direct main"
+    description:
+      name: http_interceptor
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   http_multi_server:
     dependency: transitive
     description:
@@ -476,13 +483,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.1"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.11.1"
   petitparser:
     dependency: transitive
     description:

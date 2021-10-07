@@ -8,16 +8,13 @@ import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import '../constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
-class InitProfileScreenBody extends StatefulWidget {
-  const InitProfileScreenBody({Key? key}) : super(key: key);
+class InitProfileScreenBody extends StatelessWidget {
+  InitProfileScreenBody({Key? key}) : super(key: key);
 
-  @override
-  _InitProfileScreenBodyState createState() => _InitProfileScreenBodyState();
-}
-
-class _InitProfileScreenBodyState extends State<InitProfileScreenBody> {
   final SecureStorage secureStorage = SecureStorage();
 
   @override
@@ -79,13 +76,19 @@ class _InitProfileScreenBodyState extends State<InitProfileScreenBody> {
 }
 
 class ProfileScreenBody extends StatefulWidget {
-  const ProfileScreenBody(
+  ProfileScreenBody(
       {Key? key, required this.user, required this.secureStorage})
       : super(key: key);
 
   final User user;
   final SecureStorage secureStorage;
   final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _ProfileScreenBodyState createState() => _ProfileScreenBodyState();
@@ -445,25 +448,13 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
   }
 
   Future<List<Participant>> getParticipantActivities({required bool isRegistered}) async {
-    final String accessToken = await widget.secureStorage.readSecureData(
-        'accessToken');
 
-    var request = http.Request(
-        'GET',
-        Uri.parse(
-            'https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history?upcoming=' + isRegistered.toString()
-        )
+    var response = await widget.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history?upcoming=${isRegistered.toString()}')
     );
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
-
-      List<dynamic> resultList = jsonDecode(result);
+      List<dynamic> resultList = jsonDecode(response.body);
       List<Map<String, dynamic>> mapList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
@@ -475,7 +466,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
       return participantResultList;
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising activity data');
     }
@@ -548,22 +539,23 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                 textAlign: TextAlign.left,
                               ),
                             ),
-                            Container(
-                              alignment: Alignment.bottomRight,
-                              padding: EdgeInsets.only(
-                                  right: 16, bottom: 16),
-                              child: Text(
-                                'Attendance: ${participantList[index].attendancePercent}%',
-                                style: TextStyle(
-                                  //need to change to constant TextStyles
-                                  fontFamily: 'Nunito',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16.0,
-                                  color: Colors.white,
+                            if (participantList[index].status! != 'registered')
+                              Container(
+                                alignment: Alignment.bottomRight,
+                                padding: EdgeInsets.only(
+                                    right: 16, bottom: 16),
+                                child: Text(
+                                  'Attendance: ${participantList[index].attendancePercent}%',
+                                  style: TextStyle(
+                                    //need to change to constant TextStyles
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                    color: Colors.white,
+                                  ),
+                                  textAlign: TextAlign.right,
                                 ),
-                                textAlign: TextAlign.right,
                               ),
-                            )
                           ],
                         ),
                       ),
@@ -587,14 +579,17 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                             height: 25,
                             width: 25,
                           ),
-                          Text('${participantList[index].activity.potions}',
-                            style: TextStyle(
-                              fontFamily: 'Nunito',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Color(0xFF5EC8D8),
+                          Padding(
+                            padding: EdgeInsets.only(top:3),
+                            child: Text('${participantList[index].activity.potions}',
+                              style: TextStyle(
+                                fontFamily: 'Nunito',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                color: Color(0xFF5EC8D8),
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ],
@@ -648,23 +643,26 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
   }
 
   void doLogout(BuildContext context) async {
-    final String accessToken = await widget.secureStorage.readSecureData(
-        'accessToken');
-    final response = await http.put(
+
+    final response = await widget.http.put(
       Uri.parse('https://eq-lab-dev.me/api/mp/auth/logout'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
-      },
       body: jsonEncode(<String, String>{
         "userId": widget.user.userId
       })
     );
 
-    if (response.statusCode == 200 || response.statusCode == 401) {
+    if (response.statusCode == 200) {
       print('doing log out');
       widget.secureStorage.deleteAllData();
       Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "Successfully logged out",
+              style: bodyTextStyle,
+            ),
+          )
+      );
     }
     else {
       throw Exception(jsonDecode(response.body)['error']['message']);

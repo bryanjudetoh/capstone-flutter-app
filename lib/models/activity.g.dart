@@ -50,6 +50,7 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     isFeatured: json['isFeatured'] as bool?,
     isRegistered: json['isRegistered'] as bool?,
     participantId: json['participantId'] as String?,
+    activityRating: (json['activityRating'] as num?)?.toDouble(),
   );
 }
 
@@ -69,6 +70,7 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'enabled': instance.enabled,
       'approved': instance.approved,
       'status': instance.status,
+      'activityRating': instance.activityRating,
       'activitySessionList':
           instance.activitySessionList?.map((e) => e.toJson()).toList(),
       'participantCount': instance.participantCount,

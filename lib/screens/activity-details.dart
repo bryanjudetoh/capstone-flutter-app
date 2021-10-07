@@ -4,15 +4,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/activity.dart';
-import 'package:youthapp/utilities/securestorage.dart';
+import 'package:youthapp/models/session.dart';
+import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:intl/intl.dart';
 
 class InitActivityDetailsScreen extends StatelessWidget {
   InitActivityDetailsScreen({Key? key}) : super(key: key);
 
-  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +90,9 @@ class InitActivityDetailsScreen extends StatelessWidget {
   }
 
   Future<Activity> retrieveActivity(String activityId) async {
-    final String accessToken =
-        await secureStorage.readSecureData('accessToken');
     final response = await http.get(
       Uri.parse(
-          'https://eq-lab-dev.me/api/activity-svc/mp/activity/' + activityId),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
-      },
+          'https://eq-lab-dev.me/api/activity-svc/mp/activity/$activityId'),
     );
 
     if (response.statusCode == 200) {
@@ -103,50 +105,29 @@ class InitActivityDetailsScreen extends StatelessWidget {
 }
 
 class ActivityDetailsScreen extends StatefulWidget {
-  const ActivityDetailsScreen({Key? key, required this.activity})
+  ActivityDetailsScreen({Key? key, required this.activity})
       : super(key: key);
 
   final Activity activity;
   final String placeholderPicUrl =
       'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
-
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
   @override
   _ActivityDetailsScreenState createState() => _ActivityDetailsScreenState();
 }
 
 class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
-  DateFormat dateFormat = DateFormat.yMMMd('en_US');
+  DateFormat dateFormat = DateFormat.yMd();
+  DateFormat timeFormat = DateFormat.jm();
 
   @override
   Widget build(BuildContext context) {
-    Future<Activity> register(String activityId) async {
-      final SecureStorage secureStorage = SecureStorage();
-
-      final String accessToken = await secureStorage.readSecureData('accessToken');
-
-      final response = await http.post(
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'Authorization': 'Bearer $accessToken',
-        },
-        body: activityId,
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      }
-      else if (response.statusCode == 400) {
-        print(jsonDecode(response.body)['error']['message']);
-        throw Exception(jsonDecode(response.body)['error']['message']);
-      }
-      else {
-        print(response.body);
-        throw Exception('Unforeseen error occured');
-      }
-    }
-
-      return Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -218,6 +199,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Image(
                               image: AssetImage('assets/images/elixir.png'),
@@ -227,15 +209,18 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             SizedBox(
                               width: 2,
                             ),
-                            Text(
-                              '${widget.activity.potions}',
-                              style: TextStyle(
-                                fontFamily: 'Nunito',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Color(0xFF5EC8D8),
+                            Padding(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(
+                                '${widget.activity.potions}',
+                                style: TextStyle(
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  color: Color(0xFF5EC8D8),
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         )
                       ]),
@@ -350,23 +335,350 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                 child: Text(
                   '${widget.activity.description}',
                   style: bodyTextStyle,
-                  ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
-                RoundedButton(
-                  title: 'Register',
-                  colorBG: kLightBlue,
-                  colorFont: kWhite,
-                  func: () {
-                    register(widget.activity.activityId);
-                  },
-                ),
-              ]
-          )
-        ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              RoundedButton(
+                title: 'View Sessions',
+                colorBG: kWhite,
+                colorFont: kLightBlue,
+                func: viewSessionsModalBottomSheet(context),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              RoundedButton(
+                title: '       Register       ',
+                colorBG: kLightBlue,
+                colorFont: kWhite,
+                func: () {handleRegistration(widget.activity.activityId);},
+              ),
+              SizedBox(
+                height: 20,
+              ),
+            ])),
       ),
     );
+  }
+
+  void handleRegistration(String activityId) async {
+    List<Session> sessionsList = await checkActivityClash(activityId);
+
+    if (sessionsList.length == 0) {
+      print('no activity clash');
+      try {
+        doActivityRegistration(activityId);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'Success!',
+                desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation',
+                func: () {
+                  int count = 2;
+                  Navigator.of(context).popUntil((_) => count-- <= 0);
+                },
+              );
+            }
+        );
+      }
+      on Exception catch (err) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'Error',
+                desc: err.toString(),
+                func: () { Navigator.of(context).pop();},
+              );
+            }
+        );
+      }
+    }
+    else {
+      print('there is activity clash');
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(
+                "The following sessions clash with this activity, please check before proceeding.",
+                style: titleTwoTextStyleBold,
+              ),
+              content: displayActivityClash(sessionsList),
+              actions: [
+                TextButton(
+                  child: Text("Cancel", style: bodyTextStyle,),
+                  onPressed: () {Navigator.of(context).pop();},
+                ),
+                TextButton(
+                  child: Text("Yes, proceed", style: bodyTextStyle,),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    try {
+                      doActivityRegistration(activityId);
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertPopup(
+                              title: 'Success!',
+                              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation',
+                              func: () {
+                                int count = 2;
+                                Navigator.of(context).popUntil((_) => count-- <= 0);
+                              },
+                            );
+                          }
+                      );
+                    }
+                    on Exception catch (err) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertPopup(
+                              title: 'Error',
+                              desc: err.toString(),
+                              func: () { Navigator.of(context).pop();},
+                            );
+                          }
+                      );
+                    }
+                  },
+                )
+              ],
+            );
+          }
+      );
+    }
+
+  }
+
+  Future<List<Session>> checkActivityClash(String activityId) async {
+    print('checking activity clash');
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register/check-clash?activityId=$activityId'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<Session> sessionsList = [];
+
+      for (dynamic item in resultList) {
+        sessionsList.add(Session.fromJson(Map<String, dynamic>.from(item)));
+      }
+
+      print('returning activity clash');
+      return sessionsList;
+    }
+    else if (response.statusCode == 400) {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception(result['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while registering for this activity');
     }
   }
+
+  void doActivityRegistration(String activityId) async {
+    print('attempting registration');
+    var response = await widget.http.post(
+      Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
+      body: jsonEncode(<String, String>{
+        "activityId": "$activityId",
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      print('registration OK');
+      var result = jsonDecode(response.body);
+      print(result['message']);
+    }
+    else if (response.statusCode == 400) {
+      print('already registered');
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception(result['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('doActivityRegistration error:');
+      print(result.toString());
+      throw Exception('A problem occured while registering for this activity');
+    }
+  }
+
+  Widget displayActivityClash(List<Session> sessionsList) {
+    return Container(
+      height: MediaQuery.of(context).size.height*0.5,
+      width: MediaQuery.of(context).size.width*0.6,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: sessionsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+            child: Card(
+              color: Color(0xFFFFCDD2),
+              margin: EdgeInsets.only(
+                top: 10.0,
+                bottom: 10.0,
+              ),
+              elevation: 6.0,
+              shadowColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
+                child: Container(
+                  color: Color(0xFFFFCDD2),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${sessionsList[index].activity!.name}',
+                        style: titleThreeTextStyleBold,
+                      ),
+                      SizedBox(height: 3,),
+                      Text(
+                        'Session ${sessionsList[index].seqNum}',
+                        style: subtitleTextStyleBold,
+                      ),
+                      SizedBox(height: 10,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Starting date:',
+                            style: captionTextStyle,
+                          ),
+                          Text(
+                            '${dateFormat.format(sessionsList[index].startTime!)}, '
+                                '${timeFormat.format(sessionsList[index].startTime!)}',
+                            style: subtitleTextStyleBold,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            'Ending date:',
+                            style: captionTextStyle,
+                          ),
+                          Text(
+                            '${dateFormat.format(sessionsList[index].endTime!)}, '
+                                '${timeFormat.format(sessionsList[index].endTime!)}',
+                            style: subtitleTextStyleBold,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+      ),
+    );
+  }
+
+  VoidCallback viewSessionsModalBottomSheet(BuildContext context) {
+    return () {
+      showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: widget.activity.activitySessionList!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(20, 3, 20, 3),
+                  child: Card(
+                    margin: EdgeInsets.only(
+                      top: 10.0,
+                      bottom: 10.0,
+                    ),
+                    elevation: 6.0,
+                    shadowColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  'Session ${index+1}',
+                                  style: titleThreeTextStyleBold,
+                                ),
+                                SizedBox(height: 3,),
+                                Text(
+                                  '${widget.activity.activitySessionList![index].venue}',
+                                  style: subtitleTextStyleBold,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 3,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Starting date:',
+                                      style: captionTextStyle,
+                                    ),
+                                    Text(
+                                      '${dateFormat.format(widget.activity.activitySessionList![index].startTime!)}, '
+                                          '${timeFormat.format(widget.activity.activitySessionList![index].startTime!)}',
+                                      style: subtitleTextStyleBold,
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Ending date:',
+                                      style: captionTextStyle,
+                                    ),
+                                    Text(
+                                      '${dateFormat.format(widget.activity.activitySessionList![index].endTime!)}, '
+                                          '${timeFormat.format(widget.activity.activitySessionList![index].endTime!)}',
+                                      style: subtitleTextStyleBold,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10,),
+                            Text(
+                              '${widget.activity.activitySessionList![index].description}',
+                              style: bodyTextStyle,
+                              textAlign: TextAlign.left,
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          });
+    };
+  }
+}

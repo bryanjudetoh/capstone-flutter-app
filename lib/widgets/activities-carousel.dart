@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/painting.dart';
 import 'package:youthapp/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youthapp/models/activity.dart';
-import 'package:youthapp/utilities/securestorage.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 class ActivitiesCarousel extends StatefulWidget {
   ActivitiesCarousel({
@@ -22,7 +24,12 @@ class ActivitiesCarousel extends StatefulWidget {
   final String type;
   final VoidCallback seeAllFunc;
   final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
-  final SecureStorage secureStorage = new SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _ActivitiesCarouselState createState() => _ActivitiesCarouselState();
@@ -30,7 +37,6 @@ class ActivitiesCarousel extends StatefulWidget {
 
 class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
   int _currentIndex = 0;
-  SecureStorage secureStorage = new SecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +88,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                       items: activityList
                           .map(
                             (item) => Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, '/activity-details', arguments: item.activityId);
@@ -99,6 +105,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                     elevation: 6.0,
                                     shadowColor: Colors.black,
                                     shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.amberAccent, width: 2.0),
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
                                     child: ClipRRect(
@@ -141,6 +148,44 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                               textAlign: TextAlign.left,
                                             ),
                                           ),
+                                          Container(
+                                            alignment: Alignment.topRight,
+                                            padding: EdgeInsets.only(right: 15, top: 10),
+                                            child: Container(
+                                              height: 25,
+                                              width: 93,
+                                              decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey.withOpacity(0.8),
+                                                    spreadRadius: 3,
+                                                    blurRadius: 7,
+                                                  )
+                                                ],
+                                                borderRadius: BorderRadius.circular(12),
+                                                color: Colors.white,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Icon(Icons.star_outlined, color: Colors.amber,),
+                                                      Text('Featured',
+                                                        style: TextStyle(
+                                                          fontFamily: 'Rubik',
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -164,12 +209,15 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                           height: 25,
                                           width: 25,
                                         ),
-                                        Text('${item.potions}',
-                                          style: TextStyle(
-                                            fontFamily: 'Nunito',
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                            color: Color(0xFF5EC8D8),
+                                        Padding(
+                                          padding: EdgeInsets.only(top:3),
+                                          child: Text('${item.potions}',
+                                            style: TextStyle(
+                                              fontFamily: 'Nunito',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 22,
+                                              color: Color(0xFF5EC8D8),
+                                            ),
                                           ),
                                         )
                                       ],
@@ -229,28 +277,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                 ],
               );
             } else {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // SizedBox(
-                  //   child: CircularProgressIndicator(),
-                  //   width: 20,
-                  //   height: 20,
-                  // ),
-                  // Align(
-                  //   alignment: Alignment.center,
-                  //   child: Padding(
-                  //     padding: EdgeInsets.only(top: 16),
-                  //     child: Text(
-                  //       'Loading...',
-                  //       style: titleThreeTextStyleBold,
-                  //       textAlign: TextAlign.center,
-                  //     ),
-                  //   ),
-                  // )
-                ],
-              );
+              return Container();
             }
           },
         )
@@ -259,21 +286,12 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
   }
 
   Future<List<Activity>> getFeaturedActivityList(String type) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
-
-    var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/featured/list?actType=' + type));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
+    var response = await widget.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/featured/list?actType=$type')
+    );
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
-      //print('this is $type featured activity list: ${jsonDecode(result)}');
-
-      List<dynamic> resultList = jsonDecode(result);
+      List<dynamic> resultList = jsonDecode(response.body);
       List<Map<String, dynamic>> mapList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
@@ -284,7 +302,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
       return activityResultList;
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising activity data');
     }

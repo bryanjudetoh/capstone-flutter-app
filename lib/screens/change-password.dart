@@ -4,24 +4,31 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:youthapp/constants.dart';
-import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/widgets/onboarding-textfield.dart';
 import 'package:youthapp/utilities/validators.dart';
-import 'package:http/http.dart' as http;
 import 'package:youthapp/widgets/text-button.dart';
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
-  const ChangePasswordScreen({Key? key}) : super(key: key);
+  ChangePasswordScreen({Key? key}) : super(key: key);
+
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _ChangePasswordScreenState createState() => _ChangePasswordScreenState();
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  final SecureStorage secureStorage = SecureStorage();
   final _formkey = GlobalKey<FormState>();
   final TextEditingController _pass = TextEditingController();
   final TextEditingController _confirmPass = TextEditingController();
@@ -139,11 +146,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   }
 
   void doChangePassword(body) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
 
-    final response = await http.put(
+    final response = await widget.http.put(
       Uri.parse('https://eq-lab-dev.me/api/mp/user/password'),
-      headers: <String, String>{'Content-Type': 'application/json; charset=UTF-8', 'Authorization': 'Bearer $accessToken'},
       body: body,
     );
 

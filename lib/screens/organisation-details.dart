@@ -4,15 +4,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/organisation.dart';
-import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/text-button.dart';
-import 'package:http/http.dart' as http;
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class InitOrganisationDetailsScreen extends StatelessWidget {
   InitOrganisationDetailsScreen({Key? key}) : super(key: key);
 
-  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +27,7 @@ class InitOrganisationDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<Organisation>(
-        future: retrieveOrganisation(orgId),
+        future: initOrganisationData(orgId),
         builder: (BuildContext context, AsyncSnapshot<Organisation> snapshot) {
           if (snapshot.hasData) {
             Organisation org = snapshot.data!;
@@ -74,15 +80,9 @@ class InitOrganisationDetailsScreen extends StatelessWidget {
     );
   }
 
-  Future<Organisation> retrieveOrganisation(String orgId) async {
-    final String accessToken =
-        await secureStorage.readSecureData('accessToken');
+  Future<Organisation> initOrganisationData(String orgId) async {
     final response = await http.get(
       Uri.parse('https://eq-lab-dev.me/api/mp/org/' + orgId),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer $accessToken',
-      },
     );
 
     if (response.statusCode == 200) {

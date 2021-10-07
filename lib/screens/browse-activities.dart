@@ -3,17 +3,23 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/models/activity.dart';
-import 'package:youthapp/utilities/securestorage.dart';
-import 'package:http/http.dart' as http;
 import 'package:loadmore/loadmore.dart';
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 import '../constants.dart';
 
 class InitBrowseActivitiesScreen extends StatelessWidget {
   InitBrowseActivitiesScreen({Key? key}) : super(key: key);
 
-  final SecureStorage secureStorage = SecureStorage();
   final skip = 0;
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -77,29 +83,23 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
   }
 
   Future<List<Activity>> initActivityData(String activityType) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
-
-    var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}'));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
+    var response = await http.get(
+        Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}')
+    );
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
-
-      List<dynamic> resultList = jsonDecode(result);
+      List<dynamic> resultList = jsonDecode(response.body);
       List<Activity> activityList = [];
       for (dynamic item in resultList) {
-        activityList.add(Activity.fromJson(Map<String, dynamic>.from(item)));
+        Activity a = Activity.fromJson(Map<String, dynamic>.from(item));
+        print('Name: ${a.name}, isBump: ${a.isBump!}');
+        activityList.add(a);
       }
 
       return activityList;
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
@@ -110,9 +110,14 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
 class BrowseActivitiesScreen extends StatefulWidget {
   BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityType}) : super(key: key);
 
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
   final List<Activity> initActivitiesList;
   final String activityType;
-  final SecureStorage secureStorage = SecureStorage();
   final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
 
   @override
@@ -200,20 +205,13 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
   }
 
   void loadMoreActivities() async {
-    final String accessToken = await widget.secureStorage.readSecureData('accessToken');
 
-    var request = http.Request('GET',
+    var response = await widget.http.get(
         Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=${widget.activityType}&skip=${skip.toString()}')
     );
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
-      List<dynamic> resultList = jsonDecode(result);
+      List<dynamic> resultList = jsonDecode(response.body);
 
       if (resultList.length > 0) {
         List<Activity> activityList = [];
@@ -234,7 +232,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
       }
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured while loading more activities for browse activities');
     }
@@ -383,6 +381,8 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                             elevation: 6.0,
                             shadowColor: Colors.black,
                             shape: RoundedRectangleBorder(
+                              side: activities[index].isBump! ?
+                              BorderSide(color: Colors.blueAccent, width: 6.0) : BorderSide.none,
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             child: ClipRRect(
@@ -425,6 +425,45 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
+                                  if (activities[index].isBump!)
+                                    Container(
+                                      alignment: Alignment.topRight,
+                                      padding: EdgeInsets.only(right: 15, top: 10),
+                                      child: Container(
+                                        height: 25,
+                                        width: 93,
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(0.8),
+                                              spreadRadius: 3,
+                                              blurRadius: 7,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.circular(12),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(Icons.arrow_upward_outlined, color: Colors.blue,),
+                                                Text('Bumped',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Rubik',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),

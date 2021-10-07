@@ -25,6 +25,9 @@ Session _$SessionFromJson(Map<String, dynamic> json) {
         ? null
         : DateTime.parse(json['endTime'] as String),
     attended: json['attended'] as bool?,
+    activity: json['activity'] == null
+        ? null
+        : Activity.fromJson(json['activity'] as Map<String, dynamic>),
   );
 }
 
@@ -37,4 +40,5 @@ Map<String, dynamic> _$SessionToJson(Session instance) => <String, dynamic>{
       'startTime': instance.startTime?.toIso8601String(),
       'endTime': instance.endTime?.toIso8601String(),
       'attended': instance.attended,
+      'activity': instance.activity,
     };

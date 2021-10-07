@@ -25,6 +25,7 @@ class Activity{
   bool? enabled;
   bool? approved;
   String? status;
+  double? activityRating;
 
   List<Session>? activitySessionList;
   int? participantCount;
@@ -41,7 +42,7 @@ class Activity{
     this.registrationPrice, this.applicantPax, this.attendanceReqPercent, this.potions,
     this.mediaContentUrls, this.enabled, this.approved, this.status, this.activitySessionList,
     this.participantCount, this.approvedDate, this.organisation, this.isBump, this.isFeatured,
-    this.isRegistered, this.participantId,
+    this.isRegistered, this.participantId, this.activityRating,
   });
 
   factory Activity.fromJson(Map<String, dynamic> json) => _$ActivityFromJson(json);
