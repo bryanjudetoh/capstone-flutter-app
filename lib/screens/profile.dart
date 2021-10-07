@@ -655,6 +655,14 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
       print('doing log out');
       widget.secureStorage.deleteAllData();
       Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "Successfully logged out",
+              style: bodyTextStyle,
+            ),
+          )
+      );
     }
     else {
       throw Exception(jsonDecode(response.body)['error']['message']);

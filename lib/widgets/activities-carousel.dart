@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/painting.dart';
 import 'package:youthapp/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youthapp/models/activity.dart';
@@ -87,7 +88,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                       items: activityList
                           .map(
                             (item) => Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(context, '/activity-details', arguments: item.activityId);
@@ -104,6 +105,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                     elevation: 6.0,
                                     shadowColor: Colors.black,
                                     shape: RoundedRectangleBorder(
+                                      side: BorderSide(color: Colors.amberAccent, width: 2.0),
                                       borderRadius: BorderRadius.circular(30.0),
                                     ),
                                     child: ClipRRect(
@@ -144,6 +146,44 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                                 color: Colors.white,
                                               ),
                                               textAlign: TextAlign.left,
+                                            ),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.topRight,
+                                            padding: EdgeInsets.only(right: 15, top: 10),
+                                            child: Container(
+                                              height: 25,
+                                              width: 93,
+                                              decoration: BoxDecoration(
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey.withOpacity(0.8),
+                                                    spreadRadius: 3,
+                                                    blurRadius: 7,
+                                                  )
+                                                ],
+                                                borderRadius: BorderRadius.circular(12),
+                                                color: Colors.white,
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                    children: <Widget>[
+                                                      Icon(Icons.star_outlined, color: Colors.amber,),
+                                                      Text('Featured',
+                                                        style: TextStyle(
+                                                          fontFamily: 'Rubik',
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
@@ -237,28 +277,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                 ],
               );
             } else {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // SizedBox(
-                  //   child: CircularProgressIndicator(),
-                  //   width: 20,
-                  //   height: 20,
-                  // ),
-                  // Align(
-                  //   alignment: Alignment.center,
-                  //   child: Padding(
-                  //     padding: EdgeInsets.only(top: 16),
-                  //     child: Text(
-                  //       'Loading...',
-                  //       style: titleThreeTextStyleBold,
-                  //       textAlign: TextAlign.center,
-                  //     ),
-                  //   ),
-                  // )
-                ],
-              );
+              return Container();
             }
           },
         )

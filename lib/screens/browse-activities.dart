@@ -91,7 +91,9 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
       List<dynamic> resultList = jsonDecode(response.body);
       List<Activity> activityList = [];
       for (dynamic item in resultList) {
-        activityList.add(Activity.fromJson(Map<String, dynamic>.from(item)));
+        Activity a = Activity.fromJson(Map<String, dynamic>.from(item));
+        print('Name: ${a.name}, isBump: ${a.isBump!}');
+        activityList.add(a);
       }
 
       return activityList;
@@ -379,6 +381,8 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                             elevation: 6.0,
                             shadowColor: Colors.black,
                             shape: RoundedRectangleBorder(
+                              side: activities[index].isBump! ?
+                              BorderSide(color: Colors.blueAccent, width: 6.0) : BorderSide.none,
                               borderRadius: BorderRadius.circular(30.0),
                             ),
                             child: ClipRRect(
@@ -421,6 +425,45 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
+                                  if (activities[index].isBump!)
+                                    Container(
+                                      alignment: Alignment.topRight,
+                                      padding: EdgeInsets.only(right: 15, top: 10),
+                                      child: Container(
+                                        height: 25,
+                                        width: 93,
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withOpacity(0.8),
+                                              spreadRadius: 3,
+                                              blurRadius: 7,
+                                            )
+                                          ],
+                                          borderRadius: BorderRadius.circular(12),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Row(
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children: <Widget>[
+                                                Icon(Icons.arrow_upward_outlined, color: Colors.blue,),
+                                                Text('Bumped',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Rubik',
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
