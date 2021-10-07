@@ -169,12 +169,15 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                           height: 25,
                                           width: 25,
                                         ),
-                                        Text('${item.potions}',
-                                          style: TextStyle(
-                                            fontFamily: 'Nunito',
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                            color: Color(0xFF5EC8D8),
+                                        Padding(
+                                          padding: EdgeInsets.only(top:3),
+                                          child: Text('${item.potions}',
+                                            style: TextStyle(
+                                              fontFamily: 'Nunito',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 22,
+                                              color: Color(0xFF5EC8D8),
+                                            ),
                                           ),
                                         )
                                       ],

@@ -199,6 +199,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Image(
                               image: AssetImage('assets/images/elixir.png'),
@@ -208,15 +209,18 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             SizedBox(
                               width: 2,
                             ),
-                            Text(
-                              '${widget.activity.potions}',
-                              style: TextStyle(
-                                fontFamily: 'Nunito',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Color(0xFF5EC8D8),
+                            Padding(
+                              padding: EdgeInsets.only(top: 5),
+                              child: Text(
+                                '${widget.activity.potions}',
+                                style: TextStyle(
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 30,
+                                  color: Color(0xFF5EC8D8),
+                                ),
                               ),
-                            )
+                            ),
                           ],
                         )
                       ]),

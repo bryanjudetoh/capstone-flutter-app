@@ -190,28 +190,34 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             style: titleOneTextStyleBold,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Image(
-                              image: AssetImage('assets/images/elixir.png'),
-                              height: 40,
-                              width: 40,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              '${widget.participant.activity.potions}',
-                              style: TextStyle(
-                                fontFamily: 'Nunito',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Color(0xFF5EC8D8),
+                        Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Image(
+                                image: AssetImage('assets/images/elixir.png'),
+                                height: 40,
+                                width: 40,
                               ),
-                            )
-                          ],
-                        )
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                  '${widget.participant.activity.potions}',
+                                  style: TextStyle(
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Color(0xFF5EC8D8),
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ]),
                   SizedBox(height: 2,),
                   Align(

@@ -579,14 +579,17 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                             height: 25,
                             width: 25,
                           ),
-                          Text('${participantList[index].activity.potions}',
-                            style: TextStyle(
-                              fontFamily: 'Nunito',
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                              color: Color(0xFF5EC8D8),
+                          Padding(
+                            padding: EdgeInsets.only(top:3),
+                            child: Text('${participantList[index].activity.potions}',
+                              style: TextStyle(
+                                fontFamily: 'Nunito',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 22,
+                                color: Color(0xFF5EC8D8),
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ],
