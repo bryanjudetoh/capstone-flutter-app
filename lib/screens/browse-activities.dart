@@ -282,11 +282,11 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                   Radius.circular(30.0),
                                 ),
                                 boxShadow: [
-                                  BoxShadow(
+                                  if (activities[index].isBump!) BoxShadow(
                                     color: Colors.blueAccent,
                                     spreadRadius: -10,
                                     blurRadius: 22,
-                                  ),
+                                  ) else BoxShadow(color: Colors.white),
                                 ]),
                             child: Card(
                               margin: EdgeInsets.only(
@@ -297,7 +297,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                               shadowColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                 side: activities[index].isBump! ?
-                                BorderSide(color: Colors.blueAccent, width: 6.0) : BorderSide.none,
+                                BorderSide(color: Colors.blueAccent, width: 2.0) : BorderSide.none,
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
                               child: ClipRRect(
