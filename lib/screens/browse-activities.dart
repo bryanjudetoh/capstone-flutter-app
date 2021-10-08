@@ -266,124 +266,137 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Flexible(
-                          child: Card(
-                            margin: EdgeInsets.only(
-                              top: 10.0,
-                              bottom: 10.0,
-                            ),
-                            elevation: 6.0,
-                            shadowColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              side: activities[index].isBump! ?
-                              BorderSide(color: Colors.blueAccent, width: 6.0) : BorderSide.none,
-                              borderRadius: BorderRadius.circular(30.0),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(30.0),
-                              ),
-                              child: Stack(
-                                children: <Widget>[
-                                  Image.network(
-                                    activities[index].mediaContentUrls!.isEmpty
-                                        ? widget.placeholderPicUrl
-                                        : activities[index].mediaContentUrls![0],
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.blueAccent,
+                                    spreadRadius: -10,
+                                    blurRadius: 22,
                                   ),
-                                  Container(
-                                    alignment: Alignment.bottomCenter,
-                                    padding: EdgeInsets.only(
-                                        left: 16, bottom: 16, right: 16),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      gradient: LinearGradient(
-                                        begin: FractionalOffset.topCenter,
-                                        end: FractionalOffset.bottomCenter,
-                                        colors: [
-                                          Colors.transparent,
-                                          Colors.black54
+                                ]),
+                            child: Card(
+                              margin: EdgeInsets.only(
+                                top: 10.0,
+                                bottom: 10.0,
+                              ),
+                              elevation: 6.0,
+                              shadowColor: Colors.black,
+                              shape: RoundedRectangleBorder(
+                                side: activities[index].isBump! ?
+                                BorderSide(color: Colors.blueAccent, width: 6.0) : BorderSide.none,
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(30.0),
+                                ),
+                                child: Stack(
+                                  children: <Widget>[
+                                    Image.network(
+                                      activities[index].mediaContentUrls!.isEmpty
+                                          ? widget.placeholderPicUrl
+                                          : activities[index].mediaContentUrls![0],
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                    ),
+                                    Container(
+                                      alignment: Alignment.bottomCenter,
+                                      padding: EdgeInsets.only(
+                                          left: 16, bottom: 16, right: 16),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        gradient: LinearGradient(
+                                          begin: FractionalOffset.topCenter,
+                                          end: FractionalOffset.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black54
+                                          ],
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Text(
+                                            'Currently ${activities[index].participantCount} have joined',
+                                            style: TextStyle(
+                                              //need to change to constant TextStyles
+                                              fontFamily: 'Nunito',
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18.0,
+                                              color: Colors.white,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                          ),
+                                          Row(
+                                            children: <Widget>[
+                                              Text(
+                                                '${activities[index].activityRating}',
+                                                style: TextStyle(
+                                                  //need to change to constant TextStyles
+                                                  fontFamily: 'Nunito',
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18.0,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              Icon(
+                                                Icons.star,
+                                                color: Colors.amber,
+                                              ),
+                                            ],
+                                          ),
                                         ],
                                       ),
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        Text(
-                                          'Currently ${activities[index].participantCount} have joined',
-                                          style: TextStyle(
-                                            //need to change to constant TextStyles
-                                            fontFamily: 'Nunito',
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18.0,
+                                    if (activities[index].isBump!)
+                                      Container(
+                                        alignment: Alignment.topRight,
+                                        padding: EdgeInsets.only(right: 15, top: 10),
+                                        child: Container(
+                                          height: 25,
+                                          width: 93,
+                                          decoration: BoxDecoration(
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.grey.withOpacity(0.8),
+                                                spreadRadius: 3,
+                                                blurRadius: 7,
+                                              )
+                                            ],
+                                            borderRadius: BorderRadius.circular(12),
                                             color: Colors.white,
                                           ),
-                                          textAlign: TextAlign.left,
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              '${activities[index].activityRating}',
-                                              style: TextStyle(
-                                                //need to change to constant TextStyles
-                                                fontFamily: 'Nunito',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 18.0,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            Icon(
-                                              Icons.star,
-                                              color: Colors.amber,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  if (activities[index].isBump!)
-                                    Container(
-                                      alignment: Alignment.topRight,
-                                      padding: EdgeInsets.only(right: 15, top: 10),
-                                      child: Container(
-                                        height: 25,
-                                        width: 93,
-                                        decoration: BoxDecoration(
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.withOpacity(0.8),
-                                              spreadRadius: 3,
-                                              blurRadius: 7,
-                                            )
-                                          ],
-                                          borderRadius: BorderRadius.circular(12),
-                                          color: Colors.white,
-                                        ),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Icon(Icons.arrow_upward_outlined, color: Colors.blue,),
-                                                Text('Bumped',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Rubik',
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                children: <Widget>[
+                                                  Icon(Icons.arrow_upward_outlined, color: Colors.blue,),
+                                                  Text('Bumped',
+                                                    style: TextStyle(
+                                                      fontFamily: 'Rubik',
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            )
-                                          ],
+                                                ],
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
+                           ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
