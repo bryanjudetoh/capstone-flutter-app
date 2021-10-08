@@ -48,6 +48,9 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
         : Organisation.fromJson(json['organisation'] as Map<String, dynamic>),
     isBump: json['isBump'] as bool?,
     isFeatured: json['isFeatured'] as bool?,
+    isRegistered: json['isRegistered'] as bool?,
+    participantId: json['participantId'] as String?,
+    activityRating: (json['activityRating'] as num?)?.toDouble(),
   );
 }
 
@@ -67,6 +70,7 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'enabled': instance.enabled,
       'approved': instance.approved,
       'status': instance.status,
+      'activityRating': instance.activityRating,
       'activitySessionList':
           instance.activitySessionList?.map((e) => e.toJson()).toList(),
       'participantCount': instance.participantCount,
@@ -74,4 +78,6 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'organisation': instance.organisation?.toJson(),
       'isBump': instance.isBump,
       'isFeatured': instance.isFeatured,
+      'isRegistered': instance.isRegistered,
+      'participantId': instance.participantId,
     };

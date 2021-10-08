@@ -165,11 +165,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  String formatExceptionMessage(String str) {
-    int idx = str.indexOf(":");
-    return str.substring(idx + 1).trim();
-  }
-
   void doLoginFb() async {
     var res;
     try {

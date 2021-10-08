@@ -21,6 +21,11 @@ Participant _$ParticipantFromJson(Map<String, dynamic> json) {
     registeredDate: json['registeredDate'] == null
         ? null
         : DateTime.parse(json['registeredDate'] as String),
+    acceptedDate: json['acceptedDate'] == null
+        ? null
+        : DateTime.parse(json['acceptedDate'] as String),
+    testimonial: json['testimonial'] as String?,
+    submittedRating: (json['submittedRating'] as num?)?.toDouble(),
   );
 }
 
@@ -32,4 +37,7 @@ Map<String, dynamic> _$ParticipantToJson(Participant instance) =>
       'status': instance.status,
       'attendancePercent': instance.attendancePercent,
       'registeredDate': instance.registeredDate?.toIso8601String(),
+      'acceptedDate': instance.acceptedDate?.toIso8601String(),
+      'testimonial': instance.testimonial,
+      'submittedRating': instance.submittedRating,
     };

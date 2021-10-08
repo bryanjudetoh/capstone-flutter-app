@@ -4,24 +4,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/painting.dart';
 
-import 'package:http/http.dart' as http;
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/models/organisation.dart';
-import 'package:youthapp/utilities/securestorage.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 import '../constants.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+  SearchScreen({Key? key}) : super(key: key);
+
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _SearchScreenState createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final SecureStorage secureStorage = SecureStorage();
   List<Organisation> organisations = [];
   List<Activity> activities = [];
   bool currentSearchTypeIsOrg = true;
@@ -262,27 +269,20 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<List<Map<String, dynamic>>?> doSearchOrganisations(String query) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
-
-    var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=$query&skip=${skip.toString()}'));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
+    var response = await widget.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=$query&skip=${skip.toString()}')
+    );
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
 
-      List<dynamic> resultList = jsonDecode(result);
+      List<dynamic> resultList = jsonDecode(response.body);
       List<Map<String, dynamic>> mapList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
         mapList.add(i);
       }
       setState(() {
-        this.skip = resultList.length;
+        this.skip += resultList.length;
         if (resultList.length < backendSkipLimit) {
           isEndOfList = true;
         }
@@ -290,27 +290,20 @@ class _SearchScreenState extends State<SearchScreen> {
 
       return mapList;
     } else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
   }
 
   void loadMoreOrganisations() async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
-
-    var request = http.Request('GET',
-        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=${this.currentQuery}&skip=${skip.toString()}'));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
+    var response = await widget.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/mp/org/list?name=${this.currentQuery}&skip=${skip.toString()}')
+    );
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
+      List<dynamic> resultList = jsonDecode(response.body);
 
-      List<dynamic> resultList = jsonDecode(result);
       if (resultList.length > 0) {
         List<Map<String, dynamic>> mapList = [];
         for (dynamic item in resultList) {
@@ -322,8 +315,8 @@ class _SearchScreenState extends State<SearchScreen> {
           organisationsList.add(Organisation.fromJson(org));
         }
         setState(() {
-          this.organisations.addAll(organisationsList);
-          skip = this.organisations.length;
+          this.organisations.addAll(organisationsList.where((a) => this.organisations.every((b) => a.organisationId != b.organisationId)));
+          skip += organisationsList.length;
         });
       }
       else {
@@ -333,7 +326,7 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured while loading more organisations for search results');
     }
@@ -375,12 +368,10 @@ class _SearchScreenState extends State<SearchScreen> {
     for (Map<String, dynamic> act in result) {
       activityList.add(Activity.fromJson(act));
     }
-
     return activityList;
   }
 
   Future<List<Map<String, dynamic>>?> doSearchActivities(String query) async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
     String uri = '';
 
     if (currentActivitySearchTypeIsActivity) {
@@ -389,25 +380,20 @@ class _SearchScreenState extends State<SearchScreen> {
       uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=$query&skip=${skip.toString()}';
     }
 
-    var request = http.Request('GET',
-        Uri.parse(uri));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
+    var response = await widget.http.get(
+        Uri.parse(uri)
+    );
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
+      List<dynamic> resultList = jsonDecode(response.body);
 
-      List<dynamic> resultList = jsonDecode(result);
       List<Map<String, dynamic>> mapList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
         mapList.add(i);
       }
       setState(() {
-        this.skip = resultList.length;
+        this.skip += resultList.length;
         if (resultList.length < backendSkipLimit) {
           isEndOfList = true;
         }
@@ -416,14 +402,13 @@ class _SearchScreenState extends State<SearchScreen> {
       return mapList;
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
   }
 
   void loadMoreActivities() async {
-    final String accessToken = await secureStorage.readSecureData('accessToken');
     String uri = '';
 
     if (currentActivitySearchTypeIsActivity) {
@@ -432,18 +417,13 @@ class _SearchScreenState extends State<SearchScreen> {
       uri = 'https://eq-lab-dev.me/api/activity-svc/mp/activity/search?actName=&orgName=${this.currentQuery}&skip=${skip.toString()}';
     }
 
-    var request = http.Request('GET',
-        Uri.parse(uri));
-    request.headers.addAll(<String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Bearer $accessToken',
-    });
-    http.StreamedResponse response = await request.send();
+    var response = await widget.http.get(
+        Uri.parse(uri)
+    );
 
     if (response.statusCode == 200) {
-      String result = await response.stream.bytesToString();
+      List<dynamic> resultList = jsonDecode(response.body);
 
-      List<dynamic> resultList = jsonDecode(result);
       if (resultList.length > 0) {
         List<Map<String, dynamic>> mapList = [];
         for (dynamic item in resultList) {
@@ -455,18 +435,19 @@ class _SearchScreenState extends State<SearchScreen> {
           activityList.add(Activity.fromJson(act));
         }
         setState(() {
-          this.activities.addAll(activityList);
-          skip = this.activities.length;
+          this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          skip += activityList.length;
         });
       }
       else {
         setState(() {
           this.isEndOfList = true;
+          print('isEndOfList set to true');
         });
       }
     }
     else {
-      String result = await response.stream.bytesToString();
+      String result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured while loading more activities for search results');
     }
