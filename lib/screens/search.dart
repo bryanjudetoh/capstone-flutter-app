@@ -341,7 +341,7 @@ class _SearchScreenState extends State<SearchScreen> {
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
           title: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
+            padding: EdgeInsets.symmetric(vertical: 30),
             child: Text(
               this.organisations[index].name,
               style: bodyTextStyle,
@@ -461,8 +461,8 @@ class _SearchScreenState extends State<SearchScreen> {
         itemCount: activities.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            title: Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
+            title: Container(
+              padding: EdgeInsets.symmetric(vertical: 30),
               child: Text(
                 this.activities[index].name,
                 style: bodyTextStyle,
