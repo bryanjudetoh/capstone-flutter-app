@@ -23,7 +23,7 @@ class ActivitiesCarousel extends StatefulWidget {
   final String title;
   final String type;
   final VoidCallback seeAllFunc;
-  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderPicUrl = placeholderVolunteerPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -122,9 +122,9 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                             width: double.infinity,
                                           ),
                                           Container(
-                                            alignment: Alignment.bottomLeft,
+                                            alignment: Alignment.bottomCenter,
                                             padding: EdgeInsets.only(
-                                                left: 16, bottom: 16),
+                                                left: 16, bottom: 16, right: 16),
                                             decoration: BoxDecoration(
                                               borderRadius: BorderRadius.circular(10),
                                               gradient: LinearGradient(
@@ -136,21 +136,44 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                                 ],
                                               ),
                                             ),
-                                            child: Text(
-                                              'Currently ${item.participantCount} have joined',
-                                              style: TextStyle(
-                                                //need to change to constant TextStyles
-                                                fontFamily: 'Nunito',
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14.0,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Text(
+                                                  'Currently ${item.participantCount} have joined',
+                                                  style: TextStyle(
+                                                    //need to change to constant TextStyles
+                                                    fontFamily: 'Nunito',
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.0,
+                                                    color: Colors.white,
+                                                  ),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '${item.activityRating}',
+                                                      style: TextStyle(
+                                                        //need to change to constant TextStyles
+                                                        fontFamily: 'Nunito',
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 16.0,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                    Icon(
+                                                      Icons.star,
+                                                      color: Colors.amber,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            )
                                           ),
                                           Container(
                                             alignment: Alignment.topRight,
-                                            padding: EdgeInsets.only(right: 15, top: 10),
+                                            padding: EdgeInsets.only(right: 16, top: 16),
                                             child: Container(
                                               height: 25,
                                               width: 93,

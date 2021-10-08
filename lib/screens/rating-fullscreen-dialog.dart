@@ -14,8 +14,7 @@ class RatingFullScreenDialog extends StatefulWidget {
   RatingFullScreenDialog({Key? key, required this.participant}) : super(key: key);
 
   final Participant participant;
-  final String placeholderPicUrl =
-      'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderPicUrl = placeholderVolunteerPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),

@@ -82,7 +82,8 @@ class ProfileScreenBody extends StatefulWidget {
 
   final User user;
   final SecureStorage secureStorage;
-  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderProfilePicUrl = placeholderDisplayPicUrl;
+  final String placeholderActivityPicUrl = placeholderVolunteerPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -96,7 +97,6 @@ class ProfileScreenBody extends StatefulWidget {
 
 class _ProfileScreenBodyState extends State<ProfileScreenBody>
     with TickerProviderStateMixin {
-  String? profilePicUrl = '';
   bool currentSelectedIsRegistered = true;
   late TabController tabController;
 
@@ -114,10 +114,6 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.user.profilePicUrl != null) {
-      this.profilePicUrl = widget.user.profilePicUrl;
-    }
-
     return Container(
       color: Colors.white,
       child: Padding(
@@ -174,14 +170,10 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                             children: <Widget>[
                               CircleAvatar(
                                 backgroundColor: Colors.white,
-                                backgroundImage: this.profilePicUrl!.isNotEmpty
-                                    ? NetworkImage(
-                                    'https://cdn.eq-lab-dev.me/' +
-                                        this.profilePicUrl!)
-                                    : Image
-                                    .asset(
-                                    'assets/images/default-profilepic.png')
-                                    .image,
+                                backgroundImage: NetworkImage(
+                                    widget.user.profilePicUrl!.isNotEmpty ?
+                                    widget.user.profilePicUrl! : widget.placeholderProfilePicUrl
+                                ),
                                 maxRadius: 50,
                               ),
                               SizedBox(
@@ -507,7 +499,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                           children: <Widget>[
                             Image.network(
                               participantList[index].activity.mediaContentUrls!.isEmpty
-                                  ? widget.placeholderPicUrl
+                                  ? widget.placeholderActivityPicUrl
                                   : participantList[index].activity.mediaContentUrls![0],
                               fit: BoxFit.cover,
                               width: double.infinity,

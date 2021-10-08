@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
@@ -101,8 +102,7 @@ class RegisteredActivitiesScreen extends StatefulWidget {
   RegisteredActivitiesScreen({Key? key, required this.participant}) : super(key: key);
 
   final Participant participant;
-  final String placeholderPicUrl =
-      'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderPicUrl = placeholderVolunteerPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -183,13 +183,26 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                 children: <Widget>[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(40),
-                    child: Image.network(
-                      widget.participant.activity.mediaContentUrls!.isEmpty
-                          ? widget.placeholderPicUrl
-                          : widget.participant.activity.mediaContentUrls![0],
+                    child: widget.participant.activity.mediaContentUrls!.isEmpty
+                      ? Image.network(
+                      widget.placeholderPicUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: 220,
+                    )
+                        : CarouselSlider(
+                      options: CarouselOptions(
+                        autoPlay: false,
+                        enableInfiniteScroll: true,
+                        viewportFraction: 1.0,
+                      ),
+                      items: widget.participant.activity.mediaContentUrls!
+                          .map(
+                              (url) => Image.network(
+                                url,
+                                fit: BoxFit.fitHeight,
+                              )
+                      ).toList(),
                     ),
                   ),
                   SizedBox(
@@ -235,13 +248,27 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                         ),
                       ]),
                   SizedBox(height: 2,),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '${widget.participant.activity.organisation!.name}',
-                      textAlign: TextAlign.left,
-                      style: subtitleTextStyleBold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        '${widget.participant.activity.organisation!.name}',
+                        textAlign: TextAlign.left,
+                        style: subtitleTextStyleBold,
+                      ),
+                      Row(
+                        children: <Widget>[
+                          Text(
+                            '${widget.participant.activity.activityRating}',
+                            style: bodyTextStyleBold,
+                          ),
+                          Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20,),
                   Align(

@@ -118,7 +118,7 @@ class BrowseActivitiesScreen extends StatefulWidget {
   );
   final List<Activity> initActivitiesList;
   final String activityType;
-  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderPicUrl = placeholderVolunteerPicUrl;
 
   @override
   _BrowseActivitiesScreenState createState() => _BrowseActivitiesScreenState();
@@ -399,9 +399,9 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                     width: double.infinity,
                                   ),
                                   Container(
-                                    alignment: Alignment.bottomLeft,
+                                    alignment: Alignment.bottomCenter,
                                     padding: EdgeInsets.only(
-                                        left: 16, bottom: 16),
+                                        left: 16, bottom: 16, right: 16),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                       gradient: LinearGradient(
@@ -413,16 +413,39 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                         ],
                                       ),
                                     ),
-                                    child: Text(
-                                      'Currently ${activities[index].participantCount} have joined',
-                                      style: TextStyle(
-                                        //need to change to constant TextStyles
-                                        fontFamily: 'Nunito',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.left,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          'Currently ${activities[index].participantCount} have joined',
+                                          style: TextStyle(
+                                            //need to change to constant TextStyles
+                                            fontFamily: 'Nunito',
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18.0,
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                        ),
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+                                              '${activities[index].activityRating}',
+                                              style: TextStyle(
+                                                //need to change to constant TextStyles
+                                                fontFamily: 'Nunito',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18.0,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.amber,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   if (activities[index].isBump!)
