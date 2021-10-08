@@ -7,6 +7,7 @@ import 'package:loadmore/loadmore.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/widgets/featured-carousel.dart';
 
 import '../constants.dart';
 
@@ -187,8 +188,14 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                 ],
               ),
               SizedBox(height: 10,),
+              FeaturedCarousel(
+                type: widget.activityType,
+              ),
+              SizedBox(
+                height: 30,
+              ),
               Expanded(
-                child: activities.length == 0 ? displayNoActivities() : alternativeDisplayBrowseActivities(),
+                child: activities.length == 0 ? displayNoActivities() : displayBrowseActivities(),
               ),
             ],
           ),
@@ -238,122 +245,8 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
     }
   }
 
-  ListView displayBrowseActivities() {
-    return ListView.builder(
-        controller: activitiesScrollController,
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: activities.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            height: 300,
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/activity-details', arguments: activities[index].activityId);
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Flexible(
-                      child: Card(
-                        margin: EdgeInsets.only(
-                          top: 10.0,
-                          bottom: 10.0,
-                        ),
-                        elevation: 6.0,
-                        shadowColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(30.0),
-                          ),
-                          child: Stack(
-                            children: <Widget>[
-                              Image.network(
-                                activities[index].mediaContentUrls!.isEmpty
-                                    ? widget.placeholderPicUrl
-                                    : activities[index].mediaContentUrls![0],
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                              ),
-                              Container(
-                                alignment: Alignment.bottomLeft,
-                                padding: EdgeInsets.only(
-                                    left: 16, bottom: 16),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  gradient: LinearGradient(
-                                    begin: FractionalOffset.topCenter,
-                                    end: FractionalOffset.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      Colors.black54
-                                    ],
-                                  ),
-                                ),
-                                child: Text(
-                                  'Currently ${activities[index].participantCount} have joined',
-                                  style: TextStyle(
-                                    //need to change to constant TextStyles
-                                    fontFamily: 'Nunito',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18.0,
-                                    color: Colors.white,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(
-                          '${activities[index].name}',
-                          style: carouselActivityTitleTextStyle,
-                          textAlign: TextAlign.left,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Image(
-                              image: AssetImage(
-                                  'assets/images/elixir.png'),
-                              height: 25,
-                              width: 25,
-                            ),
-                            Text('${activities[index].potions}',
-                              style: TextStyle(
-                                fontFamily: 'Nunito',
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Color(0xFF5EC8D8),
-                              ),
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }
-    );
-  }
-
-  Widget alternativeDisplayBrowseActivities() {
-    return Container(
-      child: LoadMore(
+  Widget displayBrowseActivities() {
+    return LoadMore(
         isFinish: isEndOfList,
         onLoadMore: _loadMore,
         textBuilder: DefaultLoadMoreTextBuilder.english,
@@ -506,8 +399,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
               );
             }
         ),
-      ),
-    );
+      );
   }
 
   Future<bool> _loadMore() async {
