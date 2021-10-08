@@ -7,7 +7,6 @@ import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/painting.dart';
 import 'package:youthapp/constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
@@ -20,7 +19,7 @@ class FeaturedCarousel extends StatefulWidget {
   }) : super(key: key);
 
   final String type;
-  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+  final String placeholderPicUrl = placeholderVolunteerPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
