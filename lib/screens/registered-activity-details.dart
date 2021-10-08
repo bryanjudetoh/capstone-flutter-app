@@ -93,6 +93,9 @@ class InitRegisteredActivityDetails extends StatelessWidget {
       var responseBody = jsonDecode(response.body);
       return Participant.fromJson(Map<String, dynamic>.from(responseBody));
     } else {
+      print('status code: ${response.statusCode}');
+      print('response body: ${jsonDecode(response.body)}');
+
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }
@@ -125,7 +128,8 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
   @override
   void initState() {
     super.initState();
-    if (widget.participant.submittedRating != null) {
+    print('widget.participant.submittedRating: ${widget.participant.submittedRating}');
+    if (widget.participant.submittedRating! > 0.0) {
       this.isRated = true;
     }
     else {
@@ -444,7 +448,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                       ),
                     ).then((value) {
                       setState(() {
-                        this.isChanged = !this.isChanged;
+                        this.isRated = true;
                       });
                     }
                     );

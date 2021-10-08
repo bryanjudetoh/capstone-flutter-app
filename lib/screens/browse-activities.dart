@@ -27,12 +27,12 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
     final activityType = ModalRoute.of(context)!.settings.arguments as String;
     return Container(
       color: Colors.white,
-      child: FutureBuilder<List<Activity>>(
+      child: FutureBuilder<Map<String, dynamic>>(
         future: initActivityData(activityType),
-        builder: (BuildContext context, AsyncSnapshot<List<Activity>> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.hasData) {
-            List<Activity> activities = snapshot.data!;
-            return BrowseActivitiesScreen(initActivitiesList: activities, activityType: activityType,);
+            Map<String, dynamic> data = snapshot.data!;
+            return BrowseActivitiesScreen(initActivitiesList: data['activityList'], activityType: activityType, featuredCarousel: data['featuredCarousel'],);
           }
           else if (snapshot.hasError) {
             return Center(
@@ -83,7 +83,9 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
     );
   }
 
-  Future<List<Activity>> initActivityData(String activityType) async {
+  Future<Map<String, dynamic>> initActivityData(String activityType) async {
+    Map<String, dynamic> data = {};
+
     var response = await http.get(
         Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/list?actType=$activityType&skip=${skip.toString()}')
     );
@@ -97,7 +99,11 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
         activityList.add(a);
       }
 
-      return activityList;
+      data['activityList'] = activityList;
+
+      data['featuredCarousel'] = await getFeaturedCarousel(activityType);
+
+      return data;
     }
     else {
       String result = jsonDecode(response.body);
@@ -105,11 +111,16 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
       throw Exception('A problem occurred during your search');
     }
   }
+
+  Future<FeaturedCarousel> getFeaturedCarousel(String activityType) async {
+    return FeaturedCarousel(type: activityType);
+  }
+
 }
 
 
 class BrowseActivitiesScreen extends StatefulWidget {
-  BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityType}) : super(key: key);
+  BrowseActivitiesScreen({Key? key, required this.initActivitiesList, required this.activityType, required this.featuredCarousel}) : super(key: key);
 
   final http = InterceptedHttp.build(
     interceptors: [
@@ -119,6 +130,7 @@ class BrowseActivitiesScreen extends StatefulWidget {
   );
   final List<Activity> initActivitiesList;
   final String activityType;
+  final Widget featuredCarousel;
   final String placeholderPicUrl = placeholderVolunteerPicUrl;
 
   @override
@@ -188,9 +200,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                 ],
               ),
               SizedBox(height: 10,),
-              FeaturedCarousel(
-                type: widget.activityType,
-              ),
+              widget.featuredCarousel,
               SizedBox(
                 height: 30,
               ),

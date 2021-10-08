@@ -172,7 +172,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                 backgroundColor: Colors.white,
                                 backgroundImage: NetworkImage(
                                     widget.user.profilePicUrl!.isNotEmpty ?
-                                    widget.user.profilePicUrl! : widget.placeholderProfilePicUrl
+                                    cdnLeadingUrl + widget.user.profilePicUrl! : widget.placeholderProfilePicUrl
                                 ),
                                 maxRadius: 50,
                               ),

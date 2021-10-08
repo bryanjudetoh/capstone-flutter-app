@@ -97,8 +97,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Flexible(
-                                  child:
-                                  Container (
+                                  child: Container (
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(30.0),
