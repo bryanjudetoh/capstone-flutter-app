@@ -453,7 +453,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                     }
                     );
                   },
-                  disableText: this.isRated ? 'Already Rated: ${widget.participant.submittedRating}' : null,
+                  disableText: this.isRated ? '    Already Rated    ' : null,
                 ),
               SizedBox(height: 20,),
               RoundedButton(

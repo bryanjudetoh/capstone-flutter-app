@@ -108,10 +108,9 @@ class _RatingFullScreenDialogState extends State<RatingFullScreenDialog> {
     );
   }
 
-  void handleRating(double rating) {
+  void handleRating(double rating) async {
     try {
-      submitRating(rating);
-      print('still continuing?');
+      await submitRating(rating);
       showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -141,7 +140,7 @@ class _RatingFullScreenDialogState extends State<RatingFullScreenDialog> {
     }
   }
 
-  void submitRating(double rating) async {
+  Future<void> submitRating(double rating) async {
     var response = await widget.http.post(
       Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/participant/rate/${widget.participant.participantId}'),
       body: jsonEncode(<String, dynamic>{
