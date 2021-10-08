@@ -100,6 +100,7 @@ class OrganisationDetailsScreen extends StatefulWidget {
       : super(key: key);
 
   final Organisation org;
+  final placeholderOrgProfilePicUrl = placeholderDisplayPicUrl;
 
   @override
   _OrganisationDetailsScreenState createState() =>
@@ -107,14 +108,8 @@ class OrganisationDetailsScreen extends StatefulWidget {
 }
 
 class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
-  String? orgDisplayPicUrl = '';
-
   @override
   Widget build(BuildContext context) {
-    if (widget.org.orgDisplayPicUrl != null) {
-      this.orgDisplayPicUrl = widget.org.orgDisplayPicUrl;
-    }
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SafeArea(
@@ -149,13 +144,11 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
                       children: [
                         CircleAvatar(
                           backgroundColor: Colors.white,
-                          backgroundImage: this.orgDisplayPicUrl!.isNotEmpty
-                              ? NetworkImage('https://cdn.eq-lab-dev.me/' +
-                              this.orgDisplayPicUrl!)
-                              : Image.asset(
-                              'assets/images/default-profilepic.png')
-                              .image,
-                          maxRadius: 40,
+                          backgroundImage: NetworkImage(
+                              widget.org.orgDisplayPicUrl!.isNotEmpty ?
+                              widget.org.orgDisplayPicUrl! : widget.placeholderOrgProfilePicUrl
+                          ),
+                          maxRadius: 50,
                         ),
                         SizedBox(width: 20,),
                         Text(
