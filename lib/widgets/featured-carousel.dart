@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:youthapp/constants.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/painting.dart';
@@ -150,7 +151,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                                     )
                                                   ],
                                                   borderRadius: BorderRadius.circular(12),
-                                                  color: Colors.white,
+                                                  color: Colors.amberAccent,
                                                 ),
                                                 child: Column(
                                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -158,14 +159,9 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                                     Row(
                                                       crossAxisAlignment: CrossAxisAlignment.center,
                                                       children: <Widget>[
-                                                        Icon(Icons.star_outlined, color: Colors.amber,),
+                                                        Icon(Icons.star_outlined, color: Colors.white,),
                                                         Text('Featured',
-                                                          style: TextStyle(
-                                                            fontFamily: 'Rubik',
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
-                                                            color: Colors.black,
-                                                          ),
+                                                          style: captionTextStyle,
                                                         ),
                                                       ],
                                                     )
