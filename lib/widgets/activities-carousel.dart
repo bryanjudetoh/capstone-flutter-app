@@ -18,12 +18,14 @@ class ActivitiesCarousel extends StatefulWidget {
     required this.title,
     required this.type,
     required this.seeAllFunc,
-  }) : super(key: key);
+  }) {
+    placeholderPicUrl = getPlaceholderPicUrl(type);
+  }
 
   final String title;
   final String type;
   final VoidCallback seeAllFunc;
-  final String placeholderPicUrl = placeholderVolunteerPicUrl;
+  late final String placeholderPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),

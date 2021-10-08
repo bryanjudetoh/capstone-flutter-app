@@ -83,7 +83,6 @@ class ProfileScreenBody extends StatefulWidget {
   final User user;
   final SecureStorage secureStorage;
   final String placeholderProfilePicUrl = placeholderDisplayPicUrl;
-  final String placeholderActivityPicUrl = placeholderVolunteerPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -172,7 +171,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                 backgroundColor: Colors.white,
                                 backgroundImage: NetworkImage(
                                     widget.user.profilePicUrl!.isNotEmpty ?
-                                    cdnLeadingUrl + widget.user.profilePicUrl! : widget.placeholderProfilePicUrl
+                                    widget.user.profilePicUrl! : widget.placeholderProfilePicUrl
                                 ),
                                 maxRadius: 50,
                               ),
@@ -499,7 +498,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                           children: <Widget>[
                             Image.network(
                               participantList[index].activity.mediaContentUrls!.isEmpty
-                                  ? widget.placeholderActivityPicUrl
+                                  ? getPlaceholderPicUrl(participantList[index].activity.type!)
                                   : participantList[index].activity.mediaContentUrls![0],
                               fit: BoxFit.cover,
                               width: double.infinity,

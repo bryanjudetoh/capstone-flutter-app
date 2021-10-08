@@ -6,7 +6,6 @@ import 'package:youthapp/constants.dart';
 import 'package:carousel_slider/carousel_options.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/painting.dart';
-import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
@@ -16,10 +15,12 @@ class FeaturedCarousel extends StatefulWidget {
   FeaturedCarousel({
     Key? key,
     required this.type,
-  }) : super(key: key);
+  }) {
+    placeholderPicUrl = getPlaceholderPicUrl(type);
+  }
 
   final String type;
-  final String placeholderPicUrl = placeholderVolunteerPicUrl;
+  late final String placeholderPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -110,31 +111,54 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                               width: double.infinity,
                                             ),
                                             Container(
-                                              alignment: Alignment.bottomLeft,
-                                              padding: EdgeInsets.only(
-                                                  left: 16, bottom: 16),
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(10),
-                                                gradient: LinearGradient(
-                                                  begin: FractionalOffset.topCenter,
-                                                  end: FractionalOffset.bottomCenter,
-                                                  colors: [
-                                                    Colors.transparent,
-                                                    Colors.black54
+                                                alignment: Alignment.bottomCenter,
+                                                padding: EdgeInsets.only(
+                                                    left: 16, bottom: 16, right: 16),
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  gradient: LinearGradient(
+                                                    begin: FractionalOffset.topCenter,
+                                                    end: FractionalOffset.bottomCenter,
+                                                    colors: [
+                                                      Colors.transparent,
+                                                      Colors.black54
+                                                    ],
+                                                  ),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      'Currently ${item.participantCount} have joined',
+                                                      style: TextStyle(
+                                                        //need to change to constant TextStyles
+                                                        fontFamily: 'Nunito',
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 14.0,
+                                                        color: Colors.white,
+                                                      ),
+                                                      textAlign: TextAlign.left,
+                                                    ),
+                                                    Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          '${item.activityRating}',
+                                                          style: TextStyle(
+                                                            //need to change to constant TextStyles
+                                                            fontFamily: 'Nunito',
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 14.0,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        Icon(
+                                                          Icons.star,
+                                                          color: Colors.amber,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ],
-                                                ),
-                                              ),
-                                              child: Text(
-                                                'Currently ${item.participantCount} have joined',
-                                                style: TextStyle(
-                                                  //need to change to constant TextStyles
-                                                  fontFamily: 'Nunito',
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.0,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.left,
-                                              ),
+                                                )
                                             ),
                                             Container(
                                               alignment: Alignment.topRight,

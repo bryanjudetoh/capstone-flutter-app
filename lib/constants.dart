@@ -177,10 +177,44 @@ const activityTypeMap = <String, String>{
 
 const int backendSkipLimit = 10;
 
-const String cdnLeadingUrl = "https://cdn.eq-lab-dev.me/";
 const String placeholderDisplayPicUrl = 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png';
 const String placeholderActivityPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
+const String placeholderScholarshipPicUrl = 'https://cdn.pixabay.com/photo/2016/06/01/06/26/open-book-1428428_1280.jpg';
+const String placeholderInternshipPicUrl = 'https://cdn.pixabay.com/photo/2021/09/07/02/42/working-6602781_1280.png';
+const String placeholderMentorshipPicUrl = 'https://cdn.pixabay.com/photo/2018/08/16/11/36/mentor-3610255_1280.jpg';
+const String placeholderOnlineCoursesPicUrl = 'https://cdn.pixabay.com/photo/2020/05/18/16/17/social-media-5187243_1280.png';
+const String placeholderOfflineCoursesPicUrl = 'https://cdn.pixabay.com/photo/2016/10/30/05/45/learning-1782430_960_720.jpg';
 const String placeholderVolunteerPicUrl = 'https://cdn.pixabay.com/photo/2017/02/10/12/12/volunteer-2055042_1280.png';
+const String placeholderSportsPicUrl = 'https://cdn.pixabay.com/photo/2017/06/26/19/53/team-2444978_1280.jpg';
+
+String getPlaceholderPicUrl(String activityType) {
+  switch(activityType) {
+    case 'scholarship': {
+      return placeholderScholarshipPicUrl;
+    }
+    case 'internship': {
+      return placeholderInternshipPicUrl;
+    }
+    case 'mentorship': {
+      return placeholderMentorshipPicUrl;
+    }
+    case 'onlineCourse': {
+      return placeholderOnlineCoursesPicUrl;
+    }
+    case 'offlineCourse': {
+      return placeholderOfflineCoursesPicUrl;
+    }
+    case 'volunteering': {
+      return placeholderVolunteerPicUrl;
+    }
+    case 'sports': {
+      return placeholderSportsPicUrl;
+    }
+    default: {
+      return placeholderActivityPicUrl;
+    }
+  }
+}
 
 String getCapitalizeString({required String str}) {
   if (str.length <= 1) { return str.toUpperCase(); }

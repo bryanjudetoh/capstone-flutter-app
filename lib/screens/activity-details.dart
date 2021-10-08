@@ -39,7 +39,7 @@ class InitActivityDetailsScreen extends StatelessWidget {
               Future.microtask(() {Navigator.pushReplacementNamed(context, '/registered-activity-details', arguments: activity.participantId);});
               return Container();
             }
-            return ActivityDetailsScreen(activity: activity);
+            return ActivityDetailsScreen(activity: activity, activityType: activity.type!,);
           }
           else if (snapshot.hasError) {
             return Center(
@@ -106,17 +106,19 @@ class InitActivityDetailsScreen extends StatelessWidget {
 }
 
 class ActivityDetailsScreen extends StatefulWidget {
-  ActivityDetailsScreen({Key? key, required this.activity})
-      : super(key: key);
+  ActivityDetailsScreen({Key? key, required this.activity, required String activityType}) {
+    placeholderPicUrl = getPlaceholderPicUrl(activityType);
+  }
 
   final Activity activity;
-  final String placeholderPicUrl = placeholderVolunteerPicUrl;
+  late final String placeholderPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
     ],
     retryPolicy: RefreshTokenRetryPolicy(),
   );
+
   @override
   _ActivityDetailsScreenState createState() => _ActivityDetailsScreenState();
 }

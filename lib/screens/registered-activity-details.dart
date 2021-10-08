@@ -102,10 +102,12 @@ class InitRegisteredActivityDetails extends StatelessWidget {
 }
 
 class RegisteredActivitiesScreen extends StatefulWidget {
-  RegisteredActivitiesScreen({Key? key, required this.participant}) : super(key: key);
+  RegisteredActivitiesScreen({Key? key, required this.participant}) {
+    placeholderPicUrl = getPlaceholderPicUrl(participant.activity.type!);
+  }
 
   final Participant participant;
-  final String placeholderPicUrl = placeholderVolunteerPicUrl;
+  late final String placeholderPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -128,7 +130,6 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
   @override
   void initState() {
     super.initState();
-    print('widget.participant.submittedRating: ${widget.participant.submittedRating}');
     if (widget.participant.submittedRating! > 0.0) {
       this.isRated = true;
     }
@@ -406,7 +407,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                         ),
                       ],
                     ),
-                    if (widget.participant.status != "registered")
+                    if (widget.participant.status != "registered" && widget.participant.status != "rejected")
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[

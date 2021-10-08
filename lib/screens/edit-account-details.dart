@@ -278,11 +278,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
     if (form.validate()) {
       form.save();
 
-      String? temp = await uploadPicture(_selectedImage, user);
-      String profilePicUrl = this.picUrl;
-      if(temp != null) {
-        profilePicUrl = temp;
-      }
+      await uploadPicture(_selectedImage, user);
 
       final body = jsonEncode(<String, String> {
         'firstName': firstName,
@@ -297,7 +293,6 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
         "countryCode": countryCode,
         "city": city,
         "school": school,
-        "profilePicUrl" : profilePicUrl,
       });
 
       try {

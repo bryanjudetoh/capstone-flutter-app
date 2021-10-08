@@ -11,10 +11,12 @@ import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 class RatingFullScreenDialog extends StatefulWidget {
-  RatingFullScreenDialog({Key? key, required this.participant}) : super(key: key);
+  RatingFullScreenDialog({Key? key, required this.participant}) {
+    placeholderPicUrl = getPlaceholderPicUrl(participant.activity.type!);
+  }
 
   final Participant participant;
-  final String placeholderPicUrl = placeholderVolunteerPicUrl;
+  late final String placeholderPicUrl;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
