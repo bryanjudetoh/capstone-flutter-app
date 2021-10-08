@@ -169,59 +169,47 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
     return Scaffold(
       body: SafeArea(
         child: Container(
+          color: Colors.white,
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          child: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-              return [
-                SliverAppBar(
-                  automaticallyImplyLeading: false,
-                  pinned: false,
-                  backgroundColor: Colors.white,
-                  flexibleSpace: FlexibleSpaceBar(
-                    collapseMode: CollapseMode.pin,
-                    background: Column(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {Navigator.of(context).pop();},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            ElevatedButton(
-                              onPressed: () {Navigator.of(context).pop();},
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.arrow_back_ios, color: kBlack, size: 25,)
-                                ],
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
-                                primary: kGrey,
-                              ),
-                            ),
-                            Text(
-                              activityTypeMap[widget.activityType]!,
-                              style: titleOneTextStyleBold,
-                            ),
-                            Flexible(
-                              child: SizedBox(width: 65),
-                            )
-                          ],
-                        ),
-                        SizedBox(height: 10,),
-                        widget.featuredCarousel,
-                        SizedBox(
-                          height: 10,
-                        )
+                      children: [
+                        Icon(Icons.arrow_back_ios, color: kBlack, size: 25,)
                       ],
                     ),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+                      primary: kGrey,
+                    ),
                   ),
-                  expandedHeight: 350.0,
-                )
-              ];
-            },
-            body: activities.length == 0 ? displayNoActivities() : displayBrowseActivities(),
+                  Text(
+                    activityTypeMap[widget.activityType]!,
+                    style: titleOneTextStyleBold,
+                  ),
+                  Flexible(
+                    child: SizedBox(width: 65),
+                  )
+                ],
+              ),
+              SizedBox(height: 10,),
+              widget.featuredCarousel,
+              SizedBox(
+                height: 10,
+              ),
+              Expanded(
+                child: activities.length == 0 ? displayNoActivities() : displayBrowseActivities(),
+              )
+            ],
           ),
         ),
       ),

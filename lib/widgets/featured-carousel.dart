@@ -12,10 +12,7 @@ import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 class FeaturedCarousel extends StatefulWidget {
-  FeaturedCarousel({
-    Key? key,
-    required this.type,
-  }) {
+  FeaturedCarousel({Key? key, required this.type, }) {
     placeholderPicUrl = getPlaceholderPicUrl(type);
   }
 
