@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/participant.dart';
 import 'package:youthapp/models/session.dart';
+import 'package:youthapp/screens/rating-fullscreen-dialog.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
@@ -117,6 +118,20 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
 
   DateFormat dateFormat = DateFormat.yMd();
   DateFormat timeFormat = DateFormat.jm();
+
+  late bool isRated;
+  bool isChanged = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.participant.submittedRating != null) {
+      this.isRated = true;
+    }
+    else {
+      this.isRated = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -387,11 +402,31 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                   style: bodyTextStyle,
                 ),
               ),
-              SizedBox(
-                height: 30,
-              ),
+              SizedBox(height: 30,),
+              if (widget.participant.status == 'completed')
+                RoundedButton(
+                  title: ' Rate This Activity ',
+                  colorBG: kWhite,
+                  colorFont: kLightBlue,
+                  func: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => RatingFullScreenDialog(participant: widget.participant,),
+                        fullscreenDialog: true,
+                      ),
+                    ).then((value) {
+                      setState(() {
+                        this.isChanged = !this.isChanged;
+                      });
+                    }
+                    );
+                  },
+                  disableText: this.isRated ? 'Already Rated: ${widget.participant.submittedRating}' : null,
+                ),
+              SizedBox(height: 20,),
               RoundedButton(
-                title: 'View Session Attendance',
+                title: 'View Attendances',
                 colorBG: kLightBlue,
                 colorFont: kWhite,
                 func: viewAttendanceModalBottomSheet(context),
