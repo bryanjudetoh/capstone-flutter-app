@@ -12,18 +12,14 @@ import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
-class ActivitiesCarousel extends StatefulWidget {
-  ActivitiesCarousel({
+class FeaturedCarousel extends StatefulWidget {
+  FeaturedCarousel({
     Key? key,
-    required this.title,
     required this.type,
-    required this.seeAllFunc,
   }) : super(key: key);
 
-  final String title;
   final String type;
-  final VoidCallback seeAllFunc;
-  final String placeholderPicUrl = placeholderVolunteerPicUrl;
+  final String placeholderPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -32,37 +28,16 @@ class ActivitiesCarousel extends StatefulWidget {
   );
 
   @override
-  _ActivitiesCarouselState createState() => _ActivitiesCarouselState();
+  _FeaturedCarouselState createState() => _FeaturedCarouselState();
 }
 
-class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
+class _FeaturedCarouselState extends State<FeaturedCarousel> {
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text(
-              widget.title,
-              style: titleThreeTextStyleBold,
-            ),
-            TextButton(
-              onPressed: widget.seeAllFunc,
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    AppLocalizations.of(context)!.seeMore,
-                    style: smallBodyTextStyleBold,
-                  ),
-                  Icon(Icons.navigate_next_rounded),
-                ],
-              ),
-            ),
-          ],
-        ),
         FutureBuilder<List<Activity>>(
           future: getFeaturedActivityList(widget.type),
           builder:
@@ -100,16 +75,16 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                   child:
                                   Container (
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(30.0),
-                                      ),
-                                      boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.amberAccent,
-                                        spreadRadius: -10,
-                                        blurRadius: 22,
-                                      ),
-                                    ]),
+                                        borderRadius: BorderRadius.all(
+                                          Radius.circular(30.0),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.amberAccent,
+                                            spreadRadius: -10,
+                                            blurRadius: 22,
+                                          ),
+                                        ]),
                                     child: Card(
                                       margin: EdgeInsets.only(
                                         top: 10.0,
@@ -135,9 +110,9 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                               width: double.infinity,
                                             ),
                                             Container(
-                                              alignment: Alignment.bottomCenter,
+                                              alignment: Alignment.bottomLeft,
                                               padding: EdgeInsets.only(
-                                                  left: 16, bottom: 16, right: 16),
+                                                  left: 16, bottom: 16),
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(10),
                                                 gradient: LinearGradient(
@@ -149,40 +124,17 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                                   ],
                                                 ),
                                               ),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Currently ${item.participantCount} have joined',
-                                                    style: TextStyle(
-                                                      //need to change to constant TextStyles
-                                                      fontFamily: 'Nunito',
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16.0,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.left,
-                                                  ),
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Text(
-                                                        '${item.activityRating}',
-                                                        style: TextStyle(
-                                                          //need to change to constant TextStyles
-                                                          fontFamily: 'Nunito',
-                                                          fontWeight: FontWeight.bold,
-                                                          fontSize: 16.0,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                      Icon(
-                                                        Icons.star,
-                                                        color: Colors.amber,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              )
+                                              child: Text(
+                                                'Currently ${item.participantCount} have joined',
+                                                style: TextStyle(
+                                                  //need to change to constant TextStyles
+                                                  fontFamily: 'Nunito',
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14.0,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.left,
+                                              ),
                                             ),
                                             Container(
                                               alignment: Alignment.topRight,
