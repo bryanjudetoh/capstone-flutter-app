@@ -19,9 +19,10 @@ class Participant {
   DateTime? acceptedDate;
 
   String? testimonial;
+  double? submittedRating;
 
   Participant({required this.participantId, required this.userId, required this.activity,
-    this.status, this.attendancePercent, this.registeredDate, this.acceptedDate, this.testimonial,
+    this.status, this.attendancePercent, this.registeredDate, this.acceptedDate, this.testimonial, this.submittedRating
   });
 
   factory Participant.fromJson(Map<String, dynamic> json) => _$ParticipantFromJson(json);

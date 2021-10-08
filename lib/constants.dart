@@ -163,8 +163,8 @@ const carouselActivityTitleTextStyle = TextStyle(
   color: Color(0xFF616161),
 );
 
-var countryCodesList = ['MN', 'SG', 'MY'];
-var genderList = ['male', 'female', 'others'];
+const countryCodesList = ['MN', 'SG', 'MY'];
+const genderList = ['male', 'female', 'others'];
 const activityTypeMap = <String, String>{
   'scholarship': 'Scholarship',
   'internship': 'Internship',
@@ -180,4 +180,9 @@ const int backendSkipLimit = 10;
 String getCapitalizeString({required String str}) {
   if (str.length <= 1) { return str.toUpperCase(); }
   return '${str[0].toUpperCase()}${str.substring(1)}';
+}
+
+String formatExceptionMessage(String str) {
+  int idx = str.indexOf(":");
+  return str.substring(idx + 1).trim();
 }

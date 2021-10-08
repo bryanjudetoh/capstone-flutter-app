@@ -369,20 +369,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     if (sessionsList.length == 0) {
       print('no activity clash');
       try {
-        doActivityRegistration(activityId);
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertPopup(
-                title: 'Success!',
-                desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation',
-                func: () {
-                  int count = 2;
-                  Navigator.of(context).popUntil((_) => count-- <= 0);
-                },
-              );
-            }
-        );
+        await doActivityRegistration(activityId);
       }
       on Exception catch (err) {
         showDialog(
@@ -390,7 +377,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
             builder: (BuildContext context) {
               return AlertPopup(
                 title: 'Error',
-                desc: err.toString(),
+                desc: formatExceptionMessage(err.toString()),
                 func: () { Navigator.of(context).pop();},
               );
             }
@@ -415,23 +402,10 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                 ),
                 TextButton(
                   child: Text("Yes, proceed", style: bodyTextStyle,),
-                  onPressed: () {
+                  onPressed: () async {
                     Navigator.of(context).pop();
                     try {
-                      doActivityRegistration(activityId);
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertPopup(
-                              title: 'Success!',
-                              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation',
-                              func: () {
-                                int count = 2;
-                                Navigator.of(context).popUntil((_) => count-- <= 0);
-                              },
-                            );
-                          }
-                      );
+                      await doActivityRegistration(activityId);
                     }
                     on Exception catch (err) {
                       showDialog(
@@ -439,7 +413,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                           builder: (BuildContext context) {
                             return AlertPopup(
                               title: 'Error',
-                              desc: err.toString(),
+                              desc: formatExceptionMessage(err.toString()),
                               func: () { Navigator.of(context).pop();},
                             );
                           }
@@ -484,8 +458,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
-  void doActivityRegistration(String activityId) async {
-    print('attempting registration');
+  Future<void> doActivityRegistration(String activityId) async {
     var response = await widget.http.post(
       Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
       body: jsonEncode(<String, String>{
@@ -497,17 +470,29 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       print('registration OK');
       var result = jsonDecode(response.body);
       print(result['message']);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: 'Success!',
+              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation',
+              func: () {
+                int count = 2;
+                Navigator.of(context).popUntil((_) => count-- <= 0);
+              },
+            );
+          }
+      );
     }
     else if (response.statusCode == 400) {
-      print('already registered');
       var result = jsonDecode(response.body);
       print(result);
       throw Exception(result['error']['message']);
     }
     else {
       var result = jsonDecode(response.body);
-      print('doActivityRegistration error:');
-      print(result.toString());
+      print('doActivityRegistration error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
       throw Exception('A problem occured while registering for this activity');
     }
   }
