@@ -168,8 +168,8 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.volunteering + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'volunteering');},
-            type: 'volunteering',
+            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'volunteer');},
+            type: 'volunteer',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.sports + ':',

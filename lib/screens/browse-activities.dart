@@ -383,24 +383,27 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                             borderRadius: BorderRadius.circular(12),
                                             color: Colors.white,
                                           ),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                crossAxisAlignment: CrossAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Icon(Icons.arrow_upward_outlined, color: Colors.blue,),
-                                                  Text('Bumped',
-                                                    style: TextStyle(
-                                                      fontFamily: 'Rubik',
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
+                                          child: Padding(
+                                            padding: EdgeInsets.only(left: 3),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Icon(Icons.arrow_upward_outlined, color: Colors.blue,),
+                                                    Text('Bumped',
+                                                      style: TextStyle(
+                                                        fontFamily: 'Rubik',
+                                                        fontSize: 14,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
+                                                  ],
+                                                )
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),

@@ -174,19 +174,22 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                                   borderRadius: BorderRadius.circular(12),
                                                   color: Colors.amberAccent,
                                                 ),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: <Widget>[
-                                                        Icon(Icons.star_outlined, color: Colors.white,),
-                                                        Text('Featured',
-                                                          style: captionTextStyle,
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(left: 4),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: <Widget>[
+                                                          Icon(Icons.star_outlined, color: Colors.white,),
+                                                          Text('Featured',
+                                                            style: captionTextStyle,
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),

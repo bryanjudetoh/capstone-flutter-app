@@ -200,26 +200,24 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                                     )
                                                   ],
                                                   borderRadius: BorderRadius.circular(12),
-                                                  color: Colors.white,
+                                                  color: Colors.amberAccent,
                                                 ),
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Row(
-                                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                                      children: <Widget>[
-                                                        Icon(Icons.star_outlined, color: Colors.amber,),
-                                                        Text('Featured',
-                                                          style: TextStyle(
-                                                            fontFamily: 'Rubik',
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
-                                                            color: Colors.black,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(left: 4),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                        children: <Widget>[
+                                                          Icon(Icons.star_outlined, color: Colors.white,),
+                                                          Text('Featured',
+                                                            style: captionTextStyle,
                                                           ),
-                                                        ),
-                                                      ],
-                                                    )
-                                                  ],
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -340,7 +338,7 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
       return activityResultList;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising activity data');
     }

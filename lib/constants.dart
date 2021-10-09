@@ -171,7 +171,7 @@ const activityTypeMap = <String, String>{
   'mentorship': 'Mentorship',
   'onlineCourse': 'Online Courses',
   'offlineCourse': 'Offline Courses',
-  'volunteering': 'Volunteering',
+  'volunteer': 'Volunteering',
   'sports': 'Sports',
 };
 
