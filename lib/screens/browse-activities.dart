@@ -95,7 +95,6 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
       List<Activity> activityList = [];
       for (dynamic item in resultList) {
         Activity a = Activity.fromJson(Map<String, dynamic>.from(item));
-        print('Name: ${a.name}, isBump: ${a.isBump!}');
         activityList.add(a);
       }
 
@@ -416,11 +415,14 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Text(
-                              '${activities[index].name}',
-                              style: carouselActivityTitleTextStyle,
-                              textAlign: TextAlign.left,
-                              overflow: TextOverflow.ellipsis,
+                            Container(
+                              width: MediaQuery.of(context).size.width*0.7,
+                              child: Text(
+                                '${activities[index].name}',
+                                style: carouselActivityTitleTextStyle,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,

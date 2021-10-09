@@ -204,7 +204,7 @@ String getPlaceholderPicUrl(String activityType) {
     case 'offlineCourse': {
       return placeholderOfflineCoursesPicUrl;
     }
-    case 'volunteering': {
+    case 'volunteer': {
       return placeholderVolunteerPicUrl;
     }
     case 'sports': {
