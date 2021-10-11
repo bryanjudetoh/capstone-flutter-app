@@ -46,7 +46,9 @@ class _RatingFullScreenDialogState extends State<RatingFullScreenDialog> {
                 alignment: Alignment.topLeft,
                 child: IconButton(
                   icon: Icon(Icons.cancel_outlined, size: 30,),
-                  onPressed: () {Navigator.of(context).pop();},
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
                 ),
               ),
               Center(
@@ -76,9 +78,9 @@ class _RatingFullScreenDialogState extends State<RatingFullScreenDialog> {
                     SizedBox(height: 40,),
                     RatingBar.builder(
                         initialRating: 0.0,
-                        minRating: 0.5,
+                        minRating: 1,
                         direction: Axis.horizontal,
-                        allowHalfRating: true,
+                        allowHalfRating: false,
                         itemCount: 5,
                         itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
                         itemBuilder: (context, _) => Icon(
@@ -122,20 +124,24 @@ class _RatingFullScreenDialogState extends State<RatingFullScreenDialog> {
             );
           }
       );
-      int count = 2;
       Future.delayed(const Duration(milliseconds: 1000), () {
+        int count = 3;
         Navigator.of(context).popUntil((_) => count-- <= 0);
+        Navigator.of(context).pushNamed('/registered-activity-details', arguments: widget.participant.participantId);
       });
     }
     on Exception catch (err) {
-      int count = 3;
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertPopup(
             title: 'Error',
             desc: err.toString(),
-            func: () {Navigator.of(context).popUntil((_) => count-- <= 0);},
+            func: () {
+              int count = 3;
+              Navigator.of(context).popUntil((_) => count-- <= 0);
+              Navigator.of(context).pushNamed('/registered-activity-details', arguments: widget.participant.participantId);
+            },
           );
         }
       );

@@ -125,7 +125,6 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
   DateFormat timeFormat = DateFormat.jm();
 
   late bool isRated;
-  bool isChanged = false;
 
   @override
   void initState() {
@@ -447,11 +446,6 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                         builder: (BuildContext context) => RatingFullScreenDialog(participant: widget.participant,),
                         fullscreenDialog: true,
                       ),
-                    ).then((value) {
-                      setState(() {
-                        this.isRated = true;
-                      });
-                    }
                     );
                   },
                   disableText: this.isRated ? '    Already Rated    ' : null,
@@ -487,6 +481,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                   scrollDirection: Axis.vertical,
                   itemCount: sessionsList.length,
                   itemBuilder: (BuildContext context, int index) {
+                    print('Session ${index + 1}, attended: ${sessionsList[index].attended!}');
                     return Padding(
                       padding: EdgeInsets.fromLTRB(20, 3, 20, 3),
                       child: Card(
