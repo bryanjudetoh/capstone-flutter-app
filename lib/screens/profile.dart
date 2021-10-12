@@ -652,10 +652,23 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
               "Successfully logged out",
               style: bodyTextStyle,
             ),
+            duration: const Duration(seconds: 2),
           )
       );
     }
     else {
+      print('doing force log out');
+      widget.secureStorage.deleteAllData();
+      Navigator.pushNamedAndRemoveUntil(context, '/welcome', (route) => false);
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              "ERROR: Please log in again",
+              style: bodyTextStyle,
+            ),
+            duration: const Duration(seconds: 2),
+          )
+      );
       throw Exception(jsonDecode(response.body)['error']['message']);
     }
   }

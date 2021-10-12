@@ -131,6 +131,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       try {
         doChangePassword(body);
         Navigator.pushReplacementNamed(context, '/init-home');
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text(
+                "Successfully changed password",
+                style: bodyTextStyle,
+              ),
+              duration: const Duration(seconds: 1),
+            )
+        );
       }
       on Exception catch (err) {
         showDialog(

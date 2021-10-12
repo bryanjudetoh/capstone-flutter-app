@@ -14,6 +14,7 @@ import 'package:youthapp/screens/fb-signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
 import 'package:youthapp/screens/init-home.dart';
 import 'package:youthapp/screens/verification.dart';
+import 'package:youthapp/utilities/navigation-service.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:animated_splash_screen/animated_splash_screen.dart';
@@ -28,6 +29,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final SecureStorage secureStorage = SecureStorage();
+  secureStorage.deleteAllData();
   currentAccessToken = await secureStorage.readSecureData('accessToken');
   runApp(MyApp());
 }
@@ -43,6 +45,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: NavigationService.navigatorKey,
       builder: (context, widget) => ResponsiveWrapper.builder(
         BouncingScrollWrapper.builder(context, widget!),
         maxWidth: 1200,
