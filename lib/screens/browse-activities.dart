@@ -238,7 +238,8 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
         }
 
         setState(() {
-          this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          //this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          this.activities.addAll(activityList);
           skip += resultList.length;
         });
       }

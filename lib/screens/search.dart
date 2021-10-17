@@ -315,7 +315,8 @@ class _SearchScreenState extends State<SearchScreen> {
           organisationsList.add(Organisation.fromJson(org));
         }
         setState(() {
-          this.organisations.addAll(organisationsList.where((a) => this.organisations.every((b) => a.organisationId != b.organisationId)));
+          //this.organisations.addAll(organisationsList.where((a) => this.organisations.every((b) => a.organisationId != b.organisationId)));
+          this.organisations.addAll(organisationsList);
           skip += organisationsList.length;
         });
       }
@@ -435,7 +436,8 @@ class _SearchScreenState extends State<SearchScreen> {
           activityList.add(Activity.fromJson(act));
         }
         setState(() {
-          this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          //this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
+          this.activities.addAll(activityList);
           skip += activityList.length;
         });
       }
