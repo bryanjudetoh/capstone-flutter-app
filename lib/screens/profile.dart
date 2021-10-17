@@ -102,7 +102,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -237,11 +237,11 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                     Column(
                                       children: <Widget>[
                                         Text(
-                                          'Elixirs',
+                                          'Equity Score',
                                           style: captionTextStyle,
                                         ),
                                         Text(
-                                          '1/100',
+                                          '${widget.user.potionBalance!.values.reduce((a, b) => a + b)}',
                                           style: bodyTextStyleBold,
                                         ),
                                       ],
@@ -275,6 +275,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                   tabs: [
                     Tab(child: Text('Upcoming', style: bodyTextStyle,)),
                     Tab(child: Text('History', style: bodyTextStyle,)),
+                    Tab(child: Text('Progress', style: bodyTextStyle,)),
                   ],
                   controller: tabController,
                 ),
@@ -385,6 +386,61 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                             ),
                           );
                         }
+                      }
+                      else if (snapshot.hasError) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16),
+                                child: Text('Error: ${snapshot.error}' , style: titleThreeTextStyleBold, textAlign: TextAlign.center,),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      else {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              child: CircularProgressIndicator(),
+                              width: 20,
+                              height: 20,
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: 16),
+                                child: Text(
+                                  'Loading...',
+                                  style: titleThreeTextStyleBold,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            )
+                          ],
+                        );
+                      }
+                    }
+                ),
+                FutureBuilder<List<Participant>>(
+                  future: getParticipantActivities(isRegistered: false),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Participant>> snapshot) {
+                      if (snapshot.hasData) {
+                        List<Participant> historyList = snapshot.data!;
+                        List<Participant> completedList = [];
+                        completedList.addAll(historyList.where((p) => p.status == 'completed'));
+                        return displayProfileProgress(completedList);
                       }
                       else if (snapshot.hasError) {
                         return Center(
@@ -592,6 +648,163 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
         );
       },
     );
+  }
+
+  ListView displayProfileProgress(List<Participant> completedList) {
+    return ListView(
+      children: [
+        progressTile(completedList, 'scholarship'),
+        progressTile(completedList, 'internship'),
+        progressTile(completedList, 'mentorship'),
+        progressTile(completedList, 'onlineCourse'),
+        progressTile(completedList, 'offlineCourse'),
+        progressTile(completedList, 'volunteer'),
+        progressTile(completedList, 'sports'),
+      ],
+    );
+  }
+
+  Widget progressTile (List<Participant> completedList, String type) {
+    List<Participant> typeList = [];
+    typeList.addAll(completedList.where((p) => p.activity.type == type));
+    if (typeList.isNotEmpty) {
+      return Container(
+        padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  activityTypeMap[type]!,
+                  style: titleTwoTextStyleBold,
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      '${widget.user.potionBalance![type]}',
+                      style: titleTwoTextStyle,
+                    ),
+                    SizedBox(width: 3,),
+                    Image(
+                      image: AssetImage('assets/images/elixir.png'),
+                      height: 40,
+                      width: 40,
+                    ),
+                  ],
+                )
+              ],
+            ),
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: typeList.length,
+              shrinkWrap: true,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Container(
+                    padding: EdgeInsets.fromLTRB(20, 5, 10, 5),
+                    decoration: new BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 3,
+                          offset: Offset(2, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                '${typeList[index].activity.name}',
+                                style: bodyTextStyle,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                '${typeList[index].activity.description!}',
+                                style: subtitleTextStyle,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            ],
+                          ),
+                          width: MediaQuery.of(context).size.width*0.38,
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Text(
+                              'Awarded: ${typeList[index].awardedPotions}',
+                            ),
+                            SizedBox(width: 3,),
+                            Image(
+                              image: AssetImage('assets/images/elixir.png'),
+                              height: 25,
+                              width: 25,
+                            ),
+                            SizedBox(width: 3,),
+                            Icon(Icons.navigate_next),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(context, '/registered-activity-details', arguments: typeList[index].participantId);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
+      );
+    }
+    else {
+      return Container(
+        padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
+        child: Column(
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  activityTypeMap[type]!,
+                  style: titleTwoTextStyleBold,
+                ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      '${widget.user.potionBalance![type]}',
+                      style: titleTwoTextStyle,
+                    ),
+                    SizedBox(width: 3,),
+                    Image(
+                      image: AssetImage('assets/images/elixir.png'),
+                      height: 40,
+                      width: 40,
+                    ),
+                  ],
+                )
+              ],
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
+              child: Text(
+                'You have not participated in any ${activityTypeMap[type]} yet!',
+                style: subtitleTextStyle,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   VoidCallback modalBottomSheet(BuildContext context, User user) {

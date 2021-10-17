@@ -42,15 +42,20 @@ class User {
 
   DateTime? createdAt;
   DateTime? lastLogin;
-
   String? profilePicUrl;
+
+  Map<String, int>? potionBalance;
+  int? elixirBalance;
+  List<Map<String, dynamic>>? rewardList;
 
   User({required this.userId, required this.email, this.mobile, required this.firstName, required this.lastName,
     this.gender, this.age, this.dob,
     this.address1, this.address2, this.address3,
     this.postalCode, this.countryCode, this.city, this.school,
     this.roleId, this.role, this.userType, this.loginType,
-    this.enabled, this.verified, this.createdAt, this.lastLogin, this.profilePicUrl});
+    this.enabled, this.verified, this.createdAt, this.lastLogin, this.profilePicUrl,
+    this.potionBalance, this.elixirBalance, this.rewardList,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

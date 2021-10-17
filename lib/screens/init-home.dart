@@ -100,7 +100,7 @@ class _InitHomeScreenState extends State<InitHomeScreen> {
     if (response.statusCode == 200) {
       widget.secureStorage.writeSecureData('user', response.body);
       var responseBody = jsonDecode(response.body);
-
+      print(responseBody);
       User user = User.fromJson(responseBody);
 
       return user;

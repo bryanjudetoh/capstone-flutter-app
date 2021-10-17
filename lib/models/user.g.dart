@@ -41,6 +41,13 @@ User _$UserFromJson(Map<String, dynamic> json) {
         ? null
         : DateTime.parse(json['lastLogin'] as String),
     profilePicUrl: json['profilePicUrl'] as String?,
+    potionBalance: (json['potionBalance'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, e as int),
+    ),
+    elixirBalance: json['elixirBalance'] as int?,
+    rewardList: (json['rewardList'] as List<dynamic>?)
+        ?.map((e) => e as Map<String, dynamic>)
+        .toList(),
   );
 }
 
@@ -69,4 +76,7 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'createdAt': instance.createdAt?.toIso8601String(),
       'lastLogin': instance.lastLogin?.toIso8601String(),
       'profilePicUrl': instance.profilePicUrl,
+      'potionBalance': instance.potionBalance,
+      'elixirBalance': instance.elixirBalance,
+      'rewardList': instance.rewardList,
     };
