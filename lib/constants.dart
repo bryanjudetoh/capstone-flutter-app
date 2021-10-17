@@ -163,6 +163,22 @@ const carouselActivityTitleTextStyle = TextStyle(
   color: Color(0xFF616161),
 );
 
+const homeElixirTitleTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 60.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
+
+const homeElixirBodyTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 28.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
+
 const countryCodesList = ['MN', 'SG', 'MY'];
 const genderList = ['male', 'female', 'others'];
 const activityTypeMap = <String, String>{

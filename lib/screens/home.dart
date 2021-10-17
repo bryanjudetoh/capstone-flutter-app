@@ -7,6 +7,7 @@ import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youthapp/widgets/rounded-button.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key, required this.user}) : super(key: key);
@@ -113,7 +114,6 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
 
   @override
   Widget build(BuildContext context) {
-
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: Column(
@@ -138,42 +138,123 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
           SizedBox(
             height: 20,
           ),
-          Image(
-              image: AssetImage(
-                  'assets/images/temp-homescreen-potions-level.png')),
+          Container(
+              padding: EdgeInsets.all(20.0),
+              margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+              decoration: BoxDecoration(
+                  color: kLightBlue,
+                  border: Border.all(
+                    width: 3,
+                    color: kLightBlue,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: kLightBlue.withOpacity(0.5),
+                      blurRadius: 10, // changes position of shadow
+                    ),
+                  ]),
+              child: Column(children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        maxRadius: 50,
+                        backgroundImage: AssetImage('assets/images/elixir.png',),
+                      ),
+                      SizedBox(
+                        width: 25,
+                      ),
+                      Column(
+                        children: <Widget> [
+                          Text(
+                            '15',
+                            style: homeElixirTitleTextStyle,
+                          ),
+                          Text(
+                            'Elixirs',
+                            style: homeElixirBodyTextStyle,
+                          )
+                        ]
+                      )
+                    ]
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                RoundedButton(
+                  func: () {  },
+                  colorFont: kLightBlue,
+                  colorBG: Colors.white,
+                  title: 'My rewards'
+                ),
+                SizedBox(
+                  height: 15
+                ),
+                RoundedButton(
+                    func: () {  },
+                    colorFont: kLightBlue,
+                    colorBG: Colors.white,
+                    title: 'Leaderboards'
+                ),
+              ]
+            )
+          ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.scholarship + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'scholarship');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'scholarship');
+            },
             type: 'scholarship',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.internship + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'internship');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'internship');
+            },
             type: 'internship',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.mentorship + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'mentorship');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'mentorship');
+            },
             type: 'mentorship',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.onlineCourses + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'onlineCourse');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'onlineCourse');
+            },
             type: 'onlineCourse',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.offlineCourses + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'offlineCourse');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'offlineCourse');
+            },
             type: 'offlineCourse',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.volunteering + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'volunteer');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'volunteer');
+            },
             type: 'volunteer',
           ),
           ActivitiesCarousel(
             title: AppLocalizations.of(context)!.sports + ':',
-            seeAllFunc: () {Navigator.of(context).pushNamed('/browse-activities', arguments: 'sports');},
+            seeAllFunc: () {
+              Navigator.of(context)
+                  .pushNamed('/browse-activities', arguments: 'sports');
+            },
             type: 'sports',
           ),
         ],
