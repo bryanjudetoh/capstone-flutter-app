@@ -169,11 +169,11 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                       Column(
                         children: <Widget> [
                           Text(
-                            '15',
+                            '${widget.user.potionBalance!.values.reduce((a, b) => a + b)}',
                             style: homeElixirTitleTextStyle,
                           ),
                           Text(
-                            'Elixirs',
+                            'Equity Score',
                             style: homeElixirBodyTextStyle,
                           )
                         ]
@@ -183,21 +183,28 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                 SizedBox(
                   height: 15,
                 ),
-                RoundedButton(
-                  func: () {  },
-                  colorFont: kLightBlue,
-                  colorBG: Colors.white,
-                  title: 'My rewards'
-                ),
-                SizedBox(
-                  height: 15
-                ),
-                RoundedButton(
-                    func: () {  },
-                    colorFont: kLightBlue,
-                    colorBG: Colors.white,
-                    title: 'Leaderboards'
-                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    RoundedButton(
+                        func: () {
+                            Navigator.pushNamed(context, '/browse-rewards');
+                        },
+                        colorFont: kLightBlue,
+                        colorBG: Colors.white,
+                        title: 'Rewards'
+                    ),
+                    SizedBox(
+                        height: 15
+                    ),
+                    RoundedButton(
+                        func: () {  },
+                        colorFont: kLightBlue,
+                        colorBG: Colors.white,
+                        title: 'Leaderboards'
+                    ),
+                  ],
+                )
               ]
             )
           ),
