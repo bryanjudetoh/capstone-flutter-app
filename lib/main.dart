@@ -30,6 +30,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final SecureStorage secureStorage = SecureStorage();
+  //secureStorage.deleteAllData();
   currentAccessToken = await secureStorage.readSecureData('accessToken');
   runApp(MyApp());
 }

@@ -6,7 +6,7 @@ import 'package:youthapp/models/leaderboard-entity.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:youthapp/widgets/topthree-icon.dart';
-import 'package:youthapp/widgets/leaderboard-entity.dart';
+import 'package:youthapp/widgets/leaderboard-listtile.dart';
 import '../constants.dart';
 
 class InitLeaderBoardScreen extends StatelessWidget {
@@ -173,161 +173,147 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ],
               ),
               SizedBox(height: 10,),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Column(
                 children: <Widget>[
-                  Flexible(
-                    child: Column(
-                    children: <Widget>[
-                      Text(
-                        'Leaderboard Type:',
-                        style: bodyTextStyleBold,
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(height: 5,),
-                      Container(
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: this.leaderboardType,
-                            items: leaderboardTypesList.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value, style: bodyTextStyle,),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                this.leaderboardType = value!;
-                              });
-                            },
-                            isExpanded: true,
-                          ),
-                        ),
-                        padding: EdgeInsets.only(left: 10, right: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 3,
-                              offset: Offset(2, 3),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ],
-                  )
+                  Text(
+                    'Leaderboard Type:',
+                    style: bodyTextStyleBold,
+                    textAlign: TextAlign.left,
                   ),
-                  SizedBox(width: 10,),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 75,),
-                    child: Container(
-                      child: Column(
-                        children: <Widget>[
-                          Switch(
-                            value: this.isCumulative,
-                            onChanged: (value) {
-                              setState(() {
-                                this.isCumulative = value;
-                                this.leaderboardPeriod = value ? this.emptyList[0] : leaderboardPeriodList[0];
-                              });
-                            },
-                            activeColor: kLightBlue,
-                            activeTrackColor: Colors.lightBlue.shade100,
-                          ),
-                          Text(
-                            this.isCumulative ? 'Cumulative' : 'Periodical',
-                            style: smallBodyTextStyle,
-                          ),
-                        ],
+                  SizedBox(height: 5,),
+                  Container(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: this.leaderboardType,
+                        items: leaderboardTypesList.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, style: bodyTextStyle,),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            this.leaderboardType = value!;
+                          });
+                        },
+                        isExpanded: true,
                       ),
+                    ),
+                    padding: EdgeInsets.only(left: 10, right: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 3,
+                          offset: Offset(2, 3),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 15,),
-              Row(
+              Column(
                 children: <Widget>[
-                  Flexible(
-                    child: Column(
-                    children: <Widget>[
-                      Text(
-                        'Time Period:',
-                        style: bodyTextStyleBold,
-                        textAlign: TextAlign.left,
-                      ),
-                      SizedBox(height: 5,),
-                      Container(
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: this.isCumulative ? this.emptyList[0] : this.leaderboardPeriod,
-                            items: this.isCumulative ?
-                            this.emptyList.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value, style: bodyTextStyle,),
-                              );
-                            }).toList()
-                                : leaderboardPeriodList.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value, style: bodyTextStyle,),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                this.leaderboardPeriod = value!;
-                              });
-                            },
-                            isExpanded: true,
-                          ),
-                        ),
-                        padding: EdgeInsets.only(left: 10, right: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 3,
-                              blurRadius: 3,
-                              offset: Offset(2, 3),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    'Time Period:',
+                    style: bodyTextStyleBold,
+                    textAlign: TextAlign.left,
                   ),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: 85),
-                    child: Container(
-                      padding: EdgeInsets.only(left: 10, top: 25),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          List<LeaderboardEntity> list = await queryLeaderboard();
+                  SizedBox(height: 5,),
+                  Container(
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: this.isCumulative ? this.emptyList[0] : this.leaderboardPeriod,
+                        items: this.isCumulative ?
+                        this.emptyList.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, style: bodyTextStyle,),
+                          );
+                        }).toList()
+                            : leaderboardPeriodList.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, style: bodyTextStyle,),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
                           setState(() {
-                            this.leaderboardList = list;
+                            this.leaderboardPeriod = value!;
                           });
                         },
-                        child: Text(
-                          'Go',
-                          style: smallBodyTextStyleBold,
+                        isExpanded: true,
+                      ),
+                    ),
+                    padding: EdgeInsets.only(left: 10, right: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 3,
+                          blurRadius: 3,
+                          offset: Offset(2, 3),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          primary: kLightBlue,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(30.0),
-                          ),
+                      ],
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Container(
+                    width: 80,
+                    child: Column(
+                      children: <Widget>[
+                        Switch(
+                          value: this.isCumulative,
+                          onChanged: (value) {
+                            setState(() {
+                              this.isCumulative = value;
+                              this.leaderboardPeriod = value ? this.emptyList[0] : leaderboardPeriodList[0];
+                            });
+                          },
+                          activeColor: kLightBlue,
+                          activeTrackColor: Colors.lightBlue.shade100,
+                        ),
+                        Text(
+                          this.isCumulative ? 'Total' : 'Gain',
+                          style: smallBodyTextStyle,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        List<LeaderboardEntity> list = await queryLeaderboard();
+                        setState(() {
+                          this.leaderboardList = list;
+                        });
+                      },
+                      child: Text(
+                        'Go',
+                        style: smallBodyTextStyleBold,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        primary: kLightBlue,
+                        shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(15.0),
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10,),
               SizedBox(height: 10,),
               Column(
                 children: displayLeaderboard(),
@@ -341,6 +327,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   List<Widget> displayLeaderboard() {
     LeaderboardEntity emptyEntity = LeaderboardEntity(
+        userId: 'fakeId',
         name: '---',
         type: '',
         school: '',
@@ -392,6 +379,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         List<Map<String, dynamic>> mapList = [];
         for (dynamic item in resultList) {
           Map<String, dynamic> i = Map<String, dynamic>.from(item);
+          print(i);
           mapList.add(i);
         }
         List<LeaderboardEntity> leaderboardEntityList = mapList.map((act) => LeaderboardEntity.fromJson(act)).toList();

@@ -8,7 +8,6 @@ class LeaderboardListTile extends StatelessWidget {
 
   final LeaderboardEntity user;
   final int position;
-  final String profilePicUrl = '';
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class LeaderboardListTile extends StatelessWidget {
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(
-            this.profilePicUrl.isNotEmpty ? this.profilePicUrl : placeholderDisplayPicUrl,
+            this.user.profilePicUrl != null && this.user.profilePicUrl!.isNotEmpty ? this.user.profilePicUrl! : placeholderDisplayPicUrl,
           ),
           radius: 30,
         ),
@@ -35,8 +34,12 @@ class LeaderboardListTile extends StatelessWidget {
           ],
         ),
         trailing: Container(
-          height: 120,
-          width: 70,
+          constraints: const BoxConstraints(
+            maxHeight: 140,
+            maxWidth: 85,
+            minHeight: 120,
+            minWidth: 70,
+          ),
           child: Row(
             children: <Widget>[
               Image(

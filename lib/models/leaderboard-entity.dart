@@ -4,6 +4,9 @@ part 'leaderboard-entity.g.dart';
 @JsonSerializable()
 class LeaderboardEntity {
   @JsonKey(required: true, disallowNullValue: true)
+  String userId;
+
+  @JsonKey(required: true, disallowNullValue: true)
   String name;
 
   @JsonKey(required: true)
@@ -15,8 +18,10 @@ class LeaderboardEntity {
   @JsonKey(required: true)
   int value;
 
-  LeaderboardEntity({required this.name, required this.type,
-  required this.school, required this.value});
+  String? profilePicUrl;
+
+  LeaderboardEntity({required this.userId, required this.name, required this.type,
+  required this.school, required this.value, this.profilePicUrl});
 
   factory LeaderboardEntity.fromJson(Map<String, dynamic> json) => _$LeaderboardEntityFromJson(json);
 
