@@ -3,6 +3,7 @@ import 'package:youthapp/Screens/welcome.dart';
 import 'package:youthapp/Screens/login.dart';
 import 'package:youthapp/screens/browse-activities.dart';
 import 'package:youthapp/screens/activity-details.dart';
+import 'package:youthapp/screens/browse-rewards.dart';
 import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/leaderboards.dart';
@@ -91,6 +92,7 @@ class _MyAppState extends State<MyApp> {
         '/registered-activity-details': (context) => InitRegisteredActivityDetails(),
         '/leaderboard': (context) => InitLeaderBoardScreen(),
         '/my-rewards': (context) => MyRewardsScreen(),
+        '/browse-rewards': (context) => InitBrowseRewardsScreen(),
       }
     );
   }
