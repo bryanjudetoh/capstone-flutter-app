@@ -36,6 +36,7 @@ Reward _$RewardFromJson(Map<String, dynamic> json) {
     numClaimed: json['numClaimed'] as int?,
     maxClaimPerUser: json['maxClaimPerUser'] as int?,
     quantity: json['quantity'] as int?,
+    discount: (json['discount'] as num?)?.toDouble(),
     organisation: json['organisation'] == null
         ? null
         : Organisation.fromJson(json['organisation'] as Map<String, dynamic>),
@@ -58,5 +59,6 @@ Map<String, dynamic> _$RewardToJson(Reward instance) => <String, dynamic>{
       'numClaimed': instance.numClaimed,
       'maxClaimPerUser': instance.maxClaimPerUser,
       'quantity': instance.quantity,
+      'discount': instance.discount,
       'organisation': instance.organisation,
     };

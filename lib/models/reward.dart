@@ -26,12 +26,13 @@ class Reward {
   int? numClaimed;
   int? maxClaimPerUser;
   int? quantity;
+  double? discount;
 
   Organisation? organisation;
 
   Reward({required this.rewardId, required this.name, required this.description, this.mediaContentUrls, this.elixirCost,
   this.type, this.status, this.enabled, this.rewardStartTime, this.rewardEndTime, this.expiryDuration,
-  this.expiryDate, this.numClaimed, this.maxClaimPerUser, this.quantity, this.organisation});
+  this.expiryDate, this.numClaimed, this.maxClaimPerUser, this.quantity, this.discount, this.organisation});
 
   factory Reward.fromJson(Map<String, dynamic> json) => _$RewardFromJson(json);
 

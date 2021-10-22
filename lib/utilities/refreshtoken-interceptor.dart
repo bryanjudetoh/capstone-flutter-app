@@ -46,7 +46,6 @@ class RefreshTokenRetryPolicy extends RetryPolicy {
         print('successfully refreshed token');
         return true;
       }
-      return false;
     }
     if (this.currentRetryAttempt['currentAttempt'] == 2) {
       print('doing force logout');

@@ -190,6 +190,24 @@ const activityTypeMap = <String, String>{
   'volunteer': 'Volunteering',
   'sports': 'Sports',
 };
+const leaderboardTypeMapInverse = <String, String> {
+  'Overall': 'overall',
+  'Scholarship': 'scholarship',
+  'Internship': 'internship',
+  'Mentorship': 'mentorship',
+  'Online Courses': 'onlineCourse',
+  'Offline Courses': 'offlineCourse',
+  'Volunteering': 'volunteer',
+  'Sports': 'sports',
+};
+
+const leaderboardTypesList = ['Overall', 'Scholarship', 'Internship', 'Mentorship', 'Online Courses', 'Offline Courses', 'Volunteering', 'Sports',];
+const leaderboardPeriodList = ['Past 1 week', 'Past 1 month', 'Past 6 months',];
+const leaderboardPeriodMap = <String, String>{
+  'Past 1 week': '7',
+  'Past 1 month': '30',
+  'Past 6 months': '180',
+};
 
 const int backendSkipLimit = 10;
 
@@ -240,4 +258,19 @@ String getCapitalizeString({required String str}) {
 String formatExceptionMessage(String str) {
   int idx = str.indexOf(":");
   return str.substring(idx + 1).trim();
+}
+
+String toOrdinal(int number) {
+  if (number < 0) throw Exception('Invalid Number');
+
+  switch (number % 10) {
+    case 1:
+      return '${number}st';
+    case 2:
+      return '${number}nd';
+    case 3:
+      return '${number}rd';
+    default:
+      return '${number}th';
+  }
 }

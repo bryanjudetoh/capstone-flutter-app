@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/activity.dart';
+import 'package:youthapp/models/claimed-reward.dart';
 import 'package:youthapp/models/session.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
@@ -126,6 +127,7 @@ class ActivityDetailsScreen extends StatefulWidget {
 class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
   DateFormat dateFormat = DateFormat.yMd();
   DateFormat timeFormat = DateFormat.jm();
+  int selectedRewardIndex = -1;
 
   @override
   Widget build(BuildContext context) {
@@ -398,7 +400,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     if (sessionsList.length == 0) {
       print('no activity clash');
       try {
-        await doActivityRegistration(activityId);
+        await checkforInAppRewards(activityId);
       }
       on Exception catch (err) {
         showDialog(
@@ -434,7 +436,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   onPressed: () async {
                     Navigator.of(context).pop();
                     try {
-                      await doActivityRegistration(activityId);
+                      await checkforInAppRewards(activityId);
                     }
                     on Exception catch (err) {
                       showDialog(
@@ -487,11 +489,250 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
-  Future<void> doActivityRegistration(String activityId) async {
+  Widget displayActivityClash(List<Session> sessionsList) {
+    return Container(
+      height: MediaQuery.of(context).size.height*0.5,
+      width: MediaQuery.of(context).size.width*0.6,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: sessionsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
+              child: Card(
+                color: Color(0xFFFFCDD2),
+                margin: EdgeInsets.only(
+                  top: 10.0,
+                  bottom: 10.0,
+                ),
+                elevation: 6.0,
+                shadowColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
+                  child: Container(
+                    color: Color(0xFFFFCDD2),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          '${sessionsList[index].activity!.name}',
+                          style: titleThreeTextStyleBold,
+                        ),
+                        SizedBox(height: 3,),
+                        Text(
+                          'Session ${sessionsList[index].seqNum}',
+                          style: subtitleTextStyleBold,
+                        ),
+                        SizedBox(height: 10,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Starting date:',
+                              style: captionTextStyle,
+                            ),
+                            Text(
+                              '${dateFormat.format(sessionsList[index].startTime!)}, '
+                                  '${timeFormat.format(sessionsList[index].startTime!)}',
+                              style: subtitleTextStyleBold,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5,),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              'Ending date:',
+                              style: captionTextStyle,
+                            ),
+                            Text(
+                              '${dateFormat.format(sessionsList[index].endTime!)}, '
+                                  '${timeFormat.format(sessionsList[index].endTime!)}',
+                              style: subtitleTextStyleBold,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+      ),
+    );
+  }
+
+  Future<void> checkforInAppRewards(String activityId) async {
+    List<ClaimedReward> inAppRewardsList = await getUserInAppRewards();
+
+    if (inAppRewardsList.isEmpty) {
+      try {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'No Rewards Found',
+                desc: 'We looked at your claimed rewards... and we did not find any that can be used with this activity :(',
+                func: () async {
+                  Navigator.of(context).pop();
+                  try {
+                    await doActivityRegistration(activityId: activityId);
+                  }
+                  on Exception catch (err) {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertPopup(
+                            title: 'Error',
+                            desc: formatExceptionMessage(err.toString()),
+                            func: () { Navigator.of(context).pop();},
+                          );
+                        }
+                    );
+                  }
+                },
+                buttonName: 'Continue',
+              );
+            }
+        );
+      }
+      on Exception catch (err) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'Error',
+                desc: formatExceptionMessage(err.toString()),
+                func: () { Navigator.of(context).pop();},
+              );
+            }
+        );
+      }
+    }
+    else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('We Found Rewards for this Activity!', style: titleTwoTextStyleBold,),
+              content: ListView.builder(
+                itemCount: inAppRewardsList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Container(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: Column(
+                        children: [
+                          Text(
+                            '${inAppRewardsList[index].reward.name}',
+                            style: bodyTextStyle,
+                          ),
+                          Text(
+                            '${inAppRewardsList[index].reward}',
+                            style: subtitleTextStyle,
+                          ),
+                        ],
+                      ),
+                    ),
+                    selected: index == this.selectedRewardIndex,
+                    onTap: () {
+                      setState(() {
+                        this.selectedRewardIndex = index;
+                      });
+                    },
+                  );
+                }
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Skip', style: bodyTextStyle,),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    try {
+                      await doActivityRegistration(activityId: activityId);
+                    }
+                    on Exception catch (err) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertPopup(
+                              title: 'Error',
+                              desc: formatExceptionMessage(err.toString()),
+                              func: () { Navigator.of(context).pop();},
+                            );
+                          }
+                      );
+                    }
+                  },
+                ),
+                TextButton(
+                  child: Text('Use This Reward', style: bodyTextStyle,),
+                  onPressed: () async {
+                    if (this.selectedRewardIndex > -1) {
+                      Navigator.of(context).pop();
+                      try {
+                        await doActivityRegistration(activityId: activityId, claimedRewardId: inAppRewardsList[this.selectedRewardIndex].claimedRewardId);
+                      }
+                      on Exception catch (err) {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertPopup(
+                                title: 'Error',
+                                desc: formatExceptionMessage(err.toString()),
+                                func: () { Navigator.of(context).pop();},
+                              );
+                            }
+                        );
+                      }
+                    }
+                  },
+                ),
+              ],
+            );
+          }
+      );
+    }
+  }
+
+  Future<List<ClaimedReward>> getUserInAppRewards() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list/claimed'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<Map<String, dynamic>> mapList = [];
+      for (dynamic item in resultList) {
+        Map<String, dynamic> i = Map<String, dynamic>.from(item);
+        print(i);
+        mapList.add(i);
+      }
+      List<ClaimedReward> claimedRewardsList = mapList.map((reward) => ClaimedReward.fromJson(reward)).toList();
+      List<ClaimedReward> inAppRewardsList = claimedRewardsList.where((cr) => cr.reward.type! == 'inAppReward').toList(); //TODO: double check that i got the field and inAppReward correct
+      return inAppRewardsList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred during intialising leaderboard data');
+    }
+  }
+
+  Future<void> doActivityRegistration({required String activityId, String? claimedRewardId}) async {
     var response = await widget.http.post(
       Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
-      body: jsonEncode(<String, String>{
+      body: claimedRewardId == null ?
+        jsonEncode(<String, String>{
         "activityId": "$activityId",
+      }) : jsonEncode(<String, String>{
+        "activityId": "$activityId",
+        "claimedRewardId" : "$claimedRewardId",
       }),
     );
 
@@ -524,84 +765,6 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       print('error response body: ${result.toString()}');
       throw Exception('A problem occured while registering for this activity');
     }
-  }
-
-  Widget displayActivityClash(List<Session> sessionsList) {
-    return Container(
-      height: MediaQuery.of(context).size.height*0.5,
-      width: MediaQuery.of(context).size.width*0.6,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: sessionsList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Padding(
-            padding: EdgeInsets.fromLTRB(10, 3, 10, 3),
-            child: Card(
-              color: Color(0xFFFFCDD2),
-              margin: EdgeInsets.only(
-                top: 10.0,
-                bottom: 10.0,
-              ),
-              elevation: 6.0,
-              shadowColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 10, 10, 20),
-                child: Container(
-                  color: Color(0xFFFFCDD2),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${sessionsList[index].activity!.name}',
-                        style: titleThreeTextStyleBold,
-                      ),
-                      SizedBox(height: 3,),
-                      Text(
-                        'Session ${sessionsList[index].seqNum}',
-                        style: subtitleTextStyleBold,
-                      ),
-                      SizedBox(height: 10,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Starting date:',
-                            style: captionTextStyle,
-                          ),
-                          Text(
-                            '${dateFormat.format(sessionsList[index].startTime!)}, '
-                                '${timeFormat.format(sessionsList[index].startTime!)}',
-                            style: subtitleTextStyleBold,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 5,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Ending date:',
-                            style: captionTextStyle,
-                          ),
-                          Text(
-                            '${dateFormat.format(sessionsList[index].endTime!)}, '
-                                '${timeFormat.format(sessionsList[index].endTime!)}',
-                            style: subtitleTextStyleBold,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        }
-      ),
-    );
   }
 
   VoidCallback viewSessionsModalBottomSheet(BuildContext context) {
