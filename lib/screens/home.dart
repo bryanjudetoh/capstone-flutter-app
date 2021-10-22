@@ -184,7 +184,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                   height: 15,
                 ),
                 RoundedButton(
-                  func: () {  },
+                  func: () {Navigator.pushNamed(context, '/my-rewards');},
                   colorFont: kLightBlue,
                   colorBG: Colors.white,
                   title: 'My rewards'

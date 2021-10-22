@@ -220,6 +220,7 @@ const String placeholderOnlineCoursesPicUrl = 'https://cdn.pixabay.com/photo/202
 const String placeholderOfflineCoursesPicUrl = 'https://cdn.pixabay.com/photo/2016/10/30/05/45/learning-1782430_960_720.jpg';
 const String placeholderVolunteerPicUrl = 'https://cdn.pixabay.com/photo/2017/02/10/12/12/volunteer-2055042_1280.png';
 const String placeholderSportsPicUrl = 'https://cdn.pixabay.com/photo/2017/06/26/19/53/team-2444978_1280.jpg';
+const String placeholderRewardsPicUrl = 'https://www.pngkey.com/png/detail/1-11198_presents-png-library-library-free-download-on-melbournechapter.png';
 
 String getPlaceholderPicUrl(String activityType) {
   switch(activityType) {
