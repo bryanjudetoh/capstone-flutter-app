@@ -427,7 +427,9 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                                   height: 1,
                                 ),
                                 Row(children: [
-                                  Text('${rewards[index].numClaimed}', style: bodyTextStyleBold),
+                                  Text(
+                                      '${rewards[index].numClaimed == null ? 0: rewards[index].numClaimed }',
+                                      style: bodyTextStyleBold),
                                   Text(' / ', style: bodyTextStyleBold),
                                   Text('${rewards[index].quantity}', style: bodyTextStyleBold),
                                 ]),
