@@ -41,9 +41,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
         ? null
         : DateTime.parse(json['lastLogin'] as String),
     profilePicUrl: json['profilePicUrl'] as String?,
-    potionBalance: (json['potionBalance'] as Map<String, dynamic>?)?.map(
-      (k, e) => MapEntry(k, e as int),
-    ),
+    potionBalance: json['potionBalance'] as Map<String, dynamic>?,
     elixirBalance: json['elixirBalance'] as int?,
     rewardList: (json['rewardList'] as List<dynamic>?)
         ?.map((e) => e as Map<String, dynamic>)

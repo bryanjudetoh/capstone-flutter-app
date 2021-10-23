@@ -44,7 +44,7 @@ class User {
   DateTime? lastLogin;
   String? profilePicUrl;
 
-  Map<String, int>? potionBalance;
+  Map<String, dynamic>? potionBalance;
   int? elixirBalance;
   List<Map<String, dynamic>>? rewardList;
 

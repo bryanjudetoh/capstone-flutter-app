@@ -20,8 +20,10 @@ class LeaderboardEntity {
 
   String? profilePicUrl;
 
+  int? ranking;
+
   LeaderboardEntity({required this.userId, required this.name, required this.type,
-  required this.school, required this.value, this.profilePicUrl});
+  required this.school, required this.value, this.profilePicUrl, this.ranking});
 
   factory LeaderboardEntity.fromJson(Map<String, dynamic> json) => _$LeaderboardEntityFromJson(json);
 

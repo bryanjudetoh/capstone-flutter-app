@@ -4,15 +4,31 @@ import 'package:youthapp/models/leaderboard-entity.dart';
 import '../constants.dart';
 
 class LeaderboardListTile extends StatelessWidget {
-  const LeaderboardListTile({Key? key, required this.user, required this.position}) : super(key: key);
+  const LeaderboardListTile({Key? key, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
 
   final LeaderboardEntity user;
   final int position;
+  final String userIdCheck;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10),
+      decoration: this.userIdCheck == this.user.userId
+          ? BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.lightBlueAccent,
+                  blurRadius: 5.0,
+                  spreadRadius: 3.0,
+                ),
+              ],
+            )
+          : BoxDecoration(
+              color: Colors.white,
+            )
+      ,
       child: ListTile(
         leading: CircleAvatar(
           backgroundImage: NetworkImage(
@@ -28,7 +44,7 @@ class LeaderboardListTile extends StatelessWidget {
               style: titleThreeTextStyle,
             ),
             Text(
-              '${toOrdinal(this.position)} place',
+              '${this.user.ranking == null ? toOrdinal(this.position) : toOrdinal(user.ranking!)} place',
               style: subtitleTextStyle,
             )
           ],

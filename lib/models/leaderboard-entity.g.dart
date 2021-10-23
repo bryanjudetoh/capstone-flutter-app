@@ -19,6 +19,7 @@ LeaderboardEntity _$LeaderboardEntityFromJson(Map<String, dynamic> json) {
     school: json['school'] as String,
     value: json['value'] as int,
     profilePicUrl: json['profilePicUrl'] as String?,
+    ranking: json['ranking'] as int?,
   );
 }
 
@@ -30,4 +31,5 @@ Map<String, dynamic> _$LeaderboardEntityToJson(LeaderboardEntity instance) =>
       'school': instance.school,
       'value': instance.value,
       'profilePicUrl': instance.profilePicUrl,
+      'ranking': instance.ranking,
     };
