@@ -720,7 +720,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     else {
       var result = jsonDecode(response.body);
       print(result);
-      throw Exception('A problem occurred during intialising leaderboard data');
+      throw Exception('A problem occurred during getting inAppRewards');
     }
   }
 
