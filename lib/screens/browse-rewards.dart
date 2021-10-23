@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:loadmore/loadmore.dart';
 import 'package:youthapp/models/reward.dart';
+import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import '../constants.dart';
 import 'package:http_interceptor/http_interceptor.dart';
@@ -249,7 +250,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     else {
       String result = jsonDecode(response.body);
       print(result);
-      throw Exception('A problem occured while loading more activities for browse activities');
+      throw Exception('A problem occured while loading more rewards for browse rewards');
     }
   }
 
@@ -257,6 +258,56 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     await Future.delayed(Duration(seconds: 0, milliseconds: 500));
     loadMoreRewards();
     return true;
+  }
+
+  Future<void> doRedemption(String rewardId) async {
+    var response = await widget.http.post(
+      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/'),
+      body: jsonEncode(<String, String>{
+        "rewardId": "$rewardId",
+      }),
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertPopup(
+        title: 'Confirm',
+        desc: 'This reward costs _ elixirs. You currently have _ elixirs. Proceed?',
+        func: () {
+          Navigator.pop(context);
+        },
+        );
+      }
+    );
+
+    if (response.statusCode == 201) {
+      print('redemption OK');
+      var result = jsonDecode(response.body);
+      print(result['message']);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: 'Success!',
+              desc: 'Your redemption is successful',
+              func: () {
+              },
+            );
+          }
+      );
+    }
+    else if (response.statusCode == 400) {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception(result['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('doRedemption error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while redeeming this reward');
+    }
   }
 
   Widget displayBrowseRewards() {
@@ -451,7 +502,9 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             RoundedButton(
-                                func: () {},
+                                func: () {
+                                  doRedemption(rewards[index].rewardId);
+                                },
                                 colorFont: Colors.white,
                                 colorBG: kLightBlue,
                                 title: 'Redeem'
