@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -155,8 +156,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     rewardsScrollController.dispose();
   }
 
-  final String placeholderPicUrl =
-      'http://pngimg.com/uploads/gift/gift_PNG5950.png';
+  final String placeholderPicUrl = placeholderRewardsPicUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +206,38 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                       SizedBox(
                         height: 10,
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('My elixirs: 30', style: titleThreeTextStyleBold,),
+                          ElevatedButton(
+                            onPressed: () {Navigator.pushNamed(context, '/my-rewards');},
+                            child: Row(
+                              children: <Widget>[
+                                Text('My Rewards', style: titleThreeTextStyle,),
+                                Icon(Icons.navigate_next),
+                              ],
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: kLightBlue,
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(15.0),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
                       Expanded(
                         child: displayBrowseRewards(),
                       )
-                    ]))));
+                    ]
+                )
+            )
+        )
+    );
   }
 
   void _scrollListener() {
@@ -316,206 +344,277 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
         onLoadMore: _loadMore,
         textBuilder: DefaultLoadMoreTextBuilder.english,
         child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: rewards.length,
-        itemBuilder: (BuildContext context, int index)
-    {
-      return Container(
-          height: 650,
-          child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Card(
-                  margin: EdgeInsets.only(
-                    top: 10.0,
-                    bottom: 10.0,
-                  ),
-                  elevation: 6.0,
-                  shadowColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: Padding(
+          scrollDirection: Axis.vertical,
+          itemCount: rewards.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+                height: 680,
+                child: Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(30.0),
-                      ),
-                      child: (Column(children: <Widget>[
-                        Image.network(
-                          rewards[index].mediaContentUrls!.isEmpty
-                              ? placeholderPicUrl
-                              : rewards[index].mediaContentUrls![0],
-                          width: 500,
-                          height: 200,
+                    child: Card(
+                        margin: EdgeInsets.only(
+                          top: 10.0,
+                          bottom: 10.0,
                         ),
-                        SizedBox(
-                          height: 10,
+                        elevation: 6.0,
+                        shadowColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
                         ),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${rewards[index].name}',
-                                style: titleOneTextStyleBold,
-                                textAlign: TextAlign.left,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(30.0),
+                            ),
+                            child: Column(
                                 children: <Widget>[
-                                  Image(
-                                    image: AssetImage(
-                                        'assets/images/elixir.png'),
-                                    height: 40,
-                                    width: 40,
-                                  ),
-                                  SizedBox(
-                                    width: 2,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 5),
-                                    child: Text(
-                                      '${rewards[index].elixirCost}',
-                                      style: TextStyle(
-                                        fontFamily: 'Nunito',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                        color: Color(0xFF5EC8D8),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                                    child: Container(
+                                      height: 200,
+                                      width: 500,
+                                      child: rewards[index].mediaContentUrls!.isEmpty
+                                          ? Image.network(
+                                        placeholderPicUrl,
+                                        width: 500,
+                                        height: 200,
+                                      )
+                                          : CarouselSlider(
+                                        options: CarouselOptions(
+                                          autoPlay: false,
+                                          enableInfiniteScroll: true,
+                                          viewportFraction: 1.0,
+                                        ),
+                                        items: rewards[index].mediaContentUrls!
+                                            .map(
+                                                (url) => Image.network(
+                                              url,
+                                              fit: BoxFit.fitHeight,
+                                            )
+                                        ).toList(),
                                       ),
                                     ),
                                   ),
-                                ],
-                              )
-                            ]),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '${rewards[index].organisation!.name}',
-                              style: bodyTextStyle,
-                              textAlign: TextAlign.left,
-                            )),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(children: [
-                                Text(
-                                  'Start date',
-                                  style: captionTextStyle,
-                                ),
-                                SizedBox(
-                                  height: 1,
-                                ),
-                                Text(
-                                  '${rewards[index].rewardStartTime.toString().split(' ')[0]}',
-                                  style: bodyTextStyleBold,
-                                )
-                              ]),
-                              SizedBox(
-                                width: 70,
-                              ),
-                              Column(children: [
-                                Text(
-                                  'End date',
-                                  style: captionTextStyle,
-                                ),
-                                SizedBox(
-                                  height: 1,
-                                ),
-                                Text(
-                                  '${rewards[index].rewardEndTime.toString().split(' ')[0]}',
-                                  style: bodyTextStyleBold,
-                                )
-                              ]),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(20.0),
-                          margin: EdgeInsets.only(bottom: 30.0),
-                          decoration: BoxDecoration(
-                            color: kBluishWhite,
-                            border: Border.all(
-                              width: 3,
-                              color: kBluishWhite,
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context).size.width*0.55,
+                                          child: Text(
+                                            '${rewards[index].name}',
+                                            style: titleTwoTextStyleBold,
+                                            textAlign: TextAlign.left,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .spaceEvenly,
+                                          crossAxisAlignment: CrossAxisAlignment.center,
+                                          children: <Widget>[
+                                            Image(
+                                              image: AssetImage(
+                                                  'assets/images/elixir.png'),
+                                              height: 40,
+                                              width: 40,
+                                            ),
+                                            SizedBox(
+                                              width: 2,
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 5),
+                                              child: Text(
+                                                '${rewards[index].elixirCost}',
+                                                style: TextStyle(
+                                                  fontFamily: 'Nunito',
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 24,
+                                                  color: Color(0xFF5EC8D8),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ]),
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        '${rewards[index].organisation!.name}',
+                                        style: bodyTextStyle,
+                                        textAlign: TextAlign.left,
+                                      )),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Column(children: [
+                                          Text(
+                                            'Start date',
+                                            style: captionTextStyle,
+                                          ),
+                                          SizedBox(
+                                            height: 1,
+                                          ),
+                                          Text(
+                                            '${rewards[index].rewardStartTime.toString().split(' ')[0]}',
+                                            style: bodyTextStyleBold,
+                                          )
+                                        ]),
+                                        SizedBox(
+                                          width: 70,
+                                        ),
+                                        Column(children: [
+                                          Text(
+                                            'End date',
+                                            style: captionTextStyle,
+                                          ),
+                                          SizedBox(
+                                            height: 1,
+                                          ),
+                                          Text(
+                                            '${rewards[index].rewardEndTime.toString().split(' ')[0]}',
+                                            style: bodyTextStyleBold,
+                                          )
+                                        ]),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Container(
+                                    padding: EdgeInsets.all(20.0),
+                                    margin: EdgeInsets.only(bottom: 30.0),
+                                    decoration: BoxDecoration(
+                                      color: kBluishWhite,
+                                      border: Border.all(
+                                        width: 3,
+                                        color: kBluishWhite,
+                                      ),
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    width: 500,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        SizedBox(height: 1,),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Column(children: [
+                                              Text(
+                                                'Max claims per user',
+                                                style: captionTextStyle,
+                                              ),
+                                              SizedBox(
+                                                height: 1,
+                                              ),
+                                              Text(
+                                                '${rewards[index].maxClaimPerUser}',
+                                                style: bodyTextStyleBold,
+                                              )
+                                            ]),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Column(children: [
+                                              Text(
+                                                'Reward type:',
+                                                style: captionTextStyle,
+                                              ),
+                                              SizedBox(
+                                                height: 1,
+                                              ),
+                                              Text(
+                                                '${rewardTypeMap[rewards[index].type]}',
+                                                style: bodyTextStyleBold,
+                                              )
+                                            ]),
+                                          ],
+                                        ),
+                                        SizedBox(height: 1,),
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            Column(children: [
+                                              Text(
+                                                'No. claimed',
+                                                style: captionTextStyle,
+                                              ),
+                                              SizedBox(
+                                                height: 1,
+                                              ),
+                                              Row(children: [
+                                                Text(
+                                                    '${rewards[index].numClaimed == null ? 0: rewards[index].numClaimed }',
+                                                    style: bodyTextStyleBold),
+                                                Text(' / ', style: bodyTextStyleBold),
+                                                Text('${rewards[index].quantity}', style: bodyTextStyleBold),
+                                              ]),
+                                            ]),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            Column(children: [
+                                              Container(
+                                                child: rewards[index].expiryDate != null
+                                                    ? Text('Use by date:', style: captionTextStyle,)
+                                                    : Text('Use within:', style: captionTextStyle,),
+                                              ),
+                                              SizedBox(
+                                                height: 1,
+                                              ),
+                                              Container(
+                                                child: rewards[index].expiryDate != null
+                                                    ? Text('${rewards[index].expiryDate.toString().split(' ')[0]}', style: bodyTextStyleBold)
+                                                    : Text('${rewards[index].expiryDuration!} hours', style: bodyTextStyleBold)
+                                                ,
+                                              ),
+                                            ]),
+                                          ],
+                                        ),
+                                        SizedBox(height: 1,),
+                                      ],
+                                    ),
+                                  ),
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        '${rewards[index].description}',
+                                        style: bodyTextStyle,
+                                        textAlign: TextAlign.left,
+                                      )),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      RoundedButton(
+                                          func: () {},
+                                          colorFont: Colors.white,
+                                          colorBG: kLightBlue,
+                                          title: 'Redeem'
+                                      ),
+                                    ],
+                                  )
+                                ]
                             ),
-                            borderRadius: BorderRadius.circular(15),
                           ),
-                          width: 500,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Column(children: [
-                                Text(
-                                  'Max claims per user',
-                                  style: captionTextStyle,
-                                ),
-                                SizedBox(
-                                  height: 1,
-                                ),
-                                Text(
-                                  '${rewards[index].maxClaimPerUser}',
-                                  style: bodyTextStyleBold,
-                                )
-                              ]),
-                              SizedBox(
-                                width: 70,
-                              ),
-                              Column(children: [
-                                Text(
-                                  'No. claimed',
-                                  style: captionTextStyle,
-                                ),
-                                SizedBox(
-                                  height: 1,
-                                ),
-                                Row(children: [
-                                  Text(
-                                      '${rewards[index].numClaimed == null ? 0: rewards[index].numClaimed }',
-                                      style: bodyTextStyleBold),
-                                  Text(' / ', style: bodyTextStyleBold),
-                                  Text('${rewards[index].quantity}', style: bodyTextStyleBold),
-                                ]),
-                              ]),
-                            ],
-                          ),
-                        ),
-                        Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '${rewards[index].description}',
-                              style: bodyTextStyle,
-                              textAlign: TextAlign.left,
-                            )),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            RoundedButton(
-                                func: () {
-                                  doRedemption(rewards[index].rewardId);
-                                },
-                                colorFont: Colors.white,
-                                colorBG: kLightBlue,
-                                title: 'Redeem'
-                            ),
-                          ],
                         )
-                      ]
-                      )
-                      ),
-                    ),
-                  ))));
-    }));
+                    )
+                )
+            );
+          }
+        )
+    );
   }
 }

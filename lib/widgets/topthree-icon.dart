@@ -6,10 +6,11 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/leaderboard-entity.dart';
 
 class TopThreeIcon extends StatelessWidget {
-  const TopThreeIcon({Key? key, required this.user, required this.position}) : super(key: key);
+  const TopThreeIcon({Key? key, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
   
   final LeaderboardEntity user;
   final int position;
+  final String userIdCheck;
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +30,29 @@ class TopThreeIcon extends StatelessWidget {
           SizedBox(height: 5,),
           Stack(
             children: <Widget>[
-              CircleAvatar(
-                backgroundColor: kLightBlue,
-                backgroundImage: NetworkImage(
-                  this.user.profilePicUrl != null && this.user.profilePicUrl!.isNotEmpty ? this.user.profilePicUrl! : placeholderDisplayPicUrl,
+              Container(
+                decoration: this.userIdCheck == this.user.userId
+                    ? BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.lightBlueAccent,
+                            blurRadius: 5.0,
+                            spreadRadius: 3.0,
+                          ),
+                        ],
+                      )
+                    : BoxDecoration(
+                        color: Colors.white
+                      ),
+                child: CircleAvatar(
+                  backgroundColor: kLightBlue,
+                  backgroundImage: NetworkImage(
+                    this.user.profilePicUrl != null && this.user.profilePicUrl!.isNotEmpty ? this.user.profilePicUrl! : placeholderDisplayPicUrl,
+                  ),
+                  radius: this.position == 1 ? 60 : 50,
                 ),
-                radius: this.position == 1 ? 60 : 50,
               ),
               Positioned.fill(
                   child: Align(
@@ -68,14 +86,26 @@ class TopThreeIcon extends StatelessWidget {
             ),
           ),
           SizedBox(width: 10,),
-          Text(
-            '${user.value}',
-            style: TextStyle(
-              fontFamily: 'Nunito',
-              fontSize: 18,
-              color: kLightBlue,
-            ),
-          )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image(
+                image: AssetImage(
+                    'assets/images/elixir.png'),
+                height: 30,
+                width: 30,
+              ),
+              SizedBox(width: 5,),
+              Text(
+                '${user.value}',
+                style: TextStyle(
+                  fontFamily: 'Nunito',
+                  fontSize: 18,
+                  color: kLightBlue,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/models/leaderboard-entity.dart';
+import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/topthree-icon.dart';
 import 'package:youthapp/widgets/leaderboard-listtile.dart';
 import '../constants.dart';
@@ -24,12 +26,12 @@ class InitLeaderBoardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: FutureBuilder<List<LeaderboardEntity>>(
+        child: FutureBuilder<Map<String, dynamic>>(
             future: initLeaderboardData(),
-            builder: (BuildContext context, AsyncSnapshot<List<LeaderboardEntity>> snapshot) {
+            builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
               if (snapshot.hasData) {
-                List<LeaderboardEntity> initList = snapshot.data!;
-                return LeaderboardScreen(initialLeaderboardList: initList,);
+                Map<String, dynamic> data = snapshot.data!;
+                return LeaderboardScreen(data: data,);
               }
               else if (snapshot.hasError) {
                 return Center(
@@ -81,7 +83,10 @@ class InitLeaderBoardScreen extends StatelessWidget {
     );
   }
 
-  Future<List<LeaderboardEntity>> initLeaderboardData() async {
+  Future<Map<String, dynamic>> initLeaderboardData() async {
+    Map<String, dynamic> data = {};
+    SecureStorage secureStorage = SecureStorage();
+    data['user'] = User.fromJson(jsonDecode(await secureStorage.readSecureData('user')));
     var response = await this.http.get(
         Uri.parse('https://eq-lab-dev.me/api/reward-svc/ap/leaderboard/cumulative?type=overall')
     );
@@ -94,8 +99,9 @@ class InitLeaderBoardScreen extends StatelessWidget {
         mapList.add(i);
       }
       List<LeaderboardEntity> leaderboardEntityList = mapList.map((act) => LeaderboardEntity.fromJson(act)).toList();
+      data['leaderboardList'] = leaderboardEntityList;
 
-      return leaderboardEntityList;
+      return data;
     }
     else {
       String result = jsonDecode(response.body);
@@ -107,9 +113,9 @@ class InitLeaderBoardScreen extends StatelessWidget {
 
 
 class LeaderboardScreen extends StatefulWidget {
-  LeaderboardScreen({Key? key, required this.initialLeaderboardList}) : super(key: key);
+  LeaderboardScreen({Key? key, required this.data}) : super(key: key);
 
-  final List<LeaderboardEntity> initialLeaderboardList;
+  final Map<String, dynamic> data;
   final http = InterceptedHttp.build(
     interceptors: [
       AuthHeaderInterceptor(),
@@ -124,6 +130,7 @@ class LeaderboardScreen extends StatefulWidget {
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   List<LeaderboardEntity> leaderboardList = [];
+  late User user;
   String leaderboardType = leaderboardTypesList[0];
   String leaderboardPeriod = leaderboardPeriodList[0];
   List<String> emptyList = ['-NA-'];
@@ -132,7 +139,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   void initState() {
     super.initState();
-    this.leaderboardList = widget.initialLeaderboardList;
+    this.leaderboardList = widget.data['leaderboardList']!;
+    this.user = widget.data['user']!;
   }
 
   @override
@@ -339,14 +347,17 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         TopThreeIcon(
           user: this.leaderboardList.length > 2 ? this.leaderboardList[2] : emptyEntity,
           position: 3,
+          userIdCheck: this.user.userId,
         ),
         TopThreeIcon(
           user: this.leaderboardList.length > 0 ? this.leaderboardList[0] : emptyEntity,
           position: 1,
+          userIdCheck: this.user.userId,
         ),
         TopThreeIcon(
           user: this.leaderboardList.length > 1 ? this.leaderboardList[1] : emptyEntity,
           position: 2,
+          userIdCheck: this.user.userId,
         ),
       ],
     );
@@ -354,13 +365,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     if (this.leaderboardList.length > 3) {
       for (int i = 3; i < this.leaderboardList.length; i++) {
         display.add(
-            LeaderboardListTile(user: leaderboardList[i], position: i+1,)
+            LeaderboardListTile(user: leaderboardList[i], position: i+1, userIdCheck: this.user.userId,)
         );
+        display.add(SizedBox(height: 7,));
       }
     }
     else {
       display.add(
-        LeaderboardListTile(user: emptyEntity, position: 4,)
+        LeaderboardListTile(user: emptyEntity, position: 4, userIdCheck: '',)
       );
     }
     return display;
@@ -379,7 +391,6 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         List<Map<String, dynamic>> mapList = [];
         for (dynamic item in resultList) {
           Map<String, dynamic> i = Map<String, dynamic>.from(item);
-          print(i);
           mapList.add(i);
         }
         List<LeaderboardEntity> leaderboardEntityList = mapList.map((act) => LeaderboardEntity.fromJson(act)).toList();
