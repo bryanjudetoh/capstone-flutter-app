@@ -105,7 +105,7 @@ class InitBrowseActivitiesScreen extends StatelessWidget {
       return data;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
