@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:loadmore/loadmore.dart';
 import 'package:youthapp/models/reward.dart';
+import 'package:youthapp/models/user.dart';
+import 'package:youthapp/utilities/securestorage.dart';
+import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import '../constants.dart';
 import 'package:http_interceptor/http_interceptor.dart';
@@ -15,8 +18,7 @@ import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 class InitBrowseRewardsScreen extends StatelessWidget {
   InitBrowseRewardsScreen({Key? key}) : super(key: key);
 
-  final skip = 0;
-  final orgName = '';
+  final SecureStorage secureStorage = SecureStorage();
 
   final http = InterceptedHttp.build(
     interceptors: [
@@ -25,6 +27,85 @@ class InitBrowseRewardsScreen extends StatelessWidget {
     retryPolicy: RefreshTokenRetryPolicy(),
   );
 
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: kBackground,
+      child: FutureBuilder<String>(
+        future: this.secureStorage.readSecureData('user'),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            User user = User.fromJson(jsonDecode(snapshot.data!));
+            return InitBrowseRewards(
+              user: user,
+              secureStorage: secureStorage,
+            );
+          }
+          else if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 60,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: titleTwoTextStyleBold,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          else {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    child: CircularProgressIndicator(),
+                    width: 60,
+                    height: 60,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Text(
+                      'Loading...',
+                      style: titleTwoTextStyleBold,
+                    ),
+                  )
+                ],
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+}
+
+class InitBrowseRewards extends StatelessWidget {
+  InitBrowseRewards({Key? key, required this.user, required this.secureStorage}) : super(key: key);
+
+  final skip = 0;
+  final orgName = '';
+  final User user;
+  final SecureStorage secureStorage;
+
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +116,7 @@ class InitBrowseRewardsScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.hasData) {
             Map<String, dynamic> data = snapshot.data!;
-            return BrowseRewardsScreen(initRewardsList: data['rewardsList'],);
+            return BrowseRewardsScreen(initRewardsList: data['rewardsList'], user: user, secureStorage: secureStorage);
           }
           else if (snapshot.hasError) {
             return Center(
@@ -114,7 +195,10 @@ class InitBrowseRewardsScreen extends StatelessWidget {
 }
 
 class BrowseRewardsScreen extends StatefulWidget {
-  BrowseRewardsScreen({Key? key, required this.initRewardsList});
+  BrowseRewardsScreen({Key? key, required this.initRewardsList, required this.user, required this.secureStorage});
+
+  final User user;
+  final SecureStorage secureStorage;
 
   final http = InterceptedHttp.build(
     interceptors: [
@@ -208,7 +292,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('My elixirs: 30', style: titleThreeTextStyleBold,),
+                          Text('My elixirs: ${widget.user.elixirBalance.toString()}', style: titleThreeTextStyleBold,),
                           ElevatedButton(
                             onPressed: () {Navigator.pushNamed(context, '/my-rewards');},
                             child: Row(
@@ -277,7 +361,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     else {
       String result = jsonDecode(response.body);
       print(result);
-      throw Exception('A problem occured while loading more activities for browse activities');
+      throw Exception('A problem occured while loading more rewards for browse rewards');
     }
   }
 
@@ -285,6 +369,100 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     await Future.delayed(Duration(seconds: 0, milliseconds: 500));
     loadMoreRewards();
     return true;
+  }
+
+  Future<void> doRedemption(String rewardId, int? elixirCost) async {
+    var response = await widget.http.post(
+      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/' + rewardId),
+    );
+
+    if (response.statusCode == 201) {
+      print('redemption OK');
+      var result = jsonDecode(response.body);
+      print(result['status']);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: 'Success!',
+              desc: 'Your redemption is successful',
+              func: () {
+              },
+            );
+          }
+      );
+
+      //external reward
+      if(result['status'] == 'issued') {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'Check your email!',
+                desc: 'Since your reward is external, it should have been emailed to you.',
+                func: () {
+                },
+              );
+            }
+        );
+      }
+
+      //deduct elixirs
+      if (elixirCost != null && elixirCost > 0) {
+        var currElixirBalance = widget.user.elixirBalance?.toInt();
+        var newElixirBalance = (elixirCost - currElixirBalance!);
+
+        final userBody = jsonEncode(<String, String> {
+          'elixirBalance': newElixirBalance.toString(),
+        });
+
+        final String accessToken = await widget.secureStorage.readSecureData('accessToken');
+
+        final userResponse = await widget.http.put(
+          Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': 'Bearer $accessToken',
+          },
+          body: userBody,
+        );
+
+        if (userResponse.statusCode == 200) {
+          //reload page to show my elixirs
+          Navigator.of(context).pushNamedAndRemoveUntil('/init-home', (route) => false);
+        }
+        else if (userResponse.statusCode == 400) {
+          throw Exception(jsonDecode(response.body)['error']['message']);
+        }
+        else {
+          print(userResponse.body);
+          throw Exception('Unforseen error occured');
+        }
+      }
+    }
+    else if (response.statusCode == 400) {
+      var result = jsonDecode(response.body);
+      var err = result['error']['message'];
+      print(result);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+                title: result['error']['name'],
+                desc: err,
+                func: () {
+                }
+            );
+          }
+      );
+      throw Exception(result['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('doRedemption error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while redeeming this reward');
+    }
   }
 
   Widget displayBrowseRewards() {
@@ -548,7 +726,9 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.stretch,
                                     children: [
                                       RoundedButton(
-                                          func: () {},
+                                          func: () {
+                                            doRedemption(rewards[index].rewardId, rewards[index].elixirCost);
+                                          },
                                           colorFont: Colors.white,
                                           colorBG: kLightBlue,
                                           title: 'Redeem'

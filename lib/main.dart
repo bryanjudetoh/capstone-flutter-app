@@ -90,9 +90,9 @@ class _MyAppState extends State<MyApp> {
         '/browse-activities': (context) => InitBrowseActivitiesScreen(),
         '/activity-details': (context) => InitActivityDetailsScreen(),
         '/registered-activity-details': (context) => InitRegisteredActivityDetails(),
+        '/browse-rewards': (context) => InitBrowseRewardsScreen(),
         '/leaderboard': (context) => InitLeaderBoardScreen(),
         '/my-rewards': (context) => MyRewardsScreen(),
-        '/browse-rewards': (context) => InitBrowseRewardsScreen(),
       }
     );
   }
