@@ -27,7 +27,7 @@ class TopThreeIcon extends StatelessWidget {
               decoration: TextDecoration.underline,
             ),
           ),
-          SizedBox(height: 5,),
+          SizedBox(height: this.position == 1 ? 4 : 7,),
           Stack(
             children: <Widget>[
               Container(
@@ -38,8 +38,8 @@ class TopThreeIcon extends StatelessWidget {
                         boxShadow: [
                           BoxShadow(
                             color: Colors.lightBlueAccent,
-                            blurRadius: 5.0,
-                            spreadRadius: 3.0,
+                            blurRadius: 6.0,
+                            spreadRadius: 5.0,
                           ),
                         ],
                       )

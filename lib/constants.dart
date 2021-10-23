@@ -267,8 +267,12 @@ String formatExceptionMessage(String str) {
 
 String toOrdinal(int number) {
   if (number < 0) throw Exception('Invalid Number');
+  int check = number;
+  while (check > 10) {
+    check = check % 10;
+  }
 
-  switch (number % 10) {
+  switch (check) {
     case 1:
       return '${number}st';
     case 2:

@@ -17,6 +17,7 @@ class LeaderboardListTile extends StatelessWidget {
       decoration: this.userIdCheck == this.user.userId
           ? BoxDecoration(
               color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
               boxShadow: [
                 BoxShadow(
                   color: Colors.lightBlueAccent,
@@ -27,6 +28,7 @@ class LeaderboardListTile extends StatelessWidget {
             )
           : BoxDecoration(
               color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
             )
       ,
       child: ListTile(
