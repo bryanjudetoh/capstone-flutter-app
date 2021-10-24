@@ -104,7 +104,7 @@ class InitLeaderBoardScreen extends StatelessWidget {
       return data;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising leaderboard data');
     }
@@ -440,7 +440,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         return leaderboardEntityList;
       }
       else {
-        String result = jsonDecode(response.body);
+        var result = jsonDecode(response.body);
         print(result);
         throw Exception('A problem occurred during intialising leaderboard data');
       }

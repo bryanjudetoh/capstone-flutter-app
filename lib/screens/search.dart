@@ -290,7 +290,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
       return mapList;
     } else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
@@ -327,7 +327,7 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured while loading more organisations for search results');
     }
@@ -403,7 +403,7 @@ class _SearchScreenState extends State<SearchScreen> {
       return mapList;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
@@ -449,7 +449,7 @@ class _SearchScreenState extends State<SearchScreen> {
       }
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured while loading more activities for search results');
     }

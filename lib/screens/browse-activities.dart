@@ -251,7 +251,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
       }
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured while loading more activities for browse activities');
     }

@@ -92,11 +92,12 @@ class InitRegisteredActivityDetails extends StatelessWidget {
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       return Participant.fromJson(Map<String, dynamic>.from(responseBody));
-    } else {
-      print('status code: ${response.statusCode}');
-      print('response body: ${jsonDecode(response.body)}');
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
 
-      throw Exception(jsonDecode(response.body)['error']['message']);
+      throw Exception('A problem occured while initialising activity data');
     }
   }
 }
@@ -613,7 +614,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
       return sessionResultList;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising activity data');
     }

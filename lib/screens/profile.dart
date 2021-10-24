@@ -513,7 +513,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
       return participantResultList;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during intialising activity data');
     }
