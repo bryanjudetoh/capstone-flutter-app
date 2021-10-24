@@ -620,34 +620,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text('We Found Rewards for this Activity!', style: titleTwoTextStyleBold,),
-              content: ListView.builder(
-                itemCount: inAppRewardsList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Container(
-                      padding: EdgeInsets.symmetric(vertical: 30),
-                      child: Column(
-                        children: [
-                          Text(
-                            '${inAppRewardsList[index].reward.name}',
-                            style: bodyTextStyle,
-                          ),
-                          Text(
-                            '${inAppRewardsList[index].reward}',
-                            style: subtitleTextStyle,
-                          ),
-                        ],
-                      ),
-                    ),
-                    selected: index == this.selectedRewardIndex,
-                    onTap: () {
-                      setState(() {
-                        this.selectedRewardIndex = index;
-                      });
-                    },
-                  );
-                }
-              ),
+              content: RewardsListDialog(inAppRewardsList: inAppRewardsList, updateSelectedRewardIndex: updateSelectedRewardIndex,),
               actions: [
                 TextButton(
                   child: Text('Skip', style: bodyTextStyle,),
@@ -700,9 +673,16 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
+  void updateSelectedRewardIndex(int index) {
+    setState(() {
+      this.selectedRewardIndex = index;
+      print(this.selectedRewardIndex);
+    });
+  }
+
   Future<List<ClaimedReward>> getUserInAppRewards() async {
     var response = await widget.http.get(
-      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list/claimed'),
+      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list/claimed?active=true'),
     );
 
     if (response.statusCode == 200) {
@@ -710,7 +690,6 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       List<Map<String, dynamic>> mapList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        print(i);
         mapList.add(i);
       }
       List<ClaimedReward> claimedRewardsList = mapList.map((reward) => ClaimedReward.fromJson(reward)).toList();
@@ -725,6 +704,9 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
   }
 
   Future<void> doActivityRegistration({required String activityId, String? claimedRewardId}) async {
+    print('activityId: $activityId');
+    print('claimedRewardId: $claimedRewardId');
+
     var response = await widget.http.post(
       Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
       body: claimedRewardId == null ?
@@ -858,4 +840,74 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
           });
     };
   }
+  
 }
+
+class RewardsListDialog extends StatefulWidget {
+  const RewardsListDialog({Key? key, required this.inAppRewardsList, required this.updateSelectedRewardIndex}) : super(key: key);
+
+  final List<ClaimedReward> inAppRewardsList;
+  final Function updateSelectedRewardIndex;
+
+  @override
+  _RewardsListDialogState createState() => _RewardsListDialogState();
+}
+
+class _RewardsListDialogState extends State<RewardsListDialog> {
+  late int selectedRewardIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    selectedRewardIndex = -1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: MediaQuery.of(context).size.height*0.5,
+      width: MediaQuery.of(context).size.width*0.6,
+      child: ListView.builder(
+          shrinkWrap: true,
+          itemCount: widget.inAppRewardsList.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: index == this.selectedRewardIndex ? kLightBlue : Colors.white),
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white,
+              ),
+              child: ListTile(
+                title: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${widget.inAppRewardsList[index].reward.name}',
+                      style: bodyTextStyleBold,
+                    ),
+                    Text(
+                      'Discount: ${widget.inAppRewardsList[index].reward.discount}',
+                      style: subtitleTextStyle,
+                    ),
+                    Text(
+                      'Expires on: ${widget.inAppRewardsList[index].expiryDate.toString().split(' ')[0]}',
+                      style: subtitleTextStyle,
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  setState(() {
+                    this.selectedRewardIndex = index;
+                  });
+                  widget.updateSelectedRewardIndex(index);
+                },
+              ),
+            );
+          }
+      ),
+    );
+  }
+}
+
