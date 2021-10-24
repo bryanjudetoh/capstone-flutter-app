@@ -1,10 +1,7 @@
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:loadmore/loadmore.dart';
 import 'package:youthapp/models/reward.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/securestorage.dart';
@@ -31,13 +28,14 @@ class InitBrowseRewardsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: kBackground,
-      child: FutureBuilder<String>(
-        future: this.secureStorage.readSecureData('user'),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+      child: FutureBuilder<Map<String, dynamic>>(
+        future: initRewardsScreenData(),
+        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
           if (snapshot.hasData) {
-            User user = User.fromJson(jsonDecode(snapshot.data!));
-            return InitBrowseRewards(
-              user: user,
+            Map<String, dynamic> data = snapshot.data!;
+            return BrowseRewardsScreen(
+              user: data['user'],
+              initRewardsList: data['rewardsList'],
               secureStorage: secureStorage,
             );
           }
@@ -90,88 +88,14 @@ class InitBrowseRewardsScreen extends StatelessWidget {
     );
   }
 
-}
-
-class InitBrowseRewards extends StatelessWidget {
-  InitBrowseRewards({Key? key, required this.user, required this.secureStorage}) : super(key: key);
-
-  final skip = 0;
-  final orgName = '';
-  final User user;
-  final SecureStorage secureStorage;
-
-  final http = InterceptedHttp.build(
-    interceptors: [
-      AuthHeaderInterceptor(),
-    ],
-    retryPolicy: RefreshTokenRetryPolicy(),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: kBackground,
-      child: FutureBuilder<Map<String, dynamic>>(
-        future: initRewardsData(),
-        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          if (snapshot.hasData) {
-            Map<String, dynamic> data = snapshot.data!;
-            return BrowseRewardsScreen(initRewardsList: data['rewardsList'], user: user, secureStorage: secureStorage);
-          }
-          else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Icon(
-                    Icons.error_outline,
-                    color: Colors.red,
-                    size: 60,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: titleTwoTextStyleBold,
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-          else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    child: CircularProgressIndicator(),
-                    width: 60,
-                    height: 60,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Loading...',
-                      style: titleTwoTextStyleBold,
-                    ),
-                  )
-                ],
-              ),
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  Future<Map<String, dynamic>> initRewardsData() async {
+  Future<Map<String, dynamic>> initRewardsScreenData() async {
     Map<String, dynamic> data = {};
 
+    String userData = await this.secureStorage.readSecureData('user');
+    data['user'] = User.fromJson(jsonDecode(userData));
+
     var response = await http.get(
-        Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list?orgName=$orgName')
+        Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list?orgName=')
     );
 
     if (response.statusCode == 200) {
@@ -187,7 +111,7 @@ class InitBrowseRewards extends StatelessWidget {
       return data;
     }
     else {
-      String result = jsonDecode(response.body);
+      var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occurred during your search');
     }
@@ -215,28 +139,11 @@ class BrowseRewardsScreen extends StatefulWidget {
 
 class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
   late List<Reward> rewards;
-  late String orgName;
-  late int skip;
-  late bool isEndOfList;
-  ScrollController rewardsScrollController = new ScrollController();
 
   @override
   void initState() {
     super.initState();
-    isEndOfList = false;
-    orgName = '';
     this.rewards = widget.initRewardsList;
-    skip = rewards.length;
-    if (rewards.length < backendSkipLimit) {
-      isEndOfList = true;
-    }
-    this.rewardsScrollController.addListener(_scrollListener);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    rewardsScrollController.dispose();
   }
 
   final String placeholderPicUrl = placeholderRewardsPicUrl;
@@ -292,7 +199,17 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('My elixirs: ${widget.user.elixirBalance.toString()}', style: titleThreeTextStyleBold,),
+                          Row(
+                            children: [
+                              Text('My elixirs: ${widget.user.elixirBalance.toString()}', style: titleThreeTextStyleBold,),
+                              Image(
+                                image: AssetImage(
+                                    'assets/images/elixir.png'),
+                                height: 35,
+                                width: 35,
+                              ),
+                            ],
+                          ),
                           ElevatedButton(
                             onPressed: () {Navigator.pushNamed(context, '/my-rewards');},
                             child: Row(
@@ -323,74 +240,18 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     );
   }
 
-  void _scrollListener() {
-    if (rewardsScrollController.position.pixels == rewardsScrollController.position.maxScrollExtent && !isEndOfList) {
-      print('========END OF LIST=========');
-      loadMoreRewards();
-    }
-  }
-
-  void loadMoreRewards() async {
-
-    var response = await widget.http.get(
-        Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list?orgName=$orgName')
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> resultList = jsonDecode(response.body);
-
-      if (resultList.length > 0) {
-        List<Reward> rewardsList = [];
-        for (dynamic item in resultList) {
-          rewardsList.add(Reward.fromJson(Map<String, dynamic>.from(item)));
-        }
-
-        setState(() {
-          //this.activities.addAll(activityList.where((a) => this.activities.every((b) => a.activityId != b.activityId)));
-          this.rewards.addAll(rewardsList);
-          skip += resultList.length;
-        });
-      }
-      else {
-        print('no more to add');
-        setState(() {
-          this.isEndOfList = true;
-        });
-      }
-    }
-    else {
-      String result = jsonDecode(response.body);
-      print(result);
-      throw Exception('A problem occured while loading more rewards for browse rewards');
-    }
-  }
-
-  Future<bool> _loadMore() async {
-    await Future.delayed(Duration(seconds: 0, milliseconds: 500));
-    loadMoreRewards();
-    return true;
-  }
-
   Future<void> doRedemption(String rewardId, int? elixirCost) async {
     var response = await widget.http.post(
       Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/' + rewardId),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       print('redemption OK');
       var result = jsonDecode(response.body);
       print(result['status']);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertPopup(
-              title: 'Success!',
-              desc: 'Your redemption is successful',
-              func: () {
-              },
-            );
-          }
-      );
+
+      User user = await getUserDetails();
+      widget.secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
 
       //external reward
       if(result['status'] == 'issued') {
@@ -398,46 +259,32 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
             context: context,
             builder: (BuildContext context) {
               return AlertPopup(
-                title: 'Check your email!',
-                desc: 'Since your reward is external, it should have been emailed to you.',
+                title: 'External Reward Redemption Success!',
+                desc: 'Your redemption is successful! Since your reward is external, it should have been emailed to you.',
                 func: () {
+                  int count = 2;
+                  Navigator.of(context).popUntil((_) => count-- <= 0);
+                  Navigator.pushNamed(context, '/browse-rewards');
                 },
               );
             }
         );
       }
-
-      //deduct elixirs
-      if (elixirCost != null && elixirCost > 0) {
-        var currElixirBalance = widget.user.elixirBalance?.toInt();
-        var newElixirBalance = (elixirCost - currElixirBalance!);
-
-        final userBody = jsonEncode(<String, String> {
-          'elixirBalance': newElixirBalance.toString(),
-        });
-
-        final String accessToken = await widget.secureStorage.readSecureData('accessToken');
-
-        final userResponse = await widget.http.put(
-          Uri.parse('https://eq-lab-dev.me/api/mp/user'),
-          headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': 'Bearer $accessToken',
-          },
-          body: userBody,
+      else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'In App Reward Redemption Success!',
+                desc: 'Your redemption is successful!',
+                func: () {
+                  int count = 2;
+                  Navigator.of(context).popUntil((_) => count-- <= 0);
+                  Navigator.pushNamed(context, '/browse-rewards');
+                },
+              );
+            }
         );
-
-        if (userResponse.statusCode == 200) {
-          //reload page to show my elixirs
-          Navigator.of(context).pushNamedAndRemoveUntil('/init-home', (route) => false);
-        }
-        else if (userResponse.statusCode == 400) {
-          throw Exception(jsonDecode(response.body)['error']['message']);
-        }
-        else {
-          print(userResponse.body);
-          throw Exception('Unforseen error occured');
-        }
       }
     }
     else if (response.statusCode == 400) {
@@ -451,11 +298,11 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                 title: result['error']['name'],
                 desc: err,
                 func: () {
+                  Navigator.pop(context);
                 }
             );
           }
       );
-      throw Exception(result['error']['message']);
     }
     else {
       var result = jsonDecode(response.body);
@@ -466,284 +313,292 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
   }
 
   Widget displayBrowseRewards() {
-    return LoadMore(
-        isFinish: isEndOfList,
-        onLoadMore: _loadMore,
-        textBuilder: DefaultLoadMoreTextBuilder.english,
-        child: ListView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: rewards.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-                height: 680,
-                child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Card(
-                        margin: EdgeInsets.only(
-                          top: 10.0,
-                          bottom: 10.0,
-                        ),
-                        elevation: 6.0,
-                        shadowColor: Colors.black,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(30.0),
-                            ),
-                            child: Column(
-                                children: <Widget>[
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                                    child: Container(
-                                      height: 200,
+    return ListView.builder(
+        itemCount: rewards.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+              height: 680,
+              child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Card(
+                      margin: EdgeInsets.only(
+                        top: 10.0,
+                        bottom: 10.0,
+                      ),
+                      elevation: 6.0,
+                      shadowColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(30.0),
+                          ),
+                          child: Column(
+                              children: <Widget>[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                                  child: Container(
+                                    height: 200,
+                                    width: 500,
+                                    child: rewards[index].mediaContentUrls!.isEmpty
+                                        ? Image.network(
+                                      placeholderPicUrl,
                                       width: 500,
-                                      child: rewards[index].mediaContentUrls!.isEmpty
-                                          ? Image.network(
-                                        placeholderPicUrl,
-                                        width: 500,
-                                        height: 200,
-                                      )
-                                          : CarouselSlider(
-                                        options: CarouselOptions(
-                                          autoPlay: false,
-                                          enableInfiniteScroll: true,
-                                          viewportFraction: 1.0,
-                                        ),
-                                        items: rewards[index].mediaContentUrls!
-                                            .map(
-                                                (url) => Image.network(
-                                              url,
-                                              fit: BoxFit.fitHeight,
-                                            )
-                                        ).toList(),
+                                      height: 200,
+                                    )
+                                        : CarouselSlider(
+                                      options: CarouselOptions(
+                                        autoPlay: false,
+                                        enableInfiniteScroll: true,
+                                        viewportFraction: 1.0,
                                       ),
+                                      items: rewards[index].mediaContentUrls!
+                                          .map(
+                                              (url) => Image.network(
+                                            url,
+                                            fit: BoxFit.fitHeight,
+                                          )
+                                      ).toList(),
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context).size.width*0.55,
-                                          child: Text(
-                                            '${rewards[index].name}',
-                                            style: titleTwoTextStyleBold,
-                                            textAlign: TextAlign.left,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width: MediaQuery.of(context).size.width*0.55,
+                                        child: Text(
+                                          '${rewards[index].name}',
+                                          style: titleTwoTextStyleBold,
+                                          textAlign: TextAlign.left,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceEvenly,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          children: <Widget>[
-                                            Image(
-                                              image: AssetImage(
-                                                  'assets/images/elixir.png'),
-                                              height: 40,
-                                              width: 40,
-                                            ),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(top: 5),
-                                              child: Text(
-                                                '${rewards[index].elixirCost}',
-                                                style: TextStyle(
-                                                  fontFamily: 'Nunito',
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 24,
-                                                  color: Color(0xFF5EC8D8),
-                                                ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceEvenly,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        children: <Widget>[
+                                          Image(
+                                            image: AssetImage(
+                                                'assets/images/elixir.png'),
+                                            height: 40,
+                                            width: 40,
+                                          ),
+                                          SizedBox(
+                                            width: 2,
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 5),
+                                            child: Text(
+                                              '${rewards[index].elixirCost}',
+                                              style: TextStyle(
+                                                fontFamily: 'Nunito',
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 24,
+                                                color: Color(0xFF5EC8D8),
                                               ),
                                             ),
-                                          ],
+                                          ),
+                                        ],
+                                      )
+                                    ]),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      '${rewards[index].organisation!.name}',
+                                      style: bodyTextStyle,
+                                      textAlign: TextAlign.left,
+                                    )),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(children: [
+                                        Text(
+                                          'Start date',
+                                          style: captionTextStyle,
+                                        ),
+                                        SizedBox(
+                                          height: 1,
+                                        ),
+                                        Text(
+                                          '${rewards[index].rewardStartTime.toString().split(' ')[0]}',
+                                          style: bodyTextStyleBold,
                                         )
                                       ]),
-                                  Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${rewards[index].organisation!.name}',
-                                        style: bodyTextStyle,
-                                        textAlign: TextAlign.left,
-                                      )),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        Column(children: [
-                                          Text(
-                                            'Start date',
-                                            style: captionTextStyle,
-                                          ),
-                                          SizedBox(
-                                            height: 1,
-                                          ),
-                                          Text(
-                                            '${rewards[index].rewardStartTime.toString().split(' ')[0]}',
-                                            style: bodyTextStyleBold,
-                                          )
-                                        ]),
+                                      SizedBox(
+                                        width: 70,
+                                      ),
+                                      Column(children: [
+                                        Text(
+                                          'End date',
+                                          style: captionTextStyle,
+                                        ),
                                         SizedBox(
-                                          width: 70,
+                                          height: 1,
                                         ),
-                                        Column(children: [
-                                          Text(
-                                            'End date',
-                                            style: captionTextStyle,
-                                          ),
-                                          SizedBox(
-                                            height: 1,
-                                          ),
-                                          Text(
-                                            '${rewards[index].rewardEndTime.toString().split(' ')[0]}',
-                                            style: bodyTextStyleBold,
-                                          )
-                                        ]),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.all(20.0),
-                                    margin: EdgeInsets.only(bottom: 30.0),
-                                    decoration: BoxDecoration(
-                                      color: kBluishWhite,
-                                      border: Border.all(
-                                        width: 3,
-                                        color: kBluishWhite,
-                                      ),
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-                                    width: 500,
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: <Widget>[
-                                        SizedBox(height: 1,),
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Column(children: [
-                                              Text(
-                                                'Max claims per user',
-                                                style: captionTextStyle,
-                                              ),
-                                              SizedBox(
-                                                height: 1,
-                                              ),
-                                              Text(
-                                                '${rewards[index].maxClaimPerUser}',
-                                                style: bodyTextStyleBold,
-                                              )
-                                            ]),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Column(children: [
-                                              Text(
-                                                'Reward type:',
-                                                style: captionTextStyle,
-                                              ),
-                                              SizedBox(
-                                                height: 1,
-                                              ),
-                                              Text(
-                                                '${rewardTypeMap[rewards[index].type]}',
-                                                style: bodyTextStyleBold,
-                                              )
-                                            ]),
-                                          ],
-                                        ),
-                                        SizedBox(height: 1,),
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: <Widget>[
-                                            Column(children: [
-                                              Text(
-                                                'No. claimed',
-                                                style: captionTextStyle,
-                                              ),
-                                              SizedBox(
-                                                height: 1,
-                                              ),
-                                              Row(children: [
-                                                Text(
-                                                    '${rewards[index].numClaimed == null ? 0: rewards[index].numClaimed }',
-                                                    style: bodyTextStyleBold),
-                                                Text(' / ', style: bodyTextStyleBold),
-                                                Text('${rewards[index].quantity}', style: bodyTextStyleBold),
-                                              ]),
-                                            ]),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            Column(children: [
-                                              Container(
-                                                child: rewards[index].expiryDate != null
-                                                    ? Text('Use by date:', style: captionTextStyle,)
-                                                    : Text('Use within:', style: captionTextStyle,),
-                                              ),
-                                              SizedBox(
-                                                height: 1,
-                                              ),
-                                              Container(
-                                                child: rewards[index].expiryDate != null
-                                                    ? Text('${rewards[index].expiryDate.toString().split(' ')[0]}', style: bodyTextStyleBold)
-                                                    : Text('${rewards[index].expiryDuration!} hours', style: bodyTextStyleBold)
-                                                ,
-                                              ),
-                                            ]),
-                                          ],
-                                        ),
-                                        SizedBox(height: 1,),
-                                      ],
-                                    ),
-                                  ),
-                                  Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${rewards[index].description}',
-                                        style: bodyTextStyle,
-                                        textAlign: TextAlign.left,
-                                      )),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: [
-                                      RoundedButton(
-                                          func: () {
-                                            doRedemption(rewards[index].rewardId, rewards[index].elixirCost);
-                                          },
-                                          colorFont: Colors.white,
-                                          colorBG: kLightBlue,
-                                          title: 'Redeem'
-                                      ),
+                                        Text(
+                                          '${rewards[index].rewardEndTime.toString().split(' ')[0]}',
+                                          style: bodyTextStyleBold,
+                                        )
+                                      ]),
                                     ],
-                                  )
-                                ]
-                            ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.all(20.0),
+                                  margin: EdgeInsets.only(bottom: 30.0),
+                                  decoration: BoxDecoration(
+                                    color: kBluishWhite,
+                                    border: Border.all(
+                                      width: 3,
+                                      color: kBluishWhite,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  width: 500,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      SizedBox(height: 1,),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Column(children: [
+                                            Text(
+                                              'Max claims per user',
+                                              style: captionTextStyle,
+                                            ),
+                                            SizedBox(
+                                              height: 1,
+                                            ),
+                                            Text(
+                                              '${rewards[index].maxClaimPerUser}',
+                                              style: bodyTextStyleBold,
+                                            )
+                                          ]),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Column(children: [
+                                            Text(
+                                              'Reward type:',
+                                              style: captionTextStyle,
+                                            ),
+                                            SizedBox(
+                                              height: 1,
+                                            ),
+                                            Text(
+                                              '${rewardTypeMap[rewards[index].type]}',
+                                              style: bodyTextStyleBold,
+                                            )
+                                          ]),
+                                        ],
+                                      ),
+                                      SizedBox(height: 1,),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Column(children: [
+                                            Text(
+                                              'No. claimed',
+                                              style: captionTextStyle,
+                                            ),
+                                            SizedBox(
+                                              height: 1,
+                                            ),
+                                            Row(children: [
+                                              Text(
+                                                '${rewards[index].numClaimed} / ${rewards[index].quantity}',
+                                                style: bodyTextStyleBold,
+                                              ),
+                                            ]),
+                                          ]),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Column(children: [
+                                            Container(
+                                              child: rewards[index].expiryDate != null
+                                                  ? Text('Use by date:', style: captionTextStyle,)
+                                                  : Text('Use within:', style: captionTextStyle,),
+                                            ),
+                                            SizedBox(
+                                              height: 1,
+                                            ),
+                                            Container(
+                                              child: rewards[index].expiryDate != null
+                                                  ? Text('${rewards[index].expiryDate.toString().split(' ')[0]}', style: bodyTextStyleBold)
+                                                  : Text('${rewards[index].expiryDuration!} hours', style: bodyTextStyleBold)
+                                              ,
+                                            ),
+                                          ]),
+                                        ],
+                                      ),
+                                      SizedBox(height: 1,),
+                                    ],
+                                  ),
+                                ),
+                                Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      '${rewards[index].description}',
+                                      style: bodyTextStyle,
+                                      textAlign: TextAlign.left,
+                                    )),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    RoundedButton(
+                                        func: () {
+                                          doRedemption(rewards[index].rewardId, rewards[index].elixirCost);
+                                        },
+                                        colorFont: Colors.white,
+                                        colorBG: kLightBlue,
+                                        title: 'Redeem'
+                                    ),
+                                  ],
+                                )
+                              ]
                           ),
-                        )
-                    )
-                )
-            );
-          }
-        )
+                        ),
+                      )
+                  )
+              )
+          );
+        }
     );
+  }
+
+  Future<User> getUserDetails() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while retrieving user details');
+    }
   }
 }
