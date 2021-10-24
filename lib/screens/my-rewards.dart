@@ -23,7 +23,23 @@ class MyRewardsScreen extends StatefulWidget {
   _MyRewardsScreenState createState() => _MyRewardsScreenState();
 }
 
-class _MyRewardsScreenState extends State<MyRewardsScreen> {
+class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderStateMixin {
+
+  final String placeholderPicUrl = placeholderRewardsPicUrl;
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    tabController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,108 +47,190 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
       body: SafeArea(
         child: Container(
           padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios,
-                          color: kBlack,
-                          size: 25,
-                        )
-                      ],
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
-                      primary: kGrey,
-                    ),
-                  ),
-                  Text(
-                    'My Rewards',
-                    style: titleOneTextStyleBold,
-                  ),
-                  Flexible(
-                    child: SizedBox(width: 65),
-                  )
-                ],
-              ),
-              FutureBuilder<List<ClaimedReward>>(
-                  future: retrieveMyRewards(),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<List<ClaimedReward>> snapshot) {
-                    if (snapshot.hasData) {
-                      List<ClaimedReward> myRewardsList = snapshot.data!;
-                      return Expanded(
-                        child: displayMyRewards(myRewardsList),
-                      );
-                    }
-                    else if (snapshot.hasError) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+          child: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverAppBar(
+                  pinned: false,
+                  backgroundColor: Colors.white,
+                  automaticallyImplyLeading: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    collapseMode: CollapseMode.pin,
+                    background: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
-                            Icon(
-                              Icons.error_outline,
-                              color: Colors.red,
-                              size: 60,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 16),
-                              child: Text(
-                                'Error: ${snapshot.error}',
-                                style: titleTwoTextStyleBold,
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.arrow_back_ios,
+                                    color: kBlack,
+                                    size: 25,
+                                  )
+                                ],
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+                                primary: kGrey,
                               ),
                             ),
-                          ],
-                        ),
-                      );
-                    }
-                    else {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              child: CircularProgressIndicator(),
-                              width: 60,
-                              height: 60,
+                            Text(
+                              'My Rewards',
+                              style: titleOneTextStyleBold,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 16),
-                              child: Text(
-                                'Loading...',
-                                style: titleTwoTextStyleBold,
-                              ),
+                            Flexible(
+                              child: SizedBox(width: 65),
                             )
                           ],
                         ),
-                      );
-                    }
-                  }
-              ),
-            ],
+                      ],
+                    ),
+                  ),
+                  bottom: TabBar(
+                    unselectedLabelColor: Colors.blueGrey,
+                    indicatorColor: kLightBlue,
+                    labelColor: kLightBlue,
+                    tabs: [
+                      Tab(child: Text('Active', style: bodyTextStyle,)),
+                      Tab(child: Text('History', style: bodyTextStyle,)),
+                    ],
+                    controller: tabController,
+                  ),
+                ),
+              ];
+            },
+            body: TabBarView(
+                controller: tabController,
+                physics: NeverScrollableScrollPhysics(),
+                children: [
+                  FutureBuilder<List<ClaimedReward>>(
+                      future: retrieveMyRewards(active: true),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<ClaimedReward>> snapshot) {
+                        if (snapshot.hasData) {
+                          List<ClaimedReward> myRewardsList = snapshot.data!;
+                          return displayMyRewards(myRewardsList: myRewardsList, isActive: true);
+                        }
+                        else if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 60,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    'Error: ${snapshot.error}',
+                                    style: titleTwoTextStyleBold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        else {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  child: CircularProgressIndicator(),
+                                  width: 60,
+                                  height: 60,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    'Loading...',
+                                    style: titleTwoTextStyleBold,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                      }
+                  ),
+                  FutureBuilder<List<ClaimedReward>>(
+                      future: retrieveMyRewards(active: false),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<ClaimedReward>> snapshot) {
+                        if (snapshot.hasData) {
+                          List<ClaimedReward> myRewardsList = snapshot.data!;
+                          return displayMyRewards(myRewardsList: myRewardsList, isActive: false);
+                        }
+                        else if (snapshot.hasError) {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red,
+                                  size: 60,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    'Error: ${snapshot.error}',
+                                    style: titleTwoTextStyleBold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }
+                        else {
+                          return Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  child: CircularProgressIndicator(),
+                                  width: 60,
+                                  height: 60,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  child: Text(
+                                    'Loading...',
+                                    style: titleTwoTextStyleBold,
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                      }
+                  ),
+                ]
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<List<ClaimedReward>> retrieveMyRewards() async {
+  Future<List<ClaimedReward>> retrieveMyRewards({required bool active}) async {
     final response = await widget.http.get(
-      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list/claimed'),
+      Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/list/claimed?active=$active'),
     );
 
     if (response.statusCode == 200) {
@@ -152,7 +250,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
     }
   }
 
-  Widget displayMyRewards(List<ClaimedReward> myRewardsList) {
+  Widget displayMyRewards({required List<ClaimedReward> myRewardsList, required bool isActive}) {
     if (myRewardsList.isEmpty) {
       return Center(
         child: Column(
@@ -163,7 +261,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
               size: 100,
             ),
             Text(
-              'You do not have any claimed rewards... \nGo get some!',
+              'You do not have any ${isActive ? 'active' : 'history of'} rewards... \nGo get some!',
               style: titleTwoTextStyleBold,
               textAlign: TextAlign.center,
             ),
@@ -177,7 +275,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
         itemCount: myRewardsList.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-              height: 300,
+              height: 600,
               child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Card(
@@ -198,28 +296,31 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                           ),
                           child: Column(
                             children: <Widget>[
-                              Container(
-                                height: 200,
-                                width: 500,
-                                child: myRewardsList[index].reward.mediaContentUrls!.isEmpty
-                                  ? Image.network(
-                                  placeholderRewardsPicUrl,
-                                  width: 500,
+                              ClipRRect(
+                                borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                                child: Container(
                                   height: 200,
-                                )
-                                  : CarouselSlider(
-                                  options: CarouselOptions(
-                                    autoPlay: false,
-                                    enableInfiniteScroll: true,
-                                    viewportFraction: 1.0,
+                                  width: 500,
+                                  child: myRewardsList[index].reward.mediaContentUrls!.isEmpty
+                                      ? Image.network(
+                                    placeholderPicUrl,
+                                    width: 500,
+                                    height: 200,
+                                  )
+                                      : CarouselSlider(
+                                    options: CarouselOptions(
+                                      autoPlay: false,
+                                      enableInfiniteScroll: true,
+                                      viewportFraction: 1.0,
+                                    ),
+                                    items: myRewardsList[index].reward.mediaContentUrls!
+                                        .map(
+                                            (url) => Image.network(
+                                          url,
+                                          fit: BoxFit.fitHeight,
+                                        )
+                                    ).toList(),
                                   ),
-                                  items: myRewardsList[index].reward.mediaContentUrls!
-                                      .map(
-                                          (url) => Image.network(
-                                        url,
-                                        fit: BoxFit.fitHeight,
-                                      )
-                                  ).toList(),
                                 ),
                               ),
                               SizedBox( height: 10, ),
@@ -227,10 +328,14 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Reward name',
-                                      style: titleOneTextStyleBold,
-                                      textAlign: TextAlign.left,
+                                    Container(
+                                      width: MediaQuery.of(context).size.width*0.55,
+                                      child: Text(
+                                        '${myRewardsList[index].reward.name}',
+                                        style: titleOneTextStyleBold,
+                                        textAlign: TextAlign.left,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                     Row(
                                       mainAxisAlignment:
@@ -250,7 +355,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                                         Padding(
                                           padding: EdgeInsets.only(top: 5),
                                           child: Text(
-                                            '15',
+                                            '${myRewardsList[index].reward.elixirCost}',
                                             style: TextStyle(
                                               fontFamily: 'Nunito',
                                               fontWeight: FontWeight.bold,
@@ -265,7 +370,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                               Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    'Organisation',
+                                    '${myRewardsList[index].reward.organisation!.name}',
                                     style: bodyTextStyle,
                                     textAlign: TextAlign.left,
                                   )),
@@ -277,14 +382,14 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                                   children: [
                                     Column(children: [
                                       Text(
-                                        'Start date',
+                                        'Claimed on:',
                                         style: captionTextStyle,
                                       ),
                                       SizedBox(
                                         height: 1,
                                       ),
                                       Text(
-                                        '2021.07.03',
+                                        '${myRewardsList[index].claimDate.toString().split(' ')[0]}',
                                         style: bodyTextStyleBold,
                                       )
                                     ]),
@@ -293,14 +398,14 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                                     ),
                                     Column(children: [
                                       Text(
-                                        'End date',
+                                        'Expires on:',
                                         style: captionTextStyle,
                                       ),
                                       SizedBox(
                                         height: 1,
                                       ),
                                       Text(
-                                        '2021.07.16',
+                                        '${myRewardsList[index].expiryDate.toString().split(' ')[0]}',
                                         style: bodyTextStyleBold,
                                       )
                                     ]),
@@ -325,41 +430,62 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> {
                                   children: [
                                     Column(children: [
                                       Text(
-                                        'Quantity',
+                                        'Status:',
                                         style: captionTextStyle,
                                       ),
                                       SizedBox(
                                         height: 1,
                                       ),
                                       Text(
-                                        '10',
+                                        '${getCapitalizeString(str: myRewardsList[index].status!)}',
                                         style: bodyTextStyleBold,
                                       )
                                     ]),
-                                    SizedBox(
-                                      width: 70,
-                                    ),
+                                    SizedBox(width: myRewardsList[index].reward.type == 'inAppReward' ? 35 : 70,),
                                     Column(children: [
                                       Text(
-                                        'No. claimed',
+                                        'Reward Type:',
                                         style: captionTextStyle,
                                       ),
                                       SizedBox(
                                         height: 1,
                                       ),
-                                      Row(children: [
-                                        Text('1', style: bodyTextStyleBold),
-                                        Text(' / ', style: bodyTextStyleBold),
-                                        Text('50', style: bodyTextStyleBold),
-                                      ]),
+                                      Text(
+                                        '${rewardTypeMap[myRewardsList[index].reward.type]}',
+                                        style: bodyTextStyleBold,
+                                      )
                                     ]),
+                                    if (myRewardsList[index].reward.type == 'inAppReward')
+                                      Row(
+                                        children: <Widget>[
+                                          SizedBox(
+                                            width: 35,
+                                          ),
+                                          Column(children: [
+                                            Text(
+                                              'Discount:',
+                                              style: captionTextStyle,
+                                            ),
+                                            SizedBox(
+                                              height: 1,
+                                            ),
+                                            Text(
+                                                myRewardsList[index].reward.discount != null
+                                                    ? '\$${myRewardsList[index].reward.discount!.toStringAsFixed(2)}'
+                                                    : '\$0.00'
+                                              ,
+                                              style: bodyTextStyleBold,
+                                            ),
+                                          ]),
+                                        ],
+                                      ),
                                   ],
                                 ),
                               ),
                               Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    'Description',
+                                    '${myRewardsList[index].reward.description}',
                                     style: bodyTextStyle,
                                     textAlign: TextAlign.left,
                                   )
