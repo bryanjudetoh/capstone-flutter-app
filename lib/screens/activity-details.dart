@@ -272,7 +272,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Column(children: [
                           Text(
@@ -287,9 +287,6 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             style: bodyTextStyleBold,
                           )
                         ]),
-                        SizedBox(
-                          width: 70,
-                        ),
                         Column(children: [
                           Text(
                             'End date',
@@ -303,6 +300,24 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             style: bodyTextStyleBold,
                           )
                         ]),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              'Price',
+                              style: captionTextStyle,
+                            ),
+                            SizedBox(
+                              height: 1,
+                            ),
+                            Text(
+                                widget.activity.registrationPrice! > 0
+                                    ? '\$${widget.activity.registrationPrice!.toStringAsFixed(2)}'
+                                    : 'Free'
+                              ,
+                              style: bodyTextStyleBold,
+                            )
+                          ],
+                        ),
                       ],
                     ),
                   )
@@ -649,7 +664,11 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                     if (this.selectedRewardIndex > -1) {
                       Navigator.of(context).pop();
                       try {
-                        await doActivityRegistration(activityId: activityId, claimedRewardId: inAppRewardsList[this.selectedRewardIndex].claimedRewardId);
+                        await doActivityRegistration(
+                            activityId: activityId,
+                            claimedRewardId: inAppRewardsList[this.selectedRewardIndex].claimedRewardId,
+                            claimRewardDiscount: inAppRewardsList[this.selectedRewardIndex].reward.discount!,
+                        );
                       }
                       on Exception catch (err) {
                         showDialog(
@@ -703,7 +722,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
-  Future<void> doActivityRegistration({required String activityId, String? claimedRewardId}) async {
+  Future<void> doActivityRegistration({required String activityId, String? claimedRewardId, double? claimRewardDiscount}) async {
     print('activityId: $activityId');
     print('claimedRewardId: $claimedRewardId');
 
@@ -727,7 +746,10 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
           builder: (BuildContext context) {
             return AlertPopup(
               title: 'Success!',
-              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation',
+              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
+                  '${claimRewardDiscount != null
+                      ? '\n\nThe final price paid for this activity is \$${(widget.activity.registrationPrice! - claimRewardDiscount).toStringAsFixed(2)}!'
+                      : ''}',
               func: () {
                 int count = 2;
                 Navigator.of(context).popUntil((_) => count-- <= 0);

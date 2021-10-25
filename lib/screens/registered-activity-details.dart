@@ -279,7 +279,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Column(children: [
                           Text(
@@ -294,9 +294,6 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             style: bodyTextStyleBold,
                           )
                         ]),
-                        SizedBox(
-                          width: 70,
-                        ),
                         Column(children: [
                           Text(
                             'End date',
@@ -310,6 +307,24 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             style: bodyTextStyleBold,
                           )
                         ]),
+                        Column(
+                          children: <Widget>[
+                            Text(
+                              'Price',
+                              style: captionTextStyle,
+                            ),
+                            SizedBox(
+                              height: 1,
+                            ),
+                            Text(
+                              widget.participant.activity.registrationPrice! > 0
+                                  ? '\$${widget.participant.activity.registrationPrice!.toStringAsFixed(2)}'
+                                  : 'Free'
+                              ,
+                              style: bodyTextStyleBold,
+                            )
+                          ],
+                        ),
                       ],
                     ),
                   )
