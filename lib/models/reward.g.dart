@@ -33,7 +33,7 @@ Reward _$RewardFromJson(Map<String, dynamic> json) {
     expiryDate: json['expiryDate'] == null
         ? null
         : DateTime.parse(json['expiryDate'] as String),
-    numClaimed: json['numClaimed'] as int?,
+    totalClaimed: json['totalClaimed'] as int?,
     maxClaimPerUser: json['maxClaimPerUser'] as int?,
     quantity: json['quantity'] as int?,
     discount: (json['discount'] as num?)?.toDouble(),
@@ -56,7 +56,7 @@ Map<String, dynamic> _$RewardToJson(Reward instance) => <String, dynamic>{
       'rewardEndTime': instance.rewardEndTime?.toIso8601String(),
       'expiryDuration': instance.expiryDuration,
       'expiryDate': instance.expiryDate?.toIso8601String(),
-      'numClaimed': instance.numClaimed,
+      'totalClaimed': instance.totalClaimed,
       'maxClaimPerUser': instance.maxClaimPerUser,
       'quantity': instance.quantity,
       'discount': instance.discount,

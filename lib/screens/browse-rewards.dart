@@ -139,11 +139,13 @@ class BrowseRewardsScreen extends StatefulWidget {
 
 class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
   late List<Reward> rewards;
+  late int myElixirs;
 
   @override
   void initState() {
     super.initState();
     this.rewards = widget.initRewardsList;
+    this.myElixirs = widget.user.elixirBalance!;
   }
 
   final String placeholderPicUrl = placeholderRewardsPicUrl;
@@ -201,7 +203,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                         children: [
                           Row(
                             children: [
-                              Text('My elixirs: ${widget.user.elixirBalance.toString()}', style: titleThreeTextStyleBold,),
+                              Text('My elixirs: ${this.myElixirs.toString()}', style: titleThreeTextStyleBold,),
                               Image(
                                 image: AssetImage(
                                     'assets/images/elixir.png'),
@@ -252,6 +254,9 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
 
       User user = await getUserDetails();
       widget.secureStorage.writeSecureData('user', jsonEncode(user.toJson()));
+      setState(() {
+        this.myElixirs = user.elixirBalance!;
+      });
 
       //external reward
       if(result['status'] == 'issued') {
@@ -262,9 +267,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                 title: 'External Reward Redemption Success!',
                 desc: 'Your redemption is successful! Since your reward is external, it should have been emailed to you.',
                 func: () {
-                  int count = 2;
-                  Navigator.of(context).popUntil((_) => count-- <= 0);
-                  Navigator.pushNamed(context, '/browse-rewards');
+                  Navigator.pop(context);
                 },
               );
             }
@@ -278,9 +281,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                 title: 'In App Reward Redemption Success!',
                 desc: 'Your redemption is successful!',
                 func: () {
-                  int count = 2;
-                  Navigator.of(context).popUntil((_) => count-- <= 0);
-                  Navigator.pushNamed(context, '/browse-rewards');
+                  Navigator.pop(context);
                 },
               );
             }
@@ -523,7 +524,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                                             ),
                                             Row(children: [
                                               Text(
-                                                '${rewards[index].numClaimed} / ${rewards[index].quantity}',
+                                                '${rewards[index].totalClaimed} / ${rewards[index].quantity}',
                                                 style: bodyTextStyleBold,
                                               ),
                                             ]),
