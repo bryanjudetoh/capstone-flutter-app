@@ -318,7 +318,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
         itemCount: rewards.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-              height: 680,
+              height: rewards[index].type == 'inAppReward' ? 730 : 680,
               child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Card(
@@ -472,85 +472,109 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   width: 500,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  child: Column(
                                     children: <Widget>[
-                                      SizedBox(height: 1,),
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Column(children: [
-                                            Text(
-                                              'Max claims per user',
-                                              style: captionTextStyle,
-                                            ),
-                                            SizedBox(
-                                              height: 1,
-                                            ),
-                                            Text(
-                                              '${rewards[index].maxClaimPerUser}',
-                                              style: bodyTextStyleBold,
-                                            )
-                                          ]),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Column(children: [
-                                            Text(
-                                              'Reward type:',
-                                              style: captionTextStyle,
-                                            ),
-                                            SizedBox(
-                                              height: 1,
-                                            ),
-                                            Text(
-                                              '${rewardTypeMap[rewards[index].type]}',
-                                              style: bodyTextStyleBold,
-                                            )
-                                          ]),
-                                        ],
-                                      ),
-                                      SizedBox(height: 1,),
-                                      Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: <Widget>[
-                                          Column(children: [
+                                          SizedBox(height: 1,),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Column(children: [
+                                                Text(
+                                                  'Max claims per user',
+                                                  style: captionTextStyle,
+                                                ),
+                                                SizedBox(
+                                                  height: 1,
+                                                ),
+                                                Text(
+                                                  '${rewards[index].maxClaimPerUser}',
+                                                  style: bodyTextStyleBold,
+                                                )
+                                              ]),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Column(children: [
+                                                Text(
+                                                  'Reward type:',
+                                                  style: captionTextStyle,
+                                                ),
+                                                SizedBox(
+                                                  height: 1,
+                                                ),
+                                                Text(
+                                                  '${rewardTypeMap[rewards[index].type]}',
+                                                  style: bodyTextStyleBold,
+                                                )
+                                              ]),
+                                            ],
+                                          ),
+                                          SizedBox(height: 1,),
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+                                              Column(children: [
+                                                Text(
+                                                  'No. claimed',
+                                                  style: captionTextStyle,
+                                                ),
+                                                SizedBox(
+                                                  height: 1,
+                                                ),
+                                                Row(children: [
+                                                  Text(
+                                                    '${rewards[index].totalClaimed} / ${rewards[index].quantity}',
+                                                    style: bodyTextStyleBold,
+                                                  ),
+                                                ]),
+                                              ]),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Column(children: [
+                                                Container(
+                                                  child: rewards[index].expiryDate != null
+                                                      ? Text('Use by date:', style: captionTextStyle,)
+                                                      : Text('Use within:', style: captionTextStyle,),
+                                                ),
+                                                SizedBox(
+                                                  height: 1,
+                                                ),
+                                                Container(
+                                                  child: rewards[index].expiryDate != null
+                                                      ? Text('${rewards[index].expiryDate.toString().split(' ')[0]}', style: bodyTextStyleBold)
+                                                      : Text('${rewards[index].expiryDuration!} hours', style: bodyTextStyleBold)
+                                                  ,
+                                                ),
+                                              ]),
+                                            ],
+                                          ),
+                                          SizedBox(height: 1,),
+                                        ],
+                                      ),
+                                      if (rewards[index].type == 'inAppReward')
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
                                             Text(
-                                              'No. claimed',
+                                              'Discount:',
                                               style: captionTextStyle,
                                             ),
                                             SizedBox(
                                               height: 1,
                                             ),
-                                            Row(children: [
-                                              Text(
-                                                '${rewards[index].totalClaimed} / ${rewards[index].quantity}',
-                                                style: bodyTextStyleBold,
-                                              ),
-                                            ]),
-                                          ]),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Column(children: [
-                                            Container(
-                                              child: rewards[index].expiryDate != null
-                                                  ? Text('Use by date:', style: captionTextStyle,)
-                                                  : Text('Use within:', style: captionTextStyle,),
-                                            ),
-                                            SizedBox(
-                                              height: 1,
-                                            ),
-                                            Container(
-                                              child: rewards[index].expiryDate != null
-                                                  ? Text('${rewards[index].expiryDate.toString().split(' ')[0]}', style: bodyTextStyleBold)
-                                                  : Text('${rewards[index].expiryDuration!} hours', style: bodyTextStyleBold)
+                                            Text(
+                                              rewards[index].discount != null
+                                                  ? '\$${rewards[index].discount!.toStringAsFixed(2)}'
+                                                  : '\$0.00'
                                               ,
+                                              style: bodyTextStyleBold,
                                             ),
-                                          ]),
-                                        ],
-                                      ),
-                                      SizedBox(height: 1,),
+                                          ],
+                                        )
                                     ],
                                   ),
                                 ),

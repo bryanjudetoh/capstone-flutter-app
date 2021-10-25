@@ -888,7 +888,10 @@ class _RewardsListDialogState extends State<RewardsListDialog> {
                       style: bodyTextStyleBold,
                     ),
                     Text(
-                      'Discount: ${widget.inAppRewardsList[index].reward.discount}',
+                      'Discount: ${widget.inAppRewardsList[index].reward.discount != null
+                          ? '\$${widget.inAppRewardsList[index].reward.discount!.toStringAsFixed(2)}'
+                          : '\$0.00'
+                      }',
                       style: subtitleTextStyle,
                     ),
                     Text(
