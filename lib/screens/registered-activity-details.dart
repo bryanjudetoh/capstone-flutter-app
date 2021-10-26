@@ -602,6 +602,29 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                   },
                 );
               }
+              else if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 40,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(
+                          'Error: ${snapshot.error}',
+                          style: titleTwoTextStyleBold,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
               return Container();
             }
           );
