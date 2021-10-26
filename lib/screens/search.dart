@@ -54,6 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
     activitiesScrollController.dispose();
     organisationsScrollController.dispose();
     searchbarScrollController.dispose();
+    fsbController.dispose();
     super.dispose();
   }
 
@@ -83,6 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
       width: isPortrait ? 600 : 500,
       height: 65,
       debounceDelay: const Duration(milliseconds: 500),
+      transition: CircularFloatingSearchBarTransition(),
       controller: fsbController,
       scrollController: searchbarScrollController,
       onFocusChanged: (isFocused) {
@@ -120,14 +122,16 @@ class _SearchScreenState extends State<SearchScreen> {
         }
       },
       onSubmitted: (query) async {
+        setState(() {
+          this.skip = 0;
+          this.isEndOfList = false;
+        });
         if (currentSearchTypeIsOrg) {
           List<Organisation>? result = await performOrganisationsQuery(query);
           if (result != null) {
             setState(() {
               this.organisations = result;
               this.currentQuery = query;
-              this.skip = 0;
-              this.isEndOfList = false;
             });
           }
         }
@@ -137,13 +141,10 @@ class _SearchScreenState extends State<SearchScreen> {
             setState(() {
               this.activities = result;
               this.currentQuery = query;
-              this.skip = 0;
-              this.isEndOfList = false;
             });
           }
         }
       },
-      transition: CircularFloatingSearchBarTransition(),
       actions: [
         if (!currentSearchTypeIsOrg)
           FloatingSearchBarAction(
@@ -174,7 +175,6 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         );
       },
-      isScrollControlled: true,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,

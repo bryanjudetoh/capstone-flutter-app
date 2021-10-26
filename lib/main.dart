@@ -11,6 +11,7 @@ import 'package:youthapp/screens/my-rewards.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/organisation-details.dart';
 import 'package:youthapp/screens/registered-activity-details.dart';
+import 'package:youthapp/screens/search-friends.dart';
 import 'package:youthapp/screens/search.dart';
 import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/fb-signup.dart';
@@ -93,6 +94,7 @@ class _MyAppState extends State<MyApp> {
         '/browse-rewards': (context) => InitBrowseRewardsScreen(),
         '/leaderboard': (context) => InitLeaderBoardScreen(),
         '/my-rewards': (context) => MyRewardsScreen(),
+        '/search-friends': (context) => SearchFriendsScreen(),
       }
     );
   }
