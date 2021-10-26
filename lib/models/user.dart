@@ -6,8 +6,7 @@ class User {
   @JsonKey(required: true, disallowNullValue: true)
   String userId;
 
-  @JsonKey(required: true)
-  String email;
+  String? email;
 
   String? mobile;
 
@@ -49,7 +48,7 @@ class User {
   List<Map<String, dynamic>>? rewardList;
   int? numFriends;
 
-  User({required this.userId, required this.email, this.mobile, required this.firstName, required this.lastName,
+  User({required this.userId, this.email, this.mobile, required this.firstName, required this.lastName,
     this.gender, this.age, this.dob,
     this.address1, this.address2, this.address3,
     this.postalCode, this.countryCode, this.city, this.school,

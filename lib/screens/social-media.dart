@@ -52,7 +52,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                           ),
                           IconButton(
                             onPressed: () {
-                              //Navigator.of(context).pushNamed('/search-friends');
+                              Navigator.of(context).pushNamed('/search-friends');
                             },
                             icon: Icon(Icons.search),
                             iconSize: 30,
