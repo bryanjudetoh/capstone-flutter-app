@@ -46,6 +46,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
     rewardList: (json['rewardList'] as List<dynamic>?)
         ?.map((e) => e as Map<String, dynamic>)
         .toList(),
+    numFriends: json['numFriends'] as int?,
   );
 }
 
@@ -77,4 +78,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'potionBalance': instance.potionBalance,
       'elixirBalance': instance.elixirBalance,
       'rewardList': instance.rewardList,
+      'numFriends': instance.numFriends,
     };

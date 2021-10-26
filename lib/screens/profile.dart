@@ -16,14 +16,20 @@ class InitProfileScreenBody extends StatelessWidget {
   InitProfileScreenBody({Key? key}) : super(key: key);
 
   final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
-        future: this.secureStorage.readSecureData('user'),
-        builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+    return FutureBuilder<User>(
+        future: getUserDetails(),
+        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasData) {
-            User user = User.fromJson(jsonDecode(snapshot.data!));
+            User user = snapshot.data!;
             return ProfileScreenBody(
               user: user,
               secureStorage: secureStorage,
@@ -73,6 +79,24 @@ class InitProfileScreenBody extends StatelessWidget {
           }
         });
   }
+
+  Future<User> getUserDetails() async {
+    var response = await this.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+    );
+
+    if (response.statusCode == 200) {
+      this.secureStorage.writeSecureData('user', response.body);
+      var responseBody = jsonDecode(response.body);
+      print(responseBody);
+      User user = User.fromJson(responseBody);
+
+      return user;
+    } else {
+      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
+  }
+
 }
 
 class ProfileScreenBody extends StatefulWidget {
@@ -257,7 +281,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                     style: captionTextStyle,
                                   ),
                                   Text(
-                                    '52',
+                                    '${widget.user.numFriends}',
                                     style: bodyTextStyleBold,
                                   ),
                                 ])
