@@ -472,6 +472,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                 colorBG: kLightBlue,
                 colorFont: kWhite,
                 func: viewAttendanceModalBottomSheet(context),
+                disableText: widget.participant.status == "registered" ? 'Pending Acceptance' : null,
               ),
               SizedBox(
                 height: 20,
@@ -630,7 +631,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
     }
     else {
       var result = jsonDecode(response.body);
-      print(result);
+      print('status code: ${response.statusCode} + $result');
       throw Exception('A problem occurred during intialising activity data');
     }
   }
