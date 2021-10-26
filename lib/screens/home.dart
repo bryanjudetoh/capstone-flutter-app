@@ -3,6 +3,7 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/notifications.dart';
 import 'package:youthapp/screens/profile.dart';
+import 'package:youthapp/screens/social-media.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -38,7 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: NotificationsScreenBody(user: widget.user),
             ),
             Container(
-              color: kBackground,
+              color: Colors.white,
+              child: SocialMediaScreenBody(user: widget.user),
+            ),
+            Container(
+              color: Colors.white,
               child: InitProfileScreenBody(),
             ),
           ],
@@ -64,6 +69,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           BottomNavigationBarItem(
             icon: Icon(
+              Icons.people_alt_outlined,
+              size: 30,
+            ),
+            label: 'Social Media',
+            backgroundColor: kDarkGrey,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
               Icons.person_outlined,
               size: 30,
             ),
@@ -78,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
         showUnselectedLabels: false,
         elevation: 0.0,
         backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }
