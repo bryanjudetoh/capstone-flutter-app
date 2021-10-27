@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/organisation.dart';
-import 'package:youthapp/widgets/text-button.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
@@ -118,21 +117,32 @@ class _OrganisationDetailsScreenState extends State<OrganisationDetailsScreen> {
           child: Column(
             children: <Widget>[
               Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      AppLocalizations.of(context)!.organisationDetails,
-                      style: titleOneTextStyle,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {Navigator.of(context).pop();},
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(Icons.arrow_back_ios, color: kBlack, size: 25,)
+                      ],
                     ),
-                    PlainTextButton(
-                      title: 'Back',
-                      func: () {
-                        Navigator.of(context).pop();
-                      },
-                      textStyle: backButtonBoldItalics,
-                      textColor: kBlack,
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+                      primary: kGrey,
                     ),
-                  ]),
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.organisationDetails,
+                    style: titleOneTextStyleBold,
+                  ),
+                  Flexible(
+                    child: SizedBox(width: 65),
+                  )
+                ],
+              ),
               SizedBox(
                 height: 20.0,
               ),
