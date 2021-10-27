@@ -11,7 +11,7 @@ import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
-import 'package:intl/intl.dart';
+import 'package:youthapp/utilities/date-time-formatter.dart';
 
 class InitRegisteredActivityDetails extends StatelessWidget {
   InitRegisteredActivityDetails({Key? key}) : super(key: key);
@@ -121,9 +121,6 @@ class RegisteredActivitiesScreen extends StatefulWidget {
 }
 
 class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen> {
-
-  DateFormat dateFormat = DateFormat.yMd();
-  DateFormat timeFormat = DateFormat.jm();
 
   late bool isRated;
 
@@ -290,7 +287,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             height: 1,
                           ),
                           Text(
-                            '${widget.participant.activity.activityStartTime.toString().split(' ')[0]}',
+                            '${dateFormat.format(widget.participant.activity.activityStartTime!)}',
                             style: bodyTextStyleBold,
                           )
                         ]),
@@ -303,7 +300,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             height: 1,
                           ),
                           Text(
-                            '${widget.participant.activity.activityEndTime.toString().split(' ')[0]}',
+                            '${dateFormat.format(widget.participant.activity.activityEndTime!)}',
                             style: bodyTextStyleBold,
                           )
                         ]),
@@ -361,7 +358,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                                 height: 1,
                               ),
                               Text(
-                                '${widget.participant.registeredDate.toString().split(' ')[0]}',
+                                '${dateFormat.format(widget.participant.registeredDate!.toLocal())}',
                                 style: bodyTextStyleBold,
                               )
                             ]),

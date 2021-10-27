@@ -11,6 +11,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/utilities/date-time-formatter.dart';
 
 class InitProfileScreenBody extends StatelessWidget {
   InitProfileScreenBody({Key? key}) : super(key: key);
@@ -226,8 +227,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                       style: captionTextStyle,
                                     ),
                                     Text(
-                                      'Born on ${widget.user.dob.toString()
-                                          .split(' ')[0]}',
+                                      'Born on ${dateFormat.format(widget.user.dob!)}',
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.left,
                                       style: captionTextStyle,

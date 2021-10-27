@@ -12,6 +12,7 @@ import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:intl/intl.dart';
 
 class InitActivityDetailsScreen extends StatelessWidget {
@@ -283,7 +284,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             height: 1,
                           ),
                           Text(
-                            '${widget.activity.activityStartTime.toString().split(' ')[0]}',
+                            '${dateFormat.format(widget.activity.activityStartTime!)}',
                             style: bodyTextStyleBold,
                           )
                         ]),
@@ -296,7 +297,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             height: 1,
                           ),
                           Text(
-                            '${widget.activity.activityEndTime.toString().split(' ')[0]}',
+                            '${dateFormat.format(widget.activity.activityEndTime!)}',
                             style: bodyTextStyleBold,
                           )
                         ]),
@@ -350,7 +351,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                         height: 1,
                       ),
                       Text(
-                        '${widget.activity.registrationEndTime.toString().split(' ')[0]}',
+                        '${dateFormat.format(widget.activity.registrationEndTime!)}',
                         style: bodyTextStyleBold,
                       )
                     ]),
@@ -917,7 +918,7 @@ class _RewardsListDialogState extends State<RewardsListDialog> {
                       style: subtitleTextStyle,
                     ),
                     Text(
-                      'Expires on: ${widget.inAppRewardsList[index].expiryDate.toString().split(' ')[0]}',
+                      'Expires on: ${dateFormat.format(widget.inAppRewardsList[index].expiryDate!)}',
                       style: subtitleTextStyle,
                     ),
                   ],
