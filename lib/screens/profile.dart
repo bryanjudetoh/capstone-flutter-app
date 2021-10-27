@@ -147,6 +147,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
               SliverAppBar(
                 pinned: false,
                 backgroundColor: Colors.white,
+                automaticallyImplyLeading: false,
                 flexibleSpace: FlexibleSpaceBar(
                   collapseMode: CollapseMode.pin,
                   background: Column(
