@@ -530,7 +530,7 @@ class _ProfileFeedState extends State<ProfileFeed> {
       child: ListView.builder(
         itemCount: this.profileFeed.length,
         itemBuilder: (BuildContext context, int index) {
-          return SocialMediaPost(post: this.profileFeed[index], http: widget.http,);
+          return SocialMediaPost(post: this.profileFeed[index], http: widget.http, isFullPost: false,);
         },
       ),
     );
