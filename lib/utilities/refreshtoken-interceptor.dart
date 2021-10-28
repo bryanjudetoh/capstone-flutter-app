@@ -55,7 +55,7 @@ class RefreshTokenRetryPolicy extends RetryPolicy {
       ScaffoldMessenger.of(NavigationService.navigatorKey.currentContext!).showSnackBar(
           SnackBar(
             content: const Text(
-              "ERROR: Please log in again",
+              "Session Expired: Please log in again",
               style: bodyTextStyle,
             ),
             duration: const Duration(seconds: 2),

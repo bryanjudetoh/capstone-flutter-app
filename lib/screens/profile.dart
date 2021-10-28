@@ -901,7 +901,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text(
-              "ERROR: Please log in again",
+              "Session Expired: Please log in again",
               style: bodyTextStyle,
             ),
             duration: const Duration(seconds: 2),
