@@ -213,7 +213,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                         child: Text('This is My Posts', style: bodyTextStyle,),
                       )
                     : Center(
-                        child: Text('This is Requests', style: bodyTextStyle,),
+                        child: displayRequests(),
                       )
                 ,
               ),
@@ -221,6 +221,89 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
           ),
       ),
     );
+  }
+
+  ListView displayRequests() {
+    late ScrollController requestsScrollController;
+    requestsScrollController = ScrollController();
+
+    late ScrollController suggestedScrollController;
+    suggestedScrollController = ScrollController();
+
+    return
+      ListView.builder(
+          itemCount: 1,
+          itemBuilder: (BuildContext context, int index) {
+            return Column(
+              children: [
+                ListView.builder(shrinkWrap: true,
+                  controller: requestsScrollController,
+                  itemCount: 3,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          backgroundImage: NetworkImage(
+                              this.placeholderProfilePicUrl
+                          ),
+                          maxRadius: 25,
+                        ),
+                        title: Text(
+                          'Bobby Wong',
+                          style: bodyTextStyle,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                    children: [
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Suggested',
+                            style: bodyTextStyleBold,
+                            textAlign: TextAlign.left,
+                          )),
+                    ]
+                ),
+                SizedBox(
+                  height: 2,
+                ),
+                ListView.builder(shrinkWrap: true,
+                  controller: suggestedScrollController,
+                  itemCount: 3,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          backgroundImage: NetworkImage(
+                              this.placeholderProfilePicUrl
+                          ),
+                          maxRadius: 25,
+                        ),
+                        title: Text(
+                          'Bobby Wong',
+                          style: bodyTextStyle,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            );
+          });
+
   }
 
   Future<List<User>> loadFriends() async {
