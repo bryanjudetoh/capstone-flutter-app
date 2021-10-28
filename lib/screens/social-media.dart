@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http_interceptor/http/intercepted_http.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 import '../constants.dart';
 
@@ -17,6 +22,10 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
   bool currentTabIsPost = true;
   late TabController tabController;
 
+  int skip = 0;
+  bool isEndOfList = false;
+  final String placeholderProfilePicUrl = placeholderDisplayPicUrl;
+
   @override
   void initState() {
     super.initState();
@@ -31,6 +40,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
       child: NestedScrollView(
@@ -141,7 +151,59 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                         child: Text('This is Feed', style: bodyTextStyle,),
                       )
                     : Center(
-                        child: Text('This is My Friends', style: bodyTextStyle,),
+                        child: FutureBuilder<List<User>>(
+                          future: loadFriends(),
+                          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                            if (snapshot.hasData) {
+                              List<User> data = snapshot.data!;
+                              return displayMyFriends(data);
+                            }
+                            else if (snapshot.hasError) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                      size: 60,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        'Error: ${snapshot.error}',
+                                        style: titleTwoTextStyleBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            else {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      child: CircularProgressIndicator(),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        'Loading...',
+                                        style: titleTwoTextStyleBold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       )
                 ,
               ),
@@ -158,6 +220,81 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
             ],
           ),
       ),
+    );
+  }
+
+  Future<List<User>> loadFriends() async {
+    final http = InterceptedHttp.build(
+      interceptors: [
+        AuthHeaderInterceptor(),
+      ],
+      retryPolicy: RefreshTokenRetryPolicy(),
+    );
+
+    var response = await http.get(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/list?name=&skip=${this.skip}')
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<User> userList = [];
+      for (dynamic item in resultList) {
+        Map<String, dynamic> i = Map<String, dynamic>.from(item);
+        print(i['isFriend']);
+        if (i['isFriend'] == true) {
+          userList.add(User.fromJson(i));
+        }
+      }
+      setState(() {
+        this.skip += resultList.length;
+        if (resultList.length < backendSkipLimit) {
+          isEndOfList = true;
+        }
+      });
+      return userList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred during your user search');
+    }
+  }
+
+  ListView displayMyFriends(List<User> myFriendsList) {
+    late ScrollController myFriendsScrollController;
+
+    myFriendsScrollController = ScrollController();
+
+    return ListView.builder(
+      shrinkWrap: true,
+      controller: myFriendsScrollController,
+      itemCount: myFriendsList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              backgroundImage: NetworkImage(
+                  myFriendsList[index].profilePicUrl!.isNotEmpty ?
+                  myFriendsList[index].profilePicUrl! : this.placeholderProfilePicUrl
+              ),
+              maxRadius: 25,
+            ),
+            title: Text(
+              '${myFriendsList[index].firstName} ${myFriendsList[index].lastName}',
+              style: bodyTextStyle,
+            ),
+            onTap: () {
+              print('tapped userId: ${myFriendsList[index].userId}');
+              Map<String, dynamic> data = {};
+              data['userId'] = myFriendsList[index].userId;
+              data['isFriend'] = myFriendsList[index].isFriend;
+              Navigator.pushNamed(context, '/user-profile', arguments: data);
+            },
+          ),
+        );
+      },
     );
   }
 }
