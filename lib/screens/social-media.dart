@@ -156,7 +156,27 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                           builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
                             if (snapshot.hasData) {
                               List<User> data = snapshot.data!;
-                              return displayMyFriends(data);
+                              if (data.length > 0) {
+                                return displayMyFriends(data);
+                              }
+                              else {
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.sentiment_dissatisfied_sharp,
+                                        size: 70,
+                                      ),
+                                      Text(
+                                        'You do not have any friends!',
+                                        style: titleThreeTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
                             }
                             else if (snapshot.hasError) {
                               return Center(
@@ -236,25 +256,57 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
           itemBuilder: (BuildContext context, int index) {
             return Column(
               children: [
-                ListView.builder(shrinkWrap: true,
+                ListView.builder(
+                  shrinkWrap: true,
                   controller: requestsScrollController,
                   itemCount: 3,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       padding: EdgeInsets.symmetric(vertical: 10),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage(
-                              this.placeholderProfilePicUrl
+                      child: Padding(
+                          padding: const EdgeInsets.fromLTRB(15.0,0,0,0),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                            this.placeholderProfilePicUrl
+                                        ),
+                                        maxRadius: 25,
+                                      ),
+                                      SizedBox(
+                                        width: 5,
+                                      ),
+                                      Text(
+                                        'Bobby Wong',
+                                        style: bodyTextStyle,
+                                      ),
+                                    ]
+                                ),
+                                Row(
+                                    children: [
+                                      RawMaterialButton(
+                                        onPressed: () {},
+                                        fillColor: kBluishWhite,
+                                        child: Icon(Icons.close_rounded, color: kBlack,),
+                                        padding: EdgeInsets.all(10.0),
+                                        shape: CircleBorder(),
+                                      ),
+                                      RawMaterialButton(
+                                        onPressed: () {},
+                                        fillColor: kLightBlue,
+                                        child: Icon(Icons.check_rounded, color: Colors.white,),
+                                        padding: EdgeInsets.all(10.0),
+                                        shape: CircleBorder(),
+                                      ),
+                                    ]
+                                )
+                              ]
                           ),
-                          maxRadius: 25,
-                        ),
-                        title: Text(
-                          'Bobby Wong',
-                          style: bodyTextStyle,
-                        ),
-                      ),
+                      )
                     );
                   },
                 ),
@@ -278,7 +330,8 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                 SizedBox(
                   height: 2,
                 ),
-                ListView.builder(shrinkWrap: true,
+                ListView.builder(
+                  shrinkWrap: true,
                   controller: suggestedScrollController,
                   itemCount: 3,
                   itemBuilder: (BuildContext context, int index) {
