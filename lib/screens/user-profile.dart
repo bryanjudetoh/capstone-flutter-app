@@ -86,14 +86,12 @@ class InitUserProfileScreen extends StatelessWidget {
   }
 
   Future<User> initUserProfileData(String userId) async {
-    print('selected userId: $userId');
     var response = await this.http.get(
       Uri.parse('https://eq-lab-dev.me/api/mp/user/$userId'),
     );
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
-      print(responseBody);
       return User.fromJson(responseBody);
     }
     else {
@@ -414,7 +412,6 @@ class InitProfileFeed extends StatelessWidget {
       List<dynamic> resultList = jsonDecode(response.body);
       List<Post> postList = [];
       for (dynamic item in resultList) {
-        print('$item\n');
         Post p = Post.fromJson(Map<String, dynamic>.from(item));
         postList.add(p);
       }

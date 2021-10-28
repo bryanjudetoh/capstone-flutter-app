@@ -9,11 +9,12 @@ import 'package:http_interceptor/http_interceptor.dart';
 import '../constants.dart';
 
 class SocialMediaPost extends StatefulWidget {
-  const SocialMediaPost({Key? key, required this.post, required this.http, required this.isFullPost}) : super(key: key);
+  const SocialMediaPost({Key? key, required this.post, required this.http, required this.isFullPost, this.getLikeState}) : super(key: key);
 
   final Post post;
   final InterceptedHttp http;
   final bool isFullPost;
+  final Function? getLikeState;
 
   @override
   _SocialMediaPostState createState() => _SocialMediaPostState();
@@ -267,7 +268,15 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                     IconButton(
                       onPressed: () async {
                         if (!widget.isFullPost) {
-                          var data = await Navigator.pushNamed(context, '/full-post', arguments: widget.post);
+                          Map<String, dynamic> data = await Navigator.pushNamed(context, '/full-post', arguments: widget.post.postId) as Map<String, dynamic>;
+                          print(data);
+                          setState(() {
+                            this.hasLiked = data['hasLiked'];
+                            this.hasDisliked = data['hasDisliked'];
+                            this.numLikes = data['numLikes'];
+                            this.numDislikes = data['numDislikes'];
+                            print('states set');
+                          });
                         }
                       }, //view full posts with all comments
                       icon: Icon(Icons.chat_bubble_outline_rounded, color: Colors.amber,),
@@ -306,6 +315,9 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
           this.hasDisliked = false;
         }
       });
+      if (widget.getLikeState != null) {
+        widget.getLikeState!(this.hasLiked, this.hasDisliked, this.numLikes, this.numDislikes);
+      }
     }
     on Exception catch (err) {
       message = formatExceptionMessage(err.toString());
@@ -360,6 +372,9 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
           this.hasLiked = false;
         }
       });
+      if (widget.getLikeState != null) {
+        widget.getLikeState!(this.hasLiked, this.hasDisliked, this.numLikes, this.numDislikes);
+      }
     }
     on Exception catch (err) {
       message = formatExceptionMessage(err.toString());
