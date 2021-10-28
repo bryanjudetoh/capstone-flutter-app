@@ -34,7 +34,7 @@ class InitUserProfileScreen extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasData) {
             User user = snapshot.data!;
-            return UserProfileScreen(user: user, isFriend: data['isFriend'],);
+            return UserProfileScreen(user: user, isFriend: data['isFriend'], http: this.http,);
           }
           else if (snapshot.hasError) {
             return Center(
@@ -103,11 +103,12 @@ class InitUserProfileScreen extends StatelessWidget {
 }
 
 class UserProfileScreen extends StatefulWidget {
-  UserProfileScreen({Key? key, required this.user, required this.isFriend}) : super(key: key);
+  UserProfileScreen({Key? key, required this.user, required this.isFriend, required this.http}) : super(key: key);
 
   final User user;
   final isFriend;
   final placeholderUserProfilePicUrl = placeholderDisplayPicUrl;
+  final InterceptedHttp http;
 
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
@@ -299,7 +300,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ),
                         SizedBox(height: 20,),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: handleAddFriend,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
@@ -331,6 +332,46 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> handleAddFriend() async {
+    String message = '';
+    try {
+      message = await doAddFriend();
+    }
+    on Exception catch (err) {
+      message = err.toString();
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: bodyTextStyle,
+          ),
+          duration: const Duration(seconds: 3),
+        )
+    );
+  }
+
+  Future<String> doAddFriend() async {
+    var response = await widget.http.put(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/send-request/${widget.user.userId}'),
+    );
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      return result['message'];
+    }
+    else if (response.statusCode == 400 || response.statusCode == 404) {
+      var result = jsonDecode(response.body);
+      print(result);
+      return result['error']['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while adding friend (id: ${widget.user.userId})');
+    }
   }
 }
 
