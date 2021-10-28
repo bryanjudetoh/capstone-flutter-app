@@ -47,6 +47,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
         ?.map((e) => e as Map<String, dynamic>)
         .toList(),
     numFriends: json['numFriends'] as int?,
+    isFriend: json['isFriend'] as bool?,
   );
 }
 
@@ -79,4 +80,5 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'elixirBalance': instance.elixirBalance,
       'rewardList': instance.rewardList,
       'numFriends': instance.numFriends,
+      'isFriend': instance.isFriend,
     };

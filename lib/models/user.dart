@@ -46,7 +46,9 @@ class User {
   Map<String, dynamic>? potionBalance;
   int? elixirBalance;
   List<Map<String, dynamic>>? rewardList;
+
   int? numFriends;
+  bool? isFriend;
 
   User({required this.userId, this.email, this.mobile, required this.firstName, required this.lastName,
     this.gender, this.age, this.dob,
@@ -54,7 +56,8 @@ class User {
     this.postalCode, this.countryCode, this.city, this.school,
     this.roleId, this.role, this.userType, this.loginType,
     this.enabled, this.verified, this.createdAt, this.lastLogin, this.profilePicUrl,
-    this.potionBalance, this.elixirBalance, this.rewardList, this.numFriends,
+    this.potionBalance, this.elixirBalance, this.rewardList,
+    this.numFriends, this.isFriend,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

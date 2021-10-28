@@ -225,6 +225,7 @@ const String placeholderOfflineCoursesPicUrl = 'https://cdn.pixabay.com/photo/20
 const String placeholderVolunteerPicUrl = 'https://cdn.pixabay.com/photo/2017/02/10/12/12/volunteer-2055042_1280.png';
 const String placeholderSportsPicUrl = 'https://cdn.pixabay.com/photo/2017/06/26/19/53/team-2444978_1280.jpg';
 const String placeholderRewardsPicUrl = 'http://pngimg.com/uploads/gift/gift_PNG5950.png';
+const String placeholderPostPicUrl = 'https://media.gettyimages.com/photos/in-this-image-released-on-may-13-marvel-shang-chi-super-hero-simu-liu-picture-id1317787772?s=612x612';
 
 String getPlaceholderPicUrl(String activityType) {
   switch(activityType) {

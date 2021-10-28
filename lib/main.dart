@@ -17,6 +17,7 @@ import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/fb-signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
 import 'package:youthapp/screens/init-home.dart';
+import 'package:youthapp/screens/user-profile.dart';
 import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/navigation-service.dart';
 import 'package:youthapp/utilities/securestorage.dart';
@@ -95,6 +96,7 @@ class _MyAppState extends State<MyApp> {
         '/leaderboard': (context) => InitLeaderBoardScreen(),
         '/my-rewards': (context) => MyRewardsScreen(),
         '/search-friends': (context) => SearchFriendsScreen(),
+        '/user-profile': (context) => InitUserProfileScreen(),
       }
     );
   }

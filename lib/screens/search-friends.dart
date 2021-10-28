@@ -212,8 +212,11 @@ class _SearchFriendsScreenState extends State<SearchFriendsScreen> {
               style: bodyTextStyle,
             ),
             onTap: () {
-              print('tapped');
-              //Navigator.pushNamed(context, '/user-profile', arguments: searchUsersResultList[index].userId);
+              print('tapped userId: ${searchUsersResultList[index].userId}');
+              Map<String, dynamic> data = {};
+              data['userId'] = searchUsersResultList[index].userId;
+              data['isFriend'] = searchUsersResultList[index].isFriend;
+              Navigator.pushNamed(context, '/user-profile', arguments: data);
             },
           ),
         );
