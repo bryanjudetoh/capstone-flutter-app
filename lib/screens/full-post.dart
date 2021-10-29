@@ -11,7 +11,7 @@ import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/socialmedia-post.dart';
-import 'package:comment_box/comment/comment.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 import '../constants.dart';
 
@@ -128,7 +128,7 @@ class InitFullPostScreen extends StatelessWidget {
 
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        print(i);
+        //print(i);
         commentList.add(Comment.fromJson(i));
       }
 
@@ -164,8 +164,8 @@ class _FullPostScreenState extends State<FullPostScreen> {
   late int numDislikes;
   late String replyingToId;
   late bool isReplyingToPost;
-  late List<Comment> comments;
-  GlobalKey formKey = GlobalKey<FormState>();
+  late List<Comment> commentsList;
+  final _formkey = GlobalKey<FormState>();
   TextEditingController commentController = TextEditingController();
 
   @override
@@ -179,73 +179,122 @@ class _FullPostScreenState extends State<FullPostScreen> {
     this.numDislikes = widget.post.numDislikes!;
     this.replyingToId = widget.post.postId;
     this.isReplyingToPost = true;
-    this.comments = widget.initialCommentsList;
+    this.commentsList = widget.initialCommentsList;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      bottomNavigationBar: Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: BottomAppBar(
+          color: Colors.white,
+          child: Container(
+            padding: EdgeInsets.fromLTRB(10, 10, 0, 10),
+            child: Form(
+              key: _formkey,
+              child: Row(
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      widget.user.profilePicUrl!.isNotEmpty ? widget.user.profilePicUrl! : placeholderDisplayPicUrl,
+                    ),
+                    radius: 25,
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      maxLines: 4,
+                      minLines: 1,
+                      controller: commentController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Write a comment...',
+                        contentPadding: EdgeInsets.all(12),
+                      ),
+                      validator: RequiredValidator(errorText: "* Required"),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () async {
+                      String message = '';
+                      var form = _formkey.currentState!;
+                      if (form.validate()) {
+                        try {
+                          message = await doSendComment(this.commentController.text);
+                        }
+                        on Exception catch (err) {
+                          message = formatExceptionMessage(err.toString());
+                        }
+                        reloadComments();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                message,
+                                style: bodyTextStyle,
+                              ),
+                              duration: const Duration(seconds: 1),
+                            )
+                        );
+                      }
+                      else {
+                        print('not validated');
+                      }
+                    },
+                  )
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
         child: Container(
           color: Colors.white,
-          child: CommentBox(
-            userImage: widget.user.profilePicUrl!.isNotEmpty ? widget.user.profilePicUrl! : placeholderDisplayPicUrl,
-            labelText: 'Write a comment...',
-            withBorder: true,
-            errorText: 'Comment cannot be blank',
-            formKey: this.formKey,
-            commentController: this.commentController,
-            backgroundColor: Colors.white,
-            textColor: Colors.black,
-            sendWidget: Icon(Icons.send_sharp, size: 30),
-            sendButtonMethod: () {
-              handleSendComment();
-            },
-            child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      ElevatedButton(
-                        onPressed: () {
-                          Map<String, dynamic> data = {};
-                          data['hasLiked'] = this.hasLiked;
-                          data['hasDisliked'] = this.hasDisliked;
-                          data['numLikes'] = this.numLikes;
-                          data['numDislikes'] = this.numDislikes;
-                          Navigator.of(context).pop(data);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.arrow_back_ios, color: kBlack, size: 25,)
-                          ],
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
-                          primary: kGrey,
-                        ),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    ElevatedButton(
+                      onPressed: () {
+                        Map<String, dynamic> data = {};
+                        data['hasLiked'] = this.hasLiked;
+                        data['hasDisliked'] = this.hasDisliked;
+                        data['numLikes'] = this.numLikes;
+                        data['numDislikes'] = this.numDislikes;
+                        Navigator.of(context).pop(data);
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Icon(Icons.arrow_back_ios, color: kBlack, size: 25,)
+                        ],
                       ),
-                      Text(
-                        'Post',
-                        style: titleOneTextStyleBold,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        padding: EdgeInsets.only(left: 10, top: 15, bottom: 15),
+                        primary: kGrey,
                       ),
-                      Flexible(
-                        child: SizedBox(width: 65),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20,),
-                  SocialMediaPost(post: widget.post, http: widget.http, isFullPost: true, getLikeState: getLikeState,),
-                  SizedBox(height: 10),
-                  displayComments(),
-                ],
-              ),
+                    ),
+                    Text(
+                      'Post',
+                      style: titleOneTextStyleBold,
+                    ),
+                    Flexible(
+                      child: SizedBox(width: 65),
+                    )
+                  ],
+                ),
+                SizedBox(height: 20,),
+                SocialMediaPost(post: widget.post, http: widget.http, isFullPost: true, getLikeState: getLikeState,),
+                SizedBox(height: 10),
+                displayComments(),
+              ],
             ),
           ),
         ),
@@ -275,7 +324,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
       child: ListView.builder(
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: this.comments.length,
+          itemCount: this.commentsList.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
               padding: EdgeInsets.all(10),
@@ -293,7 +342,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                         children: <Widget>[
                           CircleAvatar(
                             backgroundImage: NetworkImage(
-                              getProfilePicUrl(this.comments, index).isNotEmpty ? getProfilePicUrl(this.comments, index) : placeholderDisplayPicUrl,
+                              getProfilePicUrl(this.commentsList, index).isNotEmpty ? getProfilePicUrl(this.commentsList, index) : placeholderDisplayPicUrl,
                             ),
                             radius: 20,
                           ),
@@ -302,7 +351,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '${getName(this.comments, index)}',
+                                '${getName(this.commentsList, index)}',
                                 style: smallBodyTextStyleBold,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -310,7 +359,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                               Container(
                                 width: MediaQuery.of(context).size.width*0.70,
                                 child: Text(
-                                  '${this.comments[index].content}',
+                                  '${this.commentsList[index].content}',
                                   style: smallBodyTextStyle,
                                   textAlign: TextAlign.left,
                                 ),
@@ -324,7 +373,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                                       color: Colors.white,
                                     ),
                                     child: Text(
-                                      '${dateTimeFormat.format(this.comments[index].createdAt!.toLocal())}',
+                                      '${dateTimeFormat.format(this.commentsList[index].createdAt!.toLocal())}',
                                       style: xSmallSubtitleTextStyle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -341,7 +390,31 @@ class _FullPostScreenState extends State<FullPostScreen> {
                                         style: TextButton.styleFrom(
                                           textStyle: xSmallSubtitleTextStyleBold,
                                         ),
-                                        onPressed: () {print('reply');},
+                                        onPressed: () {
+                                          setState(() {
+                                            this.isReplyingToPost = false;
+                                            this.replyingToId = this.commentsList[index].commentId;
+                                          });
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Replying to ${getName(this.commentsList, index)}',
+                                                  style: bodyTextStyle,
+                                                ),
+                                                action: SnackBarAction(
+                                                  label: 'Cancel',
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      this.isReplyingToPost = true;
+                                                      this.replyingToId = widget.post.postId;
+                                                    });
+                                                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                                  },
+                                                ),
+                                                duration: const Duration(days: 365),
+                                              )
+                                          );
+                                        },
                                         child: Text('Reply', style: xSmallSubtitleTextStyleBold,)),
                                   ),
                                 ],
@@ -353,16 +426,16 @@ class _FullPostScreenState extends State<FullPostScreen> {
                       IconButton(
                         padding: EdgeInsets.zero,
                         constraints: BoxConstraints(),
-                        onPressed: commentsModalBottomSheet(context, this.comments[index].commentId),
+                        onPressed: commentsModalBottomSheet(context, this.commentsList[index].commentId),
                         icon: Icon(Icons.more_vert),
                       ),
                     ],
                   ),
-                  if (this.comments[index].numComments! > 0)
+                  if (this.commentsList[index].numComments! > 0)
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: this.comments[index].comments.length,
+                      itemCount: this.commentsList[index].comments.length,
                       itemBuilder: (BuildContext context, int nestedIndex) {
                         return Container(
                           padding: EdgeInsets.only(left: 20, top: 5, bottom: 5),
@@ -376,8 +449,8 @@ class _FullPostScreenState extends State<FullPostScreen> {
                                 children: <Widget>[
                                   CircleAvatar(
                                     backgroundImage: NetworkImage(
-                                      getProfilePicUrl(this.comments[index].comments, index).isNotEmpty
-                                          ? getProfilePicUrl(this.comments[index].comments, index)
+                                      getProfilePicUrl(this.commentsList[index].comments, nestedIndex).isNotEmpty
+                                          ? getProfilePicUrl(this.commentsList[index].comments, nestedIndex)
                                           : placeholderDisplayPicUrl,
                                     ),
                                     radius: 20,
@@ -387,7 +460,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text(
-                                        '${getName(this.comments[index].comments, index)}',
+                                        '${getName(this.commentsList[index].comments, nestedIndex)}',
                                         style: smallBodyTextStyleBold,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -395,7 +468,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                                       Container(
                                         width: MediaQuery.of(context).size.width*0.60,
                                         child: Text(
-                                          '${this.comments[index].comments[nestedIndex].content}',
+                                          '${this.commentsList[index].comments[nestedIndex].content}',
                                           style: smallBodyTextStyle,
                                           textAlign: TextAlign.left,
                                         ),
@@ -409,7 +482,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                                               color: Colors.white,
                                             ),
                                             child: Text(
-                                              '${dateTimeFormat.format(this.comments[index].comments[nestedIndex].createdAt!.toLocal())}',
+                                              '${dateTimeFormat.format(this.commentsList[index].comments[nestedIndex].createdAt!.toLocal())}',
                                               style: xSmallSubtitleTextStyle,
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -423,7 +496,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                               IconButton(
                                 padding: EdgeInsets.zero,
                                 constraints: BoxConstraints(),
-                                onPressed: commentsModalBottomSheet(context, this.comments[index].commentId),
+                                onPressed: commentsModalBottomSheet(context, this.commentsList[index].commentId),
                                 icon: Icon(Icons.more_vert),
                               ),
                             ],
@@ -458,7 +531,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
           commentList.add(Comment.fromJson(i));
         }
         setState(() {
-          this.comments.addAll(commentList);
+          this.commentsList.addAll(commentList);
           this.skip += resultList.length;
         });
       }
@@ -489,8 +562,70 @@ class _FullPostScreenState extends State<FullPostScreen> {
         : list[index].organisation!.name;
   }
 
-  Future<void> handleSendComment() async {
+  Future<String> doSendComment(String content) async {
+    print(content);
+    var response = await widget.http.post(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/mp/comment'),
+        body: jsonEncode(<String, String> {
+          '${this.isReplyingToPost ? 'postId' : 'commentId'}': this.replyingToId,
+          'content': content,
+        })
+    );
+    this.commentController.clear();
+    if (response.statusCode == 201) {
+      if (!this.isReplyingToPost) {
+        setState(() {
+          this.isReplyingToPost = true;
+          this.replyingToId = widget.post.postId;
+        });
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+      return 'Successfully posted comment';
+    }
+    else {
+      if (!this.isReplyingToPost) {
+        setState(() {
+          this.isReplyingToPost = true;
+          this.replyingToId = widget.post.postId;
+        });
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured in posting your comment');
+    }
+  }
 
+  Future<void> reloadComments() async {
+    setState(() {
+      this.skip = 0;
+      this.isEndOfList = false;
+    });
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/feed/comments/${widget.post.postId}?skip=${this.skip}'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<Comment> commentList = [];
+
+      for (dynamic item in resultList) {
+        Map<String, dynamic> i = Map<String, dynamic>.from(item);
+        //print(i);
+        commentList.add(Comment.fromJson(i));
+      }
+
+      setState(() {
+        this.commentsList = commentList;
+        this.skip = resultList.length;
+        this.isEndOfList = resultList.length < backendSkipLimit ? true : false;
+      });
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while retrieving post comments');
+    }
   }
 
   VoidCallback commentsModalBottomSheet(BuildContext context, String commentId) {
