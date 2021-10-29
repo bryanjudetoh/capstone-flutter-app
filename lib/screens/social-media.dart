@@ -233,7 +233,79 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                         child: Text('This is My Posts', style: bodyTextStyle,),
                       )
                     : Center(
-                        child: displayRequests(),
+                        child: FutureBuilder<List<dynamic>>(
+                          future: loadRequests(),
+                          builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+                            if (snapshot.hasData) {
+                              List<dynamic> data = snapshot.data!;
+                              if (data.length > 0) {
+                                return displayRequests(data);
+                              }
+                              else {
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.sentiment_dissatisfied_sharp,
+                                        size: 70,
+                                      ),
+                                      Text(
+                                        'You do not have any friend requests!',
+                                        style: titleThreeTextStyle,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
+                            else if (snapshot.hasError) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                      size: 60,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        'Error: ${snapshot.error}',
+                                        style: titleTwoTextStyleBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            else {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      child: CircularProgressIndicator(),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        'Loading...',
+                                        style: titleTwoTextStyleBold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                        ),
                       )
                 ,
               ),
@@ -243,12 +315,47 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
     );
   }
 
-  ListView displayRequests() {
+  Future<List<dynamic>> loadRequests() async {
+    final http = InterceptedHttp.build(
+      interceptors: [
+        AuthHeaderInterceptor(),
+      ],
+      retryPolicy: RefreshTokenRetryPolicy(),
+    );
+
+    var response = await http.get(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/requestList')
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      return resultList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred during your user search');
+    }
+  }
+
+  ListView displayRequests(List<dynamic> requestsList) {
     late ScrollController requestsScrollController;
     requestsScrollController = ScrollController();
 
     late ScrollController suggestedScrollController;
     suggestedScrollController = ScrollController();
+
+    //list of dynamic (maps)
+    //for each item in this list, retrieve the mpuser
+    //store mpuser map in a list
+    List<User> userList = [];
+
+    for (dynamic item in requestsList) {
+      Map<String, dynamic> i = Map<String, dynamic>.from(item);
+      userList.add(User.fromJson(i['mpUser']));
+    }
+
+
 
     return
       ListView.builder(
@@ -259,7 +366,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                 ListView.builder(
                   shrinkWrap: true,
                   controller: requestsScrollController,
-                  itemCount: 3,
+                  itemCount: userList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
                       padding: EdgeInsets.symmetric(vertical: 10),
@@ -273,7 +380,8 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                                       CircleAvatar(
                                         backgroundColor: Colors.white,
                                         backgroundImage: NetworkImage(
-                                            this.placeholderProfilePicUrl
+                                            userList[index].profilePicUrl!.isNotEmpty ?
+                                            userList[index].profilePicUrl! : this.placeholderProfilePicUrl
                                         ),
                                         maxRadius: 25,
                                       ),
@@ -281,7 +389,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
                                         width: 5,
                                       ),
                                       Text(
-                                        'Bobby Wong',
+                                        '${userList[index].firstName} ${userList[index].lastName}',
                                         style: bodyTextStyle,
                                       ),
                                     ]
@@ -358,6 +466,9 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
           });
 
   }
+
+  void respondToRequest(bool accept, String friendRequestId) {}
+
 
   Future<List<User>> loadFriends() async {
     final http = InterceptedHttp.build(
