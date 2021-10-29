@@ -6,6 +6,7 @@ import 'package:youthapp/screens/activity-details.dart';
 import 'package:youthapp/screens/browse-rewards.dart';
 import 'package:youthapp/screens/change-password.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
+import 'package:youthapp/screens/full-post.dart';
 import 'package:youthapp/screens/leaderboards.dart';
 import 'package:youthapp/screens/my-rewards.dart';
 import 'package:youthapp/screens/onboarding.dart';
@@ -97,6 +98,7 @@ class _MyAppState extends State<MyApp> {
         '/my-rewards': (context) => MyRewardsScreen(),
         '/search-friends': (context) => SearchFriendsScreen(),
         '/user-profile': (context) => InitUserProfileScreen(),
+        '/full-post': (context) => InitFullPostScreen(),
       }
     );
   }
