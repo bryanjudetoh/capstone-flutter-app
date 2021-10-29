@@ -4,8 +4,9 @@ import 'package:youthapp/models/leaderboard-entity.dart';
 import '../constants.dart';
 
 class LeaderboardListTile extends StatelessWidget {
-  const LeaderboardListTile({Key? key, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
+  const LeaderboardListTile({Key? key, required this.myUserId, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
 
+  final String myUserId;
   final LeaderboardEntity user;
   final int position;
   final String userIdCheck;
@@ -78,6 +79,29 @@ class LeaderboardListTile extends StatelessWidget {
             ],
           ),
         ),
+        onTap: () {
+          String message = '';
+          if (this.user.userId == 'fakeId') {
+            message = 'User doesn\'t exist';
+          }
+          else if (this.user.userId != this.myUserId) {
+            Navigator.pushNamed(context, '/user-profile', arguments: this.user.userId);
+          }
+          else {
+            message = 'That\'s your own profile';
+          }
+          if (message.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    message,
+                    style: bodyTextStyle,
+                  ),
+                  duration: const Duration(seconds: 1),
+                )
+            );
+          }
+        },
       ),
     );
   }

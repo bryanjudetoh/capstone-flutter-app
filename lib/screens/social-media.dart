@@ -682,11 +682,7 @@ class _MyFriendsBodyState extends State<MyFriendsBody> {
                 style: bodyTextStyle,
               ),
               onTap: () {
-                print('tapped userId: ${myFriendsList[index].userId}');
-                Map<String, dynamic> data = {};
-                data['userId'] = myFriendsList[index].userId;
-                data['isFriend'] = myFriendsList[index].isFriend;
-                Navigator.pushNamed(context, '/user-profile', arguments: data);
+                Navigator.pushNamed(context, '/user-profile', arguments: myFriendsList[index].userId);
               },
             ),
           );
@@ -762,31 +758,36 @@ class _RequestsBodyState extends State<RequestsBody> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      displayRequests(),
-      SizedBox( height: 20, ),
-      Row(
+    return SingleChildScrollView(
+      child: Column(
         children: [
-          SizedBox(
-            width: 10,
+          displayRequests(),
+          SizedBox( height: 20, ),
+          Row(
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Suggested',
+                      style: bodyTextStyleBold,
+                      textAlign: TextAlign.left,
+                    )),
+              ]
           ),
-          Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Suggested',
-                style: bodyTextStyleBold,
-                textAlign: TextAlign.left,
-              )),
+          SizedBox( height: 2, ),
+          displaySuggested(),
         ]
       ),
-      SizedBox( height: 2, ),
-      displaySuggested(),
-    ]);
+    );
   }
 
   ListView displayRequests() {
     return ListView.builder(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: this.friendRequestsList.length,
       itemBuilder: (BuildContext context, int index) {
         return Container(
@@ -883,6 +884,7 @@ class _RequestsBodyState extends State<RequestsBody> {
   ListView displaySuggested() {
     return ListView.builder(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: this.suggestedFriendsList.length,
       itemBuilder: (BuildContext context, int index) {
         return Container(
@@ -901,10 +903,7 @@ class _RequestsBodyState extends State<RequestsBody> {
               style: bodyTextStyle,
             ),
             onTap: () {
-              Map<String, dynamic> data = {};
-              data['userId'] = this.suggestedFriendsList[index].userId;
-              data['isFriend'] = false;
-              Navigator.pushNamed(context, '/user-profile', arguments: data);
+              Navigator.pushNamed(context, '/user-profile', arguments: this.suggestedFriendsList[index].userId);
             },
           ),
         );

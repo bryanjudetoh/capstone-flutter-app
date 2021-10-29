@@ -25,16 +25,16 @@ class InitUserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> data = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final String userId = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: FutureBuilder<User>(
-        future: initUserProfileData(data['userId']),
+        future: initUserProfileData(userId),
         builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
           if (snapshot.hasData) {
             User user = snapshot.data!;
-            return UserProfileScreen(user: user, isFriend: data['isFriend'], http: this.http,);
+            return UserProfileScreen(user: user, isFriend: user.isFriend!, http: this.http,);
           }
           else if (snapshot.hasError) {
             return Center(
@@ -106,7 +106,7 @@ class UserProfileScreen extends StatefulWidget {
   UserProfileScreen({Key? key, required this.user, required this.isFriend, required this.http}) : super(key: key);
 
   final User user;
-  final isFriend;
+  final bool isFriend;
   final placeholderUserProfilePicUrl = placeholderDisplayPicUrl;
   final InterceptedHttp http;
 
@@ -544,7 +544,8 @@ class _ProfileFeedState extends State<ProfileFeed> {
   }
 
   Widget displayEmptyProfileFeed() {
-    return Center(
+    return Container(
+      height: double.infinity,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

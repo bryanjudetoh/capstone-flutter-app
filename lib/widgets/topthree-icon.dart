@@ -6,8 +6,9 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/leaderboard-entity.dart';
 
 class TopThreeIcon extends StatelessWidget {
-  const TopThreeIcon({Key? key, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
-  
+  const TopThreeIcon({Key? key, required this.myUserId, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
+
+  final String myUserId;
   final LeaderboardEntity user;
   final int position;
   final String userIdCheck;
@@ -28,51 +29,76 @@ class TopThreeIcon extends StatelessWidget {
             ),
           ),
           SizedBox(height: this.position == 1 ? 4 : 7,),
-          Stack(
-            children: <Widget>[
-              Container(
-                decoration: this.userIdCheck == this.user.userId
-                    ? BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.lightBlueAccent,
-                            blurRadius: 6.0,
-                            spreadRadius: 5.0,
-                          ),
-                        ],
-                      )
-                    : BoxDecoration(
-                        color: Colors.white
+          GestureDetector(
+            onTap: () {
+              String message = '';
+              if (this.user.userId == 'fakeId') {
+                message = 'User doesn\'t exist';
+              }
+              else if (this.user.userId != this.myUserId) {
+                Navigator.pushNamed(context, '/user-profile', arguments: this.user.userId);
+              }
+              else {
+                message = 'That\'s your own profile';
+              }
+              if (message.isNotEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        message,
+                        style: bodyTextStyle,
                       ),
-                child: CircleAvatar(
-                  backgroundColor: kLightBlue,
-                  backgroundImage: NetworkImage(
-                    this.user.profilePicUrl != null && this.user.profilePicUrl!.isNotEmpty ? this.user.profilePicUrl! : placeholderDisplayPicUrl,
-                  ),
-                  radius: this.position == 1 ? 60 : 50,
-                ),
-              ),
-              Positioned.fill(
-                  child: Align(
-                alignment: Alignment.bottomRight,
-                child: Container(
-                  width: this.position == 1 ? 40 : 35,
-                  height: this.position == 1 ? 40 : 35,
-                  decoration: new BoxDecoration(
-                    color: this.position == 1 ? Color(0xFFFFD000) : this.position == 2 ? Color(0xFFC0C0C0) : Color(0xFFCD7F32),
+                      duration: const Duration(seconds: 1),
+                    )
+                );
+              }
+            },
+            child: Stack(
+              children: <Widget>[
+                Container(
+                  decoration: this.userIdCheck == this.user.userId
+                      ? BoxDecoration(
                     shape: BoxShape.circle,
-                  ),
-                  padding: EdgeInsets.all(5),
-                  child: SvgPicture.asset(
-                    'assets/icons/medal.svg',
                     color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.lightBlueAccent,
+                        blurRadius: 6.0,
+                        spreadRadius: 5.0,
+                      ),
+                    ],
+                  )
+                      : BoxDecoration(
+                      color: Colors.white
+                  ),
+                  child: CircleAvatar(
+                    backgroundColor: kLightBlue,
+                    backgroundImage: NetworkImage(
+                      this.user.profilePicUrl != null && this.user.profilePicUrl!.isNotEmpty ? this.user.profilePicUrl! : placeholderDisplayPicUrl,
+                    ),
+                    radius: this.position == 1 ? 60 : 50,
                   ),
                 ),
-              )
-              ),
-            ],
+                Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Container(
+                        width: this.position == 1 ? 40 : 35,
+                        height: this.position == 1 ? 40 : 35,
+                        decoration: new BoxDecoration(
+                          color: this.position == 1 ? Color(0xFFFFD000) : this.position == 2 ? Color(0xFFC0C0C0) : Color(0xFFCD7F32),
+                          shape: BoxShape.circle,
+                        ),
+                        padding: EdgeInsets.all(5),
+                        child: SvgPicture.asset(
+                          'assets/icons/medal.svg',
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                ),
+              ],
+            ),
           ),
           SizedBox(width: 5,),
           Text(
