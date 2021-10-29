@@ -519,9 +519,11 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody>
     requestsScrollController = ScrollController();
 
     List<User> userList = [];
+    List<String> requestIdList = [];
 
     for (dynamic item in requestsList) {
       Map<String, dynamic> i = Map<String, dynamic>.from(item);
+      requestIdList.add(i['friendRequestId']);
       userList.add(User.fromJson(i['mpUser']));
     }
 
@@ -561,7 +563,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody>
                               ]),
                               Row(children: [
                                 RawMaterialButton(
-                                  onPressed: () {},
+                                  onPressed: () => respondToRequest(false, requestIdList[index]),
                                   fillColor: kBluishWhite,
                                   child: Icon(
                                     Icons.close_rounded,
@@ -571,7 +573,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody>
                                   shape: CircleBorder(),
                                 ),
                                 RawMaterialButton(
-                                  onPressed: () {},
+                                  onPressed: () => respondToRequest(true, requestIdList[index]),
                                   fillColor: kLightBlue,
                                   child: Icon(
                                     Icons.check_rounded,
@@ -590,7 +592,26 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody>
         });
   }
 
-  void respondToRequest(bool accept, String friendRequestId) {}
+  Future<void> respondToRequest(bool accept, String friendRequestId) async {
+    final http = InterceptedHttp.build(
+      interceptors: [
+        AuthHeaderInterceptor(),
+      ],
+      retryPolicy: RefreshTokenRetryPolicy(),
+    );
+
+    var response = await http.put(Uri.parse(
+        'https://eq-lab-dev.me/api/social-media/mp/friend/respond-friend-request/${friendRequestId}?accept=${accept}'));
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      print(result);
+    } else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred when loading your friends');
+    }
+  }
 
   Future<List<User>> loadFriends() async {
     final http = InterceptedHttp.build(
