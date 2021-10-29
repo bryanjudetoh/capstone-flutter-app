@@ -172,7 +172,6 @@ class _SearchFriendsScreenState extends State<SearchFriendsScreen> {
       List<User> userList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        print(i);
         userList.add(User.fromJson(i));
       }
       setState(() {

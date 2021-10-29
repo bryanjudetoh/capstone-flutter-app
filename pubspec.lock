@@ -155,6 +155,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.15.0"
+  comment_box:
+    dependency: "direct main"
+    description:
+      name: comment_box
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.16"
   convert:
     dependency: transitive
     description:
@@ -635,13 +642,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.0"
-  toggle_switch:
-    dependency: "direct main"
-    description:
-      name: toggle_switch
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.2.0"
   typed_data:
     dependency: transitive
     description:

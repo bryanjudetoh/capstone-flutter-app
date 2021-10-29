@@ -108,6 +108,21 @@ const bodyTextStyleBold = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+const smallSubtitleTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  color: kDarkGrey,
+);
+
+const smallSubtitleTextStyleBold = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 15.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
+  color: kDarkGrey,
+);
+
 const smallBodyTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
   fontSize: 15.0,
@@ -134,12 +149,28 @@ const xSmallBodyTextStyleBold = TextStyle(
   fontWeight: FontWeight.bold,
 );
 
+const xSmallSubtitleTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 13.0,
+  height: 1.25,
+  color: kDarkGrey,
+);
+
+const xSmallSubtitleTextStyleBold = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 13.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
+  color: kDarkGrey,
+);
+
 const backButtonBoldItalics = TextStyle(
     fontFamily: "SF Pro Display",
     fontSize: 22.0,
     fontStyle: FontStyle.italic,
     fontWeight: FontWeight.bold,
-    color: Colors.black);
+    color: Colors.black
+);
 
 const captionTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
