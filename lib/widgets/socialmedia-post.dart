@@ -105,12 +105,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: widget.post.mediaContentUrls.isEmpty
-                        ? Image.network(
-                      placeholderPostPicUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 220,
-                    )
+                        ? Container()
                         : CarouselSlider(
                             options: CarouselOptions(
                               autoPlay: false,
