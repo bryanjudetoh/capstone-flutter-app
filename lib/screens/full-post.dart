@@ -162,6 +162,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
   late bool hasDisliked;
   late int numLikes;
   late int numDislikes;
+  late int numComments;
   late String replyingToId;
   late bool isReplyingToPost;
   late List<Comment> commentsList;
@@ -176,6 +177,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
     this.hasLiked = widget.post.hasLiked!;
     this.hasDisliked = widget.post.hasDisliked!;
     this.numLikes = widget.post.numLikes!;
+    this.numComments = widget.post.numComments!;
     this.numDislikes = widget.post.numDislikes!;
     this.replyingToId = widget.post.postId;
     this.isReplyingToPost = true;
@@ -223,11 +225,16 @@ class _FullPostScreenState extends State<FullPostScreen> {
                       if (form.validate()) {
                         try {
                           message = await doSendComment(this.commentController.text);
+                          List<Comment> refreshedList = await reloadComments();
+                          await Future.delayed(Duration(seconds: 1));
+                          setState(() {
+                            this.numComments += 1;
+                            this.commentsList = List.from(this.commentsList)..addAll(refreshedList);
+                          });
                         }
                         on Exception catch (err) {
                           message = formatExceptionMessage(err.toString());
                         }
-                        reloadComments();
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -237,9 +244,6 @@ class _FullPostScreenState extends State<FullPostScreen> {
                               duration: const Duration(seconds: 1),
                             )
                         );
-                      }
-                      else {
-                        print('not validated');
                       }
                     },
                   )
@@ -266,6 +270,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                         data['hasDisliked'] = this.hasDisliked;
                         data['numLikes'] = this.numLikes;
                         data['numDislikes'] = this.numDislikes;
+                        data['numComments'] = this.numComments;
                         Navigator.of(context).pop(data);
                       },
                       child: Row(
@@ -302,12 +307,13 @@ class _FullPostScreenState extends State<FullPostScreen> {
     );
   }
 
-  void getLikeState(bool liked, bool disliked, int numLikes, int numDislikes) {
+  void getLikeState(bool liked, bool disliked, int numLikes, int numDislikes, int numComments) {
     setState(() {
       this.hasLiked = liked;
       this.hasDisliked = disliked;
       this.numLikes = numLikes;
       this.numDislikes = numDislikes;
+      this.numComments = numComments;
     });
   }
 
@@ -596,8 +602,9 @@ class _FullPostScreenState extends State<FullPostScreen> {
     }
   }
 
-  Future<void> reloadComments() async {
+  Future<List<Comment>> reloadComments() async {
     setState(() {
+      this.commentsList.clear();
       this.skip = 0;
       this.isEndOfList = false;
     });
@@ -607,19 +614,19 @@ class _FullPostScreenState extends State<FullPostScreen> {
 
     if (response.statusCode == 200) {
       List<dynamic> resultList = jsonDecode(response.body);
-      List<Comment> commentList = [];
+      List<Comment> newCommentsList = [];
 
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
         //print(i);
-        commentList.add(Comment.fromJson(i));
+        newCommentsList.add(Comment.fromJson(i));
       }
 
       setState(() {
-        this.commentsList = commentList;
         this.skip = resultList.length;
         this.isEndOfList = resultList.length < backendSkipLimit ? true : false;
       });
+      return newCommentsList;
     }
     else {
       var result = jsonDecode(response.body);

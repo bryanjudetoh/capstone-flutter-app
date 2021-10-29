@@ -1,12 +1,27 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:loadmore/loadmore.dart';
+import 'package:youthapp/models/friend-request.dart';
+import 'package:youthapp/models/post.dart';
 import 'package:youthapp/models/user.dart';
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/widgets/socialmedia-post.dart';
 
 import '../constants.dart';
 
 class SocialMediaScreenBody extends StatefulWidget {
-  const SocialMediaScreenBody({Key? key,required this.user}) : super(key: key);
+  SocialMediaScreenBody({Key? key, required this.user}) : super(key: key);
 
   final User user;
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
 
   @override
   _SocialMediaScreenBodyState createState() => _SocialMediaScreenBodyState();
@@ -137,27 +152,787 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
             children: <Widget>[
               Container(
                 child: this.currentTabIsPost
-                    ? Center(
-                        child: Text('This is Feed', style: bodyTextStyle,),
+                    ? FutureBuilder<List<Post>>(
+                        future: getInitialFeed(),
+                        builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+                          if (snapshot.hasData) {
+                            List<Post> initialFeed = snapshot.data!;
+                            return initialFeed.isNotEmpty
+                                ? MyFeedBody(initialFeed: initialFeed, http: widget.http,)
+                                : Center( child: Text('There is nothing on your feed for now', style: bodyTextStyle,),);
+                          }
+                          else if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 60,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Text(
+                                      'Error: ${snapshot.error}',
+                                      style: titleTwoTextStyleBold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          else {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    child: CircularProgressIndicator(),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 16),
+                                    child: Text(
+                                      'Loading...',
+                                      style: titleTwoTextStyleBold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+                        }
                       )
-                    : Center(
-                        child: Text('This is My Friends', style: bodyTextStyle,),
-                      )
-                ,
+                    : FutureBuilder<List<User>>(
+                          future: getInitialMyFriends(),
+                          builder: (BuildContext context, AsyncSnapshot<List<User>> snapshot) {
+                            if (snapshot.hasData) {
+                              List<User> initialMyFriends = snapshot.data!;
+                              return initialMyFriends.isNotEmpty
+                                  ? MyFriendsBody(initialFriends: initialMyFriends, http: widget.http,)
+                                  : Center( child: Text('You have no friends', style: bodyTextStyle,),);
+                            }
+                            else if (snapshot.hasError) {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.error_outline,
+                                      color: Colors.red,
+                                      size: 60,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        'Error: ${snapshot.error}',
+                                        style: titleTwoTextStyleBold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                            else {
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      child: CircularProgressIndicator(),
+                                      width: 60,
+                                      height: 60,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 16),
+                                      child: Text(
+                                        'Loading...',
+                                        style: titleTwoTextStyleBold,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                          }
+                      ),
               ),
               Container(
                 child: this.currentTabIsPost
-                    ? Center(
-                        child: Text('This is My Posts', style: bodyTextStyle,),
-                      )
-                    : Center(
-                        child: Text('This is Requests', style: bodyTextStyle,),
-                      )
+                    ? FutureBuilder<List<Post>>(
+                        future: getInitialMyPosts(),
+                        builder: (BuildContext context, AsyncSnapshot<List<Post>> snapshot) {
+                          if (snapshot.hasData) {
+                            List<Post> initialMyPosts = snapshot.data!;
+                            return initialMyPosts.isNotEmpty
+                                ? MyFeedBody(initialFeed: initialMyPosts, http: widget.http,)
+                                : Center( child: Text('You haven\'t posted anything yet', style: bodyTextStyle,),);
+                          }
+                          else if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 60,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Text(
+                                      'Error: ${snapshot.error}',
+                                      style: titleTwoTextStyleBold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          else {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    child: CircularProgressIndicator(),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 16),
+                                    child: Text(
+                                      'Loading...',
+                                      style: titleTwoTextStyleBold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+                        }
+                    )
+                    : FutureBuilder<Map<String, dynamic>>(
+                        future: loadRequestsTabData(),
+                        builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                          if (snapshot.hasData) {
+                            Map<String, dynamic> data = snapshot.data!;
+                            return RequestsBody(friendRequestsList: data['requests'], suggestedFriendsList: data['suggested'], http: widget.http,);
+                          }
+                          else if (snapshot.hasError) {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: Colors.red,
+                                    size: 60,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: Text(
+                                      'Error: ${snapshot.error}',
+                                      style: titleTwoTextStyleBold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          else {
+                            return Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    child: CircularProgressIndicator(),
+                                    width: 60,
+                                    height: 60,
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 16),
+                                    child: Text(
+                                      'Loading...',
+                                      style: titleTwoTextStyleBold,
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+                        }
+                    )
                 ,
               ),
             ],
           ),
       ),
     );
+  }
+  
+  Future<List<Post>> getInitialFeed() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/feed?skip=0'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<Post> initialFeedList = [];
+      initialFeedList.addAll(resultList.map((e) => Post.fromJson(Map<String,dynamic>.from(e))).toList());
+      return initialFeedList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while loading initial feed posts');
+    }
+  }
+
+  Future<List<Post>> getInitialMyPosts() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/profile?skip=0'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<Post> initialMyPostsList = [];
+      initialMyPostsList.addAll(resultList.map((p) => Post.fromJson(Map<String,dynamic>.from(p))).toList());
+      return initialMyPostsList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while loading initial my posts');
+    }
+  }
+
+  Future<List<User>> getInitialMyFriends() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/list?name=&skip=0'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<User> initialMyFriends = [];
+      for (dynamic item in resultList) {
+        Map<String, dynamic> i = Map<String,dynamic>.from(item);
+        if (i['isFriend']) {
+          initialMyFriends.add(User.fromJson(i));
+        }
+      }
+      return initialMyFriends;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while loading initial my friends');
+    }
+  }
+
+  Future<Map<String, dynamic>> loadRequestsTabData() async {
+    Map<String, dynamic> data = {};
+    data['requests'] = await getFriendRequests();
+    data['suggested'] = await getSuggestedFriends();
+
+    return data;
+  }
+
+  Future<List<FriendRequest>> getFriendRequests() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/requestList'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<FriendRequest> friendRequestsList = [];
+      for (dynamic item in resultList) {
+        Map<String, dynamic> i = Map<String, dynamic>.from(item);
+        friendRequestsList.add(FriendRequest.fromJson(i));
+      }
+      return friendRequestsList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred during loading initial friend requests');
+    }
+  }
+
+  Future<List<User>> getSuggestedFriends() async {
+    var response = await widget.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/discover')
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<User> suggestedFriendsList = [];
+      for (dynamic item in resultList) {
+        Map<String, dynamic> i = Map<String, dynamic>.from(item);
+        suggestedFriendsList.add(User.fromJson(i));
+      }
+      return suggestedFriendsList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred during loading initial suggested friends');
+    }
+  }
+}
+
+class MyFeedBody extends StatefulWidget {
+  const MyFeedBody({Key? key, required this.initialFeed, required this.http}) : super(key: key);
+  
+  final List<Post> initialFeed;
+  final InterceptedHttp http;
+
+  @override
+  _MyFeedBodyState createState() => _MyFeedBodyState();
+}
+
+class _MyFeedBodyState extends State<MyFeedBody> {
+  
+  List<Post> feedList = [];
+  late int skip;
+  late bool isEndOfList;
+  
+  @override
+  void initState() {
+    super.initState();
+    this.feedList.addAll(widget.initialFeed);
+    this.skip = widget.initialFeed.length;
+    this.isEndOfList = widget.initialFeed.length < backendSkipLimit ? true : false;
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    return LoadMore(
+      isFinish: isEndOfList,
+      onLoadMore: loadMoreFeedPost,
+      textBuilder: DefaultLoadMoreTextBuilder.english,
+      child: ListView.builder(
+        itemCount: this.feedList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return SocialMediaPost(post: this.feedList[index], http: widget.http, isFullPost: false,);
+        },
+      ),
+    );
+  }
+  
+  Future<bool> loadMoreFeedPost() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/feed?skip=${this.skip}'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      if (resultList.length > 0) {
+        List<Post> feedList = [];
+        feedList.addAll(resultList.map((e) => Post.fromJson(Map<String,dynamic>.from(e))).toList());
+        setState(() {
+          this.feedList.addAll(feedList);
+          this.skip += resultList.length;
+        });
+      }
+      else {
+        print('no more to add');
+        setState(() {
+          this.isEndOfList = true;
+        });
+      }
+      return true;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      return false;
+    }
+  }
+}
+
+class MyPostsBody extends StatefulWidget {
+  const MyPostsBody({Key? key, required this.initialFeed, required this.http}) : super(key: key);
+
+  final List<Post> initialFeed;
+  final InterceptedHttp http;
+
+  @override
+  _MyPostsBodyState createState() => _MyPostsBodyState();
+}
+
+class _MyPostsBodyState extends State<MyPostsBody> {
+
+  List<Post> myPostsList = [];
+  late int skip;
+  late bool isEndOfList;
+
+  @override
+  void initState() {
+    super.initState();
+    this.myPostsList.addAll(widget.initialFeed);
+    this.skip = widget.initialFeed.length;
+    this.isEndOfList = widget.initialFeed.length < backendSkipLimit ? true : false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadMore(
+      isFinish: isEndOfList,
+      onLoadMore: loadMoreMyPosts,
+      textBuilder: DefaultLoadMoreTextBuilder.english,
+      child: ListView.builder(
+        itemCount: this.myPostsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return SocialMediaPost(post: this.myPostsList[index], http: widget.http, isFullPost: false,);
+        },
+      ),
+    );
+  }
+
+  Future<bool> loadMoreMyPosts() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me//api/social-media/mp/profile?skip=${this.skip}'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      if (resultList.length > 0) {
+        List<Post> myPostsList = [];
+        myPostsList.addAll(resultList.map((e) => Post.fromJson(Map<String,dynamic>.from(e))).toList());
+        setState(() {
+          this.myPostsList.addAll(myPostsList);
+          this.skip += resultList.length;
+        });
+      }
+      else {
+        print('no more to add');
+        setState(() {
+          this.isEndOfList = true;
+        });
+      }
+      return true;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      return false;
+    }
+  }
+}
+
+class MyFriendsBody extends StatefulWidget {
+  const MyFriendsBody({Key? key, required this.initialFriends, required this.http}) : super(key: key);
+
+  final List<User> initialFriends;
+  final InterceptedHttp http;
+
+  @override
+  _MyFriendsBodyState createState() => _MyFriendsBodyState();
+}
+
+class _MyFriendsBodyState extends State<MyFriendsBody> {
+
+  List<User> myFriendsList = [];
+  late int skip;
+  late bool isEndOfList;
+
+  @override
+  void initState() {
+    super.initState();
+    this.myFriendsList.addAll(widget.initialFriends);
+    this.skip = widget.initialFriends.length;
+    this.isEndOfList = widget.initialFriends.length < backendSkipLimit ? true : false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadMore(
+      isFinish: isEndOfList,
+      onLoadMore: loadMoreMyFriends,
+      textBuilder: DefaultLoadMoreTextBuilder.english,
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: this.myFriendsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: NetworkImage(
+                    myFriendsList[index].profilePicUrl!.isNotEmpty
+                        ? myFriendsList[index].profilePicUrl!
+                        : placeholderDisplayPicUrl
+                ),
+                maxRadius: 25,
+              ),
+              title: Text(
+                '${myFriendsList[index].firstName} ${myFriendsList[index].lastName}',
+                style: bodyTextStyle,
+              ),
+              onTap: () {
+                print('tapped userId: ${myFriendsList[index].userId}');
+                Map<String, dynamic> data = {};
+                data['userId'] = myFriendsList[index].userId;
+                data['isFriend'] = myFriendsList[index].isFriend;
+                Navigator.pushNamed(context, '/user-profile', arguments: data);
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Future<bool> loadMoreMyFriends() async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/list?name=&skip=${this.skip}'),
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+
+      if (resultList.length > 0) {
+        List<User> myFriendsList = [];
+        for (dynamic item in resultList) {
+          Map<String, dynamic> i = Map<String,dynamic>.from(item);
+          if (i['isFriend']) {
+            myFriendsList.add(User.fromJson(i));
+          }
+        }
+        setState(() {
+          this.myFriendsList.addAll(myFriendsList);
+          this.skip += resultList.length;
+        });
+      }
+      else {
+        print('no more to add');
+        setState(() {
+          this.isEndOfList = true;
+        });
+      }
+
+      return true;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      return false;
+    }
+  }
+}
+
+class RequestsBody extends StatefulWidget {
+  const RequestsBody({Key? key,
+    required this.friendRequestsList,
+    required this.suggestedFriendsList,
+    required this.http
+  }) : super(key: key);
+
+  final List<FriendRequest> friendRequestsList;
+  final List<User> suggestedFriendsList;
+  final InterceptedHttp http;
+
+  @override
+  _RequestsBodyState createState() => _RequestsBodyState();
+}
+
+class _RequestsBodyState extends State<RequestsBody> {
+
+  late List<FriendRequest> friendRequestsList;
+  late List<User> suggestedFriendsList;
+
+  @override
+  void initState() {
+    super.initState();
+    this.friendRequestsList = widget.friendRequestsList;
+    this.suggestedFriendsList = widget.suggestedFriendsList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(children: [
+      displayRequests(),
+      SizedBox( height: 20, ),
+      Row(
+        children: [
+          SizedBox(
+            width: 10,
+          ),
+          Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Suggested',
+                style: bodyTextStyleBold,
+                textAlign: TextAlign.left,
+              )),
+        ]
+      ),
+      SizedBox( height: 2, ),
+      displaySuggested(),
+    ]);
+  }
+
+  ListView displayRequests() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: this.friendRequestsList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(15.0, 0, 0, 0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        backgroundImage: NetworkImage(
+                            this.friendRequestsList[index].mpUser.profilePicUrl!.isNotEmpty
+                                ? this.friendRequestsList[index].mpUser.profilePicUrl!
+                                : placeholderDisplayPicUrl
+                        ),
+                        maxRadius: 25,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        '${this.friendRequestsList[index].mpUser.firstName} ${this.friendRequestsList[index].mpUser.lastName}',
+                        style: bodyTextStyle,
+                      ),
+                    ]),
+                    Row(
+                      children: [
+                        RawMaterialButton(
+                          onPressed: () async {
+                            String message = '';
+                            try {
+                              message = await respondToRequest(false, this.friendRequestsList[index].friendRequestId);
+                            }
+                            on Exception catch(err) {
+                              message = formatExceptionMessage(err.toString());
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    message,
+                                    style: bodyTextStyle,
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                )
+                            );
+                          },
+                          fillColor: kBluishWhite,
+                          child: Icon(
+                            Icons.close_rounded,
+                            color: kBlack,
+                          ),
+                          padding: EdgeInsets.all(10.0),
+                          shape: CircleBorder(),
+                        ),
+                        RawMaterialButton(
+                          onPressed: () async {
+                            String message = '';
+                            try {
+                              message = await respondToRequest(true, this.friendRequestsList[index].friendRequestId);
+                            }
+                            on Exception catch(err) {
+                              message = formatExceptionMessage(err.toString());
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    message,
+                                    style: bodyTextStyle,
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                )
+                            );
+                          },
+                          fillColor: kLightBlue,
+                          child: Icon(
+                            Icons.check_rounded,
+                            color: Colors.white,
+                          ),
+                          padding: EdgeInsets.all(10.0),
+                          shape: CircleBorder(),
+                        ),
+                      ],
+                    ),
+                  ]
+              ),
+            )
+        );
+      },
+    );
+  }
+
+  ListView displaySuggested() {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: this.suggestedFriendsList.length,
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.white,
+              backgroundImage: NetworkImage(
+                  this.suggestedFriendsList[index].profilePicUrl!.isNotEmpty
+                      ? this.suggestedFriendsList[index].profilePicUrl!
+                      : placeholderDisplayPicUrl),
+              maxRadius: 25,
+            ),
+            title: Text(
+              '${this.suggestedFriendsList[index].firstName} ${this.suggestedFriendsList[index].lastName}',
+              style: bodyTextStyle,
+            ),
+            onTap: () {
+              Map<String, dynamic> data = {};
+              data['userId'] = this.suggestedFriendsList[index].userId;
+              data['isFriend'] = false;
+              Navigator.pushNamed(context, '/user-profile', arguments: data);
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String> respondToRequest(bool accept, String friendRequestId) async {
+    var response = await widget.http.put(Uri.parse(
+        'https://eq-lab-dev.me/api/social-media/mp/friend/respond-friend-request/$friendRequestId?accept=${accept.toString()}'));
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      print(result);
+      setState(() {
+        this.friendRequestsList.removeWhere((fr) => fr.friendRequestId == friendRequestId);
+      });
+      return accept ? 'Successfully accepted friend request' : 'Successfully rejected friend request';
+    }
+    else if (response.statusCode == 400) {
+      var result = jsonDecode(response.body);
+      print(result);
+      return result['error']['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occurred while responding to this friend request');
+    }
   }
 }
