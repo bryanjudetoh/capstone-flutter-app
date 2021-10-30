@@ -36,8 +36,13 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final SecureStorage secureStorage = SecureStorage();
-  //secureStorage.deleteAllData();
-  currentAccessToken = await secureStorage.readSecureData('accessToken');
+  try {
+    currentAccessToken = await secureStorage.readSecureData('accessToken');
+  }
+  on Exception catch (err) {
+    currentAccessToken = '';
+    print(err.toString());
+  }
   runApp(MyApp());
 }
 
