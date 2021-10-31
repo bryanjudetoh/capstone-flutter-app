@@ -135,6 +135,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
   late String replyingToId;
   late bool isReplyingToPost;
   late Widget commentsWidget;
+  late FocusNode commentFocusNode;
   final _formkey = GlobalKey<FormState>();
   TextEditingController commentController = TextEditingController();
 
@@ -148,7 +149,8 @@ class _FullPostScreenState extends State<FullPostScreen> {
     this.numDislikes = widget.post.numDislikes!;
     this.replyingToId = widget.post.postId;
     this.isReplyingToPost = true;
-    this.commentsWidget = InitSocialMediaComments(postId: widget.post.postId, getReplyCommentsState: getReplyCommentsState,);
+    this.commentFocusNode = FocusNode();
+    this.commentsWidget = InitSocialMediaComments(postId: widget.post.postId, getReplyCommentsState: getReplyCommentsState, requestFocus: this.requestFocus, cancelFocus: this.cancelFocus,);
   }
 
   @override
@@ -173,6 +175,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      focusNode: this.commentFocusNode,
                       maxLines: 4,
                       minLines: 1,
                       controller: commentController,
@@ -194,7 +197,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                           message = await doSendComment(this.commentController.text);
                           setState(() {
                             this.numComments += 1;
-                            this.commentsWidget = new InitSocialMediaComments(postId: widget.post.postId, getReplyCommentsState: getReplyCommentsState,);
+                            this.commentsWidget = new InitSocialMediaComments(postId: widget.post.postId, getReplyCommentsState: getReplyCommentsState, requestFocus: this.requestFocus, cancelFocus: this.cancelFocus,);
                           });
                         }
                         on Exception catch (err) {
@@ -263,7 +266,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
                 SizedBox(height: 20,),
                 SocialMediaPost(post: widget.post, http: widget.http, isFullPost: true, getLikeState: getLikeState, displayNumComments: displayNumComments,),
                 SizedBox(height: 10),
-                displayComments(),
+                this.commentsWidget,
               ],
             ),
           ),
@@ -293,13 +296,13 @@ class _FullPostScreenState extends State<FullPostScreen> {
     return this.numComments;
   }
 
-  Widget displayComments() {
-    if (widget.post.numComments == 0) {
-      return Container(
-        child: Text('No comments yet', style: bodyTextStyle,),
-      );
-    }
-    return this.commentsWidget;
+  void requestFocus() {
+    this.commentFocusNode.requestFocus();
+  }
+
+  void cancelFocus() {
+    this.commentFocusNode.unfocus();
+    this.commentController.clear();
   }
 
   Future<String> doSendComment(String content) async {

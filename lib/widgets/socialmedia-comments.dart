@@ -11,7 +11,7 @@ import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import '../constants.dart';
 
 class InitSocialMediaComments extends StatelessWidget {
-  InitSocialMediaComments({Key? key, required this.postId, required this.getReplyCommentsState}) : super(key: key);
+  InitSocialMediaComments({Key? key, required this.postId, required this.getReplyCommentsState, required this.requestFocus, required this.cancelFocus}) : super(key: key);
 
   final http = InterceptedHttp.build(
     interceptors: [
@@ -21,6 +21,8 @@ class InitSocialMediaComments extends StatelessWidget {
   );
   final String postId;
   final Function getReplyCommentsState;
+  final Function requestFocus;
+  final Function cancelFocus;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class InitSocialMediaComments extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<Comment>> snapshot) {
           if (snapshot.hasData) {
             List<Comment> initialCommentsList = snapshot.data!;
-            return SocialMediaComments(initialCommentsList: initialCommentsList, postId: this.postId, getReplyCommentsState: getReplyCommentsState, http: this.http,);
+            return SocialMediaComments(initialCommentsList: initialCommentsList, postId: this.postId, getReplyCommentsState: getReplyCommentsState, http: this.http, requestFocus: this.requestFocus, cancelFocus: this.cancelFocus,);
           }
           else if (snapshot.hasError) {
             return Center(
@@ -55,26 +57,7 @@ class InitSocialMediaComments extends StatelessWidget {
             );
           }
           else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    child: CircularProgressIndicator(),
-                    width: 60,
-                    height: 60,
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 16),
-                    child: Text(
-                      'Loading...',
-                      style: titleTwoTextStyleBold,
-                    ),
-                  )
-                ],
-              ),
-            );
+            return Container();
           }
         },
       ),
@@ -108,12 +91,14 @@ class InitSocialMediaComments extends StatelessWidget {
 
 
 class SocialMediaComments extends StatefulWidget {
-  SocialMediaComments({Key? key, required this.initialCommentsList, required this.postId, required this.getReplyCommentsState, required this.http}) : super(key: key);
+  SocialMediaComments({Key? key, required this.initialCommentsList, required this.postId, required this.getReplyCommentsState, required this.http, required this.requestFocus, required this.cancelFocus}) : super(key: key);
   
   final List<Comment> initialCommentsList;
   final String postId;
   final InterceptedHttp http;
   final Function getReplyCommentsState;
+  final Function requestFocus;
+  final Function cancelFocus;
   
 
   @override
@@ -209,6 +194,7 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                                           textStyle: xSmallSubtitleTextStyleBold,
                                         ),
                                         onPressed: () {
+                                          widget.requestFocus();
                                           widget.getReplyCommentsState(this.commentsList[index].commentId, false);
                                           ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
@@ -219,6 +205,7 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                                                 action: SnackBarAction(
                                                   label: 'Cancel',
                                                   onPressed: () {
+                                                    widget.cancelFocus();
                                                     widget.getReplyCommentsState( widget.postId, true);
                                                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                                   },
