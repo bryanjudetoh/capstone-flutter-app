@@ -9,12 +9,13 @@ import 'package:http_interceptor/http_interceptor.dart';
 import '../constants.dart';
 
 class SocialMediaPost extends StatefulWidget {
-  const SocialMediaPost({Key? key, required this.post, required this.http, required this.isFullPost, this.getLikeState}) : super(key: key);
+  const SocialMediaPost({Key? key, required this.post, required this.http, required this.isFullPost, this.getLikeState, this.displayNumComments}) : super(key: key);
 
   final Post post;
   final InterceptedHttp http;
   final bool isFullPost;
   final Function? getLikeState;
+  final Function? displayNumComments;
 
   @override
   _SocialMediaPostState createState() => _SocialMediaPostState();
@@ -280,7 +281,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                       icon: Icon(Icons.chat_bubble_outline_rounded, color: Colors.amber,),
                     ),
                     SizedBox(width: 5,),
-                    Text('${this.numComments}', style: bodyTextStyle,),
+                    Text('${widget.displayNumComments != null ? widget.displayNumComments!() : this.numComments}', style: bodyTextStyle,),
                   ],
                 ),
               ],
