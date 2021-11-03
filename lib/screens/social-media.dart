@@ -930,6 +930,7 @@ class _RequestsBodyState extends State<RequestsBody> {
     }
     else {
       var result = jsonDecode(response.body);
+      print(response.statusCode);
       print(result);
       throw Exception('A problem occurred while responding to this friend request');
     }
