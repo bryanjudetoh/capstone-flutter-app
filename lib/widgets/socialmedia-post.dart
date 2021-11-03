@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/models/post.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/widgets/report-modal.dart';
 
 import '../constants.dart';
 
@@ -28,6 +29,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   late int numLikes;
   late int numDislikes;
   late int numComments;
+  List<String> reportTypes = [];
 
   @override
   void initState() {
@@ -91,7 +93,15 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                 ],
               ),
               IconButton(
-                onPressed: postsModalBottomSheet(context, widget.post.postId),
+                onPressed: () async {
+                  if (this.reportTypes.isEmpty) {
+                    List<String> reportTypes = await getReportTypes();
+                    setState(() {
+                      this.reportTypes = reportTypes;
+                    });
+                  }
+                  postsModalBottomSheet(context, widget.post.postId);
+                },
                 icon: Icon(Icons.more_vert),
               ),
             ],
@@ -418,23 +428,32 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     }
   }
 
-  VoidCallback postsModalBottomSheet(BuildContext context, String postId) {
-    return () {
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.report_problem_outlined, color: Colors.redAccent,),
-                  title: Text('Report', style: bodyTextStyleBold,),
-                  onTap: () {}, //do report post here
-                ),
-              ],
-            );
-          }
-      );
-    };
+  void postsModalBottomSheet(BuildContext context, String postId) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ReportModal(reportedContentId: widget.post.postId, reportTypes: this.reportTypes, http: widget.http, isPost: true,);
+      }
+    );
+  }
+
+  Future<List<String>> getReportTypes() async{
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/report/type/list')
+    );
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<String> reportTypesList = [];
+      for (dynamic item in resultList) {
+        reportTypesList.add(item.toString());
+      }
+      return reportTypesList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(response.statusCode);
+      print(result);
+      throw Exception('A problem occurred while responding to this friend request');
+    }
   }
 }

@@ -7,6 +7,7 @@ import 'package:youthapp/models/comment.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/widgets/report-modal.dart';
 
 import '../constants.dart';
 
@@ -109,6 +110,7 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
   late int skip;
   late bool isEndOfList;
   late List<Comment> commentsList;
+  List<String> reportTypes = [];
 
   @override
   void initState() {
@@ -225,7 +227,15 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                       IconButton(
                         padding: EdgeInsets.zero,
                         constraints: BoxConstraints(),
-                        onPressed: commentsModalBottomSheet(context, this.commentsList[index].commentId),
+                        onPressed: () async {
+                          if (this.reportTypes.isEmpty) {
+                            List<String> reportTypes = await getReportTypes();
+                            setState(() {
+                              this.reportTypes = reportTypes;
+                            });
+                          }
+                          commentsModalBottomSheet(context, this.commentsList[index].commentId);
+                        },
                         icon: Icon(Icons.more_vert),
                       ),
                     ],
@@ -295,7 +305,15 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                               IconButton(
                                 padding: EdgeInsets.zero,
                                 constraints: BoxConstraints(),
-                                onPressed: commentsModalBottomSheet(context, this.commentsList[index].commentId),
+                                onPressed: () async {
+                                  if (this.reportTypes.isEmpty) {
+                                    List<String> reportTypes = await getReportTypes();
+                                    setState(() {
+                                      this.reportTypes = reportTypes;
+                                    });
+                                  }
+                                  commentsModalBottomSheet(context, this.commentsList[index].comments[nestedIndex].commentId);
+                                },
                                 icon: Icon(Icons.more_vert),
                               ),
                             ],
@@ -361,23 +379,32 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
         : list[index].organisation!.name;
   }
 
-  VoidCallback commentsModalBottomSheet(BuildContext context, String commentId) {
-    return () {
-      showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.report_problem_outlined, color: Colors.redAccent,),
-                  title: Text('Report', style: bodyTextStyleBold,),
-                  onTap: () {}, //do report comment here
-                ),
-              ],
-            );
-          }
-      );
-    };
+  Future<List<String>> getReportTypes() async{
+    var response = await widget.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/report/type/list')
+    );
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<String> reportTypesList = [];
+      for (dynamic item in resultList) {
+        reportTypesList.add(item.toString());
+      }
+      return reportTypesList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(response.statusCode);
+      print(result);
+      throw Exception('A problem occurred while responding to this friend request');
+    }
+  }
+
+  void commentsModalBottomSheet(BuildContext context, String commentId) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return ReportModal(reportedContentId: commentId, reportTypes: this.reportTypes, http: widget.http, isPost: false,);
+        }
+    );
   }
 }
