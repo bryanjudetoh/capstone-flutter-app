@@ -329,7 +329,6 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
               ),
               Container(
                 padding: EdgeInsets.all(20.0),
-                margin: EdgeInsets.only(bottom: 30.0),
                 decoration: BoxDecoration(
                   color: kBluishWhite,
                   border: Border.all(
@@ -377,6 +376,41 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   ],
                 ),
               ),
+              SizedBox(height: 5,),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: kLightBlue,
+                    padding: EdgeInsets.fromLTRB(10, 3, 13, 3),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )
+                  ),
+                  onPressed: () {
+                    Map<String, dynamic> data = {};
+                    data['sharedActivity'] = widget.activity;
+                    Navigator.pushNamed(context, '/create-post-shared', arguments: data);
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.share,),
+                      SizedBox(width: 5,),
+                      Text(
+                        'Share',
+                        style: TextStyle(
+                          fontFamily: 'SF Pro Display',
+                          fontSize: 20.0,
+                          height: 1.25,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 5,),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(

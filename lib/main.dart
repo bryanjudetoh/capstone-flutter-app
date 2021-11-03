@@ -5,6 +5,7 @@ import 'package:youthapp/screens/browse-activities.dart';
 import 'package:youthapp/screens/activity-details.dart';
 import 'package:youthapp/screens/browse-rewards.dart';
 import 'package:youthapp/screens/change-password.dart';
+import 'package:youthapp/screens/create-post-shared.dart';
 import 'package:youthapp/screens/create-post.dart';
 import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/full-post.dart';
@@ -106,6 +107,7 @@ class _MyAppState extends State<MyApp> {
         '/user-profile': (context) => InitUserProfileScreen(),
         '/full-post': (context) => InitFullPostScreen(),
         '/create-post': (context) => CreatePostScreen(),
+        '/create-post-shared': (context) => InitCreatePostShared(),
       }
     );
   }
