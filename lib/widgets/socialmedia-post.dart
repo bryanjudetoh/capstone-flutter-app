@@ -180,7 +180,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                               Container(
                                 child: widget.post.sharedReward!.mediaContentUrls!.isEmpty
                                     ? Image.network(
-                                  placeholderPostPicUrl,
+                                  placeholderRewardsPicUrl,
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   height: 220,

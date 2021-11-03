@@ -247,7 +247,7 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
               Container(
                 child: widget.sharedReward!.mediaContentUrls!.isEmpty
                     ? Image.network(
-                  placeholderPostPicUrl,
+                  placeholderRewardsPicUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: 220,
