@@ -76,7 +76,6 @@ class InitSocialMediaComments extends StatelessWidget {
 
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        //print(i);
         commentList.add(Comment.fromJson(i));
       }
 
@@ -183,13 +182,8 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  // Text(
-                                  //   '${this.comments[index].numLikes} likes',
-                                  //   style: xSmallBodyTextStyle,
-                                  //   overflow: TextOverflow.ellipsis,
-                                  // ),
+                                  CommentLikesDislikes(comment: this.commentsList[index], http: widget.http,),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 15),
                                     constraints: BoxConstraints(),
                                     child: TextButton(
                                         style: TextButton.styleFrom(
@@ -241,91 +235,96 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                     ],
                   ),
                   if (this.commentsList[index].numComments! > 0)
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: this.commentsList[index].comments.length,
-                      itemBuilder: (BuildContext context, int nestedIndex) {
-                        return Container(
-                          padding: EdgeInsets.only(left: 20, top: 5, bottom: 5),
-                          color: Colors.white,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                      getProfilePicUrl(this.commentsList[index].comments, nestedIndex).isNotEmpty
-                                          ? getProfilePicUrl(this.commentsList[index].comments, nestedIndex)
-                                          : placeholderDisplayPicUrl,
-                                    ),
-                                    radius: 20,
-                                  ),
-                                  SizedBox(width: 10,),
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        '${getName(this.commentsList[index].comments, nestedIndex)}',
-                                        style: smallBodyTextStyleBold,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 5,),
-                                      Container(
-                                        width: MediaQuery.of(context).size.width*0.60,
-                                        child: Text(
-                                          '${this.commentsList[index].comments[nestedIndex].content}',
-                                          style: smallBodyTextStyle,
-                                          textAlign: TextAlign.left,
-                                        ),
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Row(
-                                        children: <Widget>[
-                                          Container(
-                                            padding: EdgeInsets.all(5),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                            ),
-                                            child: Text(
-                                              '${dateTimeFormat.format(this.commentsList[index].comments[nestedIndex].createdAt!.toLocal())}',
-                                              style: xSmallSubtitleTextStyle,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                                ],
-                              ),
-                              IconButton(
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(),
-                                onPressed: () async {
-                                  if (this.reportTypes.isEmpty) {
-                                    List<String> reportTypes = await getReportTypes();
-                                    setState(() {
-                                      this.reportTypes = reportTypes;
-                                    });
-                                  }
-                                  commentsModalBottomSheet(context, this.commentsList[index].comments[nestedIndex].commentId);
-                                },
-                                icon: Icon(Icons.more_vert),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                    displayReplies(this.commentsList[index].comments),
                 ],
               ),
             );
           }
       ),
+    );
+  }
+
+  Widget displayReplies(List<Comment> list) {
+    return ListView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (BuildContext context, int nestedIndex) {
+        return Container(
+          padding: EdgeInsets.only(left: 20, top: 5, bottom: 5),
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      getProfilePicUrl(list, nestedIndex).isNotEmpty
+                          ? getProfilePicUrl(list, nestedIndex)
+                          : placeholderDisplayPicUrl,
+                    ),
+                    radius: 20,
+                  ),
+                  SizedBox(width: 10,),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        '${getName(list, nestedIndex)}',
+                        style: smallBodyTextStyleBold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 5,),
+                      Container(
+                        width: MediaQuery.of(context).size.width*0.60,
+                        child: Text(
+                          '${list[nestedIndex].content}',
+                          style: smallBodyTextStyle,
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      SizedBox(height: 10,),
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            child: Text(
+                              '${dateTimeFormat.format(list[nestedIndex].createdAt!.toLocal())}',
+                              style: xSmallSubtitleTextStyle,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          CommentLikesDislikes(comment: list[nestedIndex], http: widget.http,),
+                        ],
+                      ),
+                    ],
+                  )
+                ],
+              ),
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(),
+                onPressed: () async {
+                  if (this.reportTypes.isEmpty) {
+                    List<String> reportTypes = await getReportTypes();
+                    setState(() {
+                      this.reportTypes = reportTypes;
+                    });
+                  }
+                  commentsModalBottomSheet(context, list[nestedIndex].commentId);
+                },
+                icon: Icon(Icons.more_vert),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -344,7 +343,6 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
         List<Comment> commentList = [];
         for (dynamic item in resultList) {
           Map<String, dynamic> i = Map<String, dynamic>.from(item);
-          //print(i);
           commentList.add(Comment.fromJson(i));
         }
         setState(() {
@@ -408,3 +406,183 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
     );
   }
 }
+
+class CommentLikesDislikes extends StatefulWidget {
+  const CommentLikesDislikes({Key? key, required this.comment, required this.http}) : super(key: key);
+
+  final Comment comment;
+  final InterceptedHttp http;
+
+  @override
+  _CommentLikesDislikesState createState() => _CommentLikesDislikesState();
+}
+
+class _CommentLikesDislikesState extends State<CommentLikesDislikes> {
+  late bool hasLiked;
+  late bool hasDisliked;
+  late int numLikes;
+  late int numDislikes;
+
+  @override
+  void initState() {
+    super.initState();
+    this.hasLiked = widget.comment.hasLiked!;
+    this.hasDisliked = widget.comment.hasDisliked!;
+    this.numLikes = widget.comment.numLikes!;
+    this.numDislikes = widget.comment.numDislikes!;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(width: 10,),
+        Column(
+          children: [
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
+              onPressed: () async {
+                await handleLikeComment();
+              }, //do like or unlike
+              icon: Icon(
+                Icons.thumb_up_alt_outlined,
+                color: this.hasDisliked ? null : this.hasLiked ? Colors.blue : null,
+                size: 20,
+              ),
+            ),
+            Text('${this.numLikes}', style: xSmallSubtitleTextStyle,),
+          ],
+        ),
+        SizedBox(width: 15,),
+        Column(
+          children: [
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
+              onPressed: () async {
+                await handleDislikeComment();
+              }, //do dislike or undislike
+              icon: Icon(
+                Icons.thumb_down_alt_outlined,
+                color: this.hasLiked ? null : this.hasDisliked ? Colors.red : null,
+                size: 20,
+              ),
+            ),
+            Text('${this.numDislikes}', style: xSmallSubtitleTextStyle,),
+          ],
+        ),
+        SizedBox(width: 10,),
+      ],
+    );
+  }
+
+  Future<void> handleLikeComment() async {
+    String message = '';
+    try {
+      message = await doLikeComment();
+      setState(() {
+        this.hasLiked = !this.hasLiked;
+        if (this.hasLiked) {
+          this.hasDisliked = false;
+        }
+      });
+    }
+    on Exception catch (err) {
+      message = formatExceptionMessage(err.toString());
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: bodyTextStyle,
+          ),
+          duration: const Duration(seconds: 1),
+        )
+    );
+  }
+
+  Future<String> doLikeComment() async {
+    var response = await widget.http.put(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/comment/${widget.comment.commentId}/like'),
+    );
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      if (!this.hasLiked) {
+        setState(() {
+          this.numLikes += 1;
+          if (this.hasDisliked) {
+            this.numDislikes -= 1;
+          }
+        });
+      }
+      else {
+        setState(() {
+          this.numLikes -= 1;
+        });
+      }
+      return result['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('Error occured while liking this comment');
+    }
+  }
+
+  Future<void> handleDislikeComment() async {
+    String message = '';
+    try {
+      message = await doDislikeComment();
+      setState(() {
+        this.hasDisliked = !this.hasDisliked;
+        if (this.hasDisliked) {
+          this.hasLiked = false;
+        }
+      });
+    }
+    on Exception catch (err) {
+      message = formatExceptionMessage(err.toString());
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: bodyTextStyle,
+          ),
+          duration: const Duration(seconds: 1),
+        )
+    );
+  }
+
+  Future<String> doDislikeComment() async {
+    var response = await widget.http.put(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/mp/comment/${widget.comment.commentId}/dislike')
+    );
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      if (!this.hasDisliked) {
+        setState(() {
+          this.numDislikes += 1;
+          if (this.hasLiked) {
+            this.numLikes -= 1;
+          }
+        });
+      }
+      else {
+        setState(() {
+          this.numDislikes -= 1;
+        });
+      }
+      return result['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('Error occured while disliking this comment');
+    }
+  }
+}
+

@@ -247,7 +247,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                     IconButton(
                       onPressed: () async {
                         await handleLikePost();
-                      }, //do like or unlike
+                      },
                       icon: Icon(
                         Icons.thumb_up_alt_outlined,
                         color: this.hasDisliked ? null : this.hasLiked ? Colors.blue : null,),
@@ -261,7 +261,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                     IconButton(
                       onPressed: () async {
                         await handleDislikePost();
-                      }, //do dislike or undislike
+                      },
                       icon: Icon(
                         Icons.thumb_down_alt_outlined,
                         color: this.hasLiked ? null : this.hasDisliked ? Colors.red : null,
@@ -277,17 +277,15 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                       onPressed: () async {
                         if (!widget.isFullPost) {
                           Map<String, dynamic> data = await Navigator.pushNamed(context, '/full-post', arguments: widget.post.postId) as Map<String, dynamic>;
-                          print(data);
                           setState(() {
                             this.hasLiked = data['hasLiked'];
                             this.hasDisliked = data['hasDisliked'];
                             this.numLikes = data['numLikes'];
                             this.numDislikes = data['numDislikes'];
                             this.numComments = data['numComments'];
-                            print('states set');
                           });
                         }
-                      }, //view full posts with all comments
+                      },
                       icon: Icon(Icons.chat_bubble_outline_rounded, color: Colors.amber,),
                     ),
                     SizedBox(width: 5,),
