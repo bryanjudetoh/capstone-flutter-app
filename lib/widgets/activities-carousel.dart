@@ -230,11 +230,14 @@ class _ActivitiesCarouselState extends State<ActivitiesCarousel> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
-                                    Text(
-                                      '${item.name}',
-                                      style: carouselActivityTitleTextStyle,
-                                      textAlign: TextAlign.left,
-                                      overflow: TextOverflow.ellipsis,
+                                    Container(
+                                      width: MediaQuery.of(context).size.width*0.55,
+                                      child: Text(
+                                        '${item.name}',
+                                        style: carouselActivityTitleTextStyle,
+                                        textAlign: TextAlign.left,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                     Row(
                                       crossAxisAlignment: CrossAxisAlignment.center,
