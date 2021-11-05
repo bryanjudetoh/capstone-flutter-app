@@ -20,8 +20,14 @@ class Organisation {
 
   String? orgDisplayPicUrl;
 
+  int? numFollowers;
+
+  bool? isFollowing;
+
   Organisation({required this.organisationId, required this.name, this.email,
-    this.countryCode, this.website, this.orgDisplayPicUrl});
+    this.countryCode, this.website, this.orgDisplayPicUrl,
+    this.orgTags, this.numFollowers, this.isFollowing,
+  });
 
   factory Organisation.fromJson(Map<String, dynamic> json) => _$OrganisationFromJson(json);
 
