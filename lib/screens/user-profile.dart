@@ -164,121 +164,152 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         SizedBox(
                           height: 20,
                         ),
-                        Container(
-                          padding: EdgeInsets.all(10.0),
-                          margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                width: 3,
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.5),
-                                  blurRadius: 10, // changes position of shadow
-                                ),
-                              ]),
-                          child: Column(children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  backgroundImage: NetworkImage(
-                                      widget.user.profilePicUrl!.isNotEmpty ?
-                                      widget.user.profilePicUrl! : widget.placeholderUserProfilePicUrl
+                        Stack(
+                          children: <Widget>[
+                            Container(
+                              padding: EdgeInsets.all(10.0),
+                              margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                    width: 3,
+                                    color: Colors.white,
                                   ),
-                                  maxRadius: 50,
-                                ),
-                                SizedBox(
-                                  width: 25,
-                                ),
-                                Flexible(
-                                  child: Column(
-                                    children: <Widget>[
-                                      Text(
-                                        "${widget.user.firstName} ${widget.user
-                                            .lastName}",
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.left,
-                                        style: bodyTextStyleBold,
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.5),
+                                      blurRadius: 10, // changes position of shadow
+                                    ),
+                                  ]),
+                              child: Column(children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    CircleAvatar(
+                                      backgroundColor: Colors.white,
+                                      backgroundImage: NetworkImage(
+                                          widget.user.profilePicUrl!.isNotEmpty ?
+                                          widget.user.profilePicUrl! : widget.placeholderUserProfilePicUrl
                                       ),
-                                      Text(
-                                        '${widget.user.school}',
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.left,
-                                        style: captionTextStyle,
-                                      ),
-                                      Text(
-                                        '${widget.user.city}',
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.left,
-                                        style: captionTextStyle,
-                                      ),
-                                      Text(
-                                        'Born on ${dateFormat.format(widget.user.dob!.toLocal())}',
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.left,
-                                        style: captionTextStyle,
-                                      ),
-                                      Text(
-                                        '${widget.user.email}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: captionTextStyle,
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  Row(
-                                    children: <Widget>[
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/elixir.png'),
-                                        height: 40,
-                                        width: 40,
-                                      ),
-                                      SizedBox(
-                                        width: 2,
-                                      ),
-                                      Column(
+                                      maxRadius: 50,
+                                    ),
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    Flexible(
+                                      child: Column(
                                         children: <Widget>[
                                           Text(
-                                            'Equity Score',
+                                            "${widget.user.firstName} ${widget.user.lastName}",
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
+                                            style: bodyTextStyleBold,
+                                          ),
+                                          Text(
+                                            '${widget.user.school}',
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
                                             style: captionTextStyle,
                                           ),
                                           Text(
-                                            '${widget.user.potionBalance!.values.reduce((a, b) => a + b)}',
-                                            style: bodyTextStyleBold,
+                                            '${widget.user.city}',
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
+                                            style: captionTextStyle,
+                                          ),
+                                          Text(
+                                            'Born on ${dateFormat.format(widget.user.dob!.toLocal())}',
+                                            overflow: TextOverflow.ellipsis,
+                                            textAlign: TextAlign.left,
+                                            style: captionTextStyle,
+                                          ),
+                                          Text(
+                                            '${widget.user.email}',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: captionTextStyle,
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(children: <Widget>[
-                                    Text(
-                                      'Friends',
-                                      style: captionTextStyle,
                                     ),
-                                    Text(
-                                      '${widget.user.numFriends}',
-                                      style: bodyTextStyleBold,
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: <Widget>[
+                                      Row(
+                                        children: <Widget>[
+                                          Image(
+                                            image: AssetImage(
+                                                'assets/images/elixir.png'),
+                                            height: 40,
+                                            width: 40,
+                                          ),
+                                          SizedBox(
+                                            width: 2,
+                                          ),
+                                          Column(
+                                            children: <Widget>[
+                                              Text(
+                                                'Equity Score',
+                                                style: captionTextStyle,
+                                              ),
+                                              Text(
+                                                '${widget.user.potionBalance!.values.reduce((a, b) => a + b)}',
+                                                style: bodyTextStyleBold,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Column(children: <Widget>[
+                                        Text(
+                                          'Friends',
+                                          style: captionTextStyle,
+                                        ),
+                                        Text(
+                                          '${widget.user.numFriends}',
+                                          style: bodyTextStyleBold,
+                                        ),
+                                      ])
+                                    ])
+                              ]),
+                            ),
+                            if (widget.isFriend)
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Padding(
+                                  padding: EdgeInsets.only(right: 30, top: 5),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton(
+                                      icon: Icon(Icons.more_vert),
+                                      items: [
+                                        DropdownMenuItem(
+                                          child: Row(
+                                            children: <Widget>[
+                                              Icon(Icons.person_remove),
+                                              SizedBox(width: 8),
+                                              Text('Unfriend', style: smallBodyTextStyle),
+                                            ],
+                                          ),
+                                          value: 'Unfriend',
+                                        ),
+                                      ],
+                                      onChanged: (_) async {
+                                        await handleUnfriend();
+                                      },
                                     ),
-                                  ])
-                                ])
-                          ]),
+                                  ),
+                                ),
+                              ),
+                          ]
                         ),
                       ],
                     ),
@@ -332,6 +363,49 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> handleUnfriend() async {
+    String message = '';
+    try {
+      message = await doUnfriend();
+      Navigator.pop(context);
+      Navigator.pushNamed(context, '/user-profile', arguments: widget.user.userId);
+    }
+    on Exception catch (err) {
+      message = formatExceptionMessage(err.toString());
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: bodyTextStyle,
+          ),
+          duration: const Duration(seconds: 1),
+        )
+    );
+  }
+
+  Future<String> doUnfriend() async {
+    var response = await widget.http.put(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/friend/unfriend/${widget.user.userId}'),
+    );
+
+    if (response.statusCode == 200) {
+      var result = jsonDecode(response.body);
+      return result['message'];
+    }
+    else if (response.statusCode == 400 || response.statusCode == 404) {
+      var result = jsonDecode(response.body);
+      print(result);
+      return result['error']['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('status code: ${response.statusCode}');
+      print(result);
+      throw Exception('A problem occured while adding friend (id: ${widget.user.userId})');
+    }
   }
 
   Future<void> handleAddFriend() async {
