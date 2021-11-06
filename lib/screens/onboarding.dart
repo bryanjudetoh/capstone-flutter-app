@@ -315,7 +315,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
 
       try {
-        doRegistration(body, true);
+        await doRegistration(body, true);
 
         showDialog(
           context: context,
