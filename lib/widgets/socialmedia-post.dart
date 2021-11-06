@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/models/post.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:http_interceptor/http_interceptor.dart';
-import 'package:youthapp/widgets/report-modal.dart';
+import 'package:youthapp/utilities/securestorage.dart';
+import 'package:youthapp/widgets/postcomment-modal.dart';
 
 import '../constants.dart';
 
@@ -29,7 +30,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   late int numLikes;
   late int numDislikes;
   late int numComments;
-  List<String> reportTypes = [];
+  final SecureStorage secureStorage = SecureStorage();
 
   @override
   void initState() {
@@ -94,13 +95,13 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
               ),
               IconButton(
                 onPressed: () async {
-                  if (this.reportTypes.isEmpty) {
-                    List<String> reportTypes = await getReportTypes();
-                    setState(() {
-                      this.reportTypes = reportTypes;
-                    });
+                  String userData = await secureStorage.readSecureData('user');
+                  String myUserId = Map<String, dynamic>.from(jsonDecode(userData))['userId'];
+                  bool isMyPost = false;
+                  if (widget.post.mpUser != null) {
+                    isMyPost = widget.post.mpUser!.userId == myUserId;
                   }
-                  postsModalBottomSheet(context, widget.post.postId);
+                  postsModalBottomSheet(context, widget.post.postId, isMyPost);
                 },
                 icon: Icon(Icons.more_vert),
               ),
@@ -426,11 +427,11 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     }
   }
 
-  void postsModalBottomSheet(BuildContext context, String postId) {
+  void postsModalBottomSheet(BuildContext context, String postId, bool isMyPost) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return ReportModal(reportedContentId: widget.post.postId, reportTypes: this.reportTypes, http: widget.http, isPost: true,);
+        return InitPostCommentModal(reportedContentId: widget.post.postId, http: widget.http, isPost: true, isMyPostComment: isMyPost,);
       }
     );
   }

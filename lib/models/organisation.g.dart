@@ -19,8 +19,11 @@ Organisation _$OrganisationFromJson(Map<String, dynamic> json) {
     countryCode: json['countryCode'] as String?,
     website: json['website'] as String?,
     orgDisplayPicUrl: json['orgDisplayPicUrl'] as String?,
-  )..orgTags =
-      (json['orgTags'] as List<dynamic>?)?.map((e) => e as String).toList();
+    orgTags:
+        (json['orgTags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    numFollowers: json['numFollowers'] as int?,
+    isFollowing: json['isFollowing'] as bool?,
+  );
 }
 
 Map<String, dynamic> _$OrganisationToJson(Organisation instance) =>
@@ -32,4 +35,6 @@ Map<String, dynamic> _$OrganisationToJson(Organisation instance) =>
       'website': instance.website,
       'orgTags': instance.orgTags,
       'orgDisplayPicUrl': instance.orgDisplayPicUrl,
+      'numFollowers': instance.numFollowers,
+      'isFollowing': instance.isFollowing,
     };

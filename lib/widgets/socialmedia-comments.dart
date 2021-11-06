@@ -7,7 +7,8 @@ import 'package:youthapp/models/comment.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
-import 'package:youthapp/widgets/report-modal.dart';
+import 'package:youthapp/utilities/securestorage.dart';
+import 'package:youthapp/widgets/postcomment-modal.dart';
 
 import '../constants.dart';
 
@@ -109,7 +110,7 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
   late int skip;
   late bool isEndOfList;
   late List<Comment> commentsList;
-  List<String> reportTypes = [];
+  final SecureStorage secureStorage = SecureStorage();
 
   @override
   void initState() {
@@ -222,13 +223,13 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                         padding: EdgeInsets.zero,
                         constraints: BoxConstraints(),
                         onPressed: () async {
-                          if (this.reportTypes.isEmpty) {
-                            List<String> reportTypes = await getReportTypes();
-                            setState(() {
-                              this.reportTypes = reportTypes;
-                            });
+                          String userData = await secureStorage.readSecureData('user');
+                          String myUserId = Map<String, dynamic>.from(jsonDecode(userData))['userId'];
+                          bool isMyComment = false;
+                          if (this.commentsList[index].mpUser != null) {
+                            isMyComment = this.commentsList[index].mpUser!.userId == myUserId;
                           }
-                          commentsModalBottomSheet(context, this.commentsList[index].commentId);
+                          commentsModalBottomSheet(context, this.commentsList[index], isMyComment);
                         },
                         icon: Icon(Icons.more_vert),
                       ),
@@ -311,13 +312,13 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                 padding: EdgeInsets.zero,
                 constraints: BoxConstraints(),
                 onPressed: () async {
-                  if (this.reportTypes.isEmpty) {
-                    List<String> reportTypes = await getReportTypes();
-                    setState(() {
-                      this.reportTypes = reportTypes;
-                    });
+                  String userData = await secureStorage.readSecureData('user');
+                  String myUserId = Map<String, dynamic>.from(jsonDecode(userData))['userId'];
+                  bool isMyComment = false;
+                  if (list[nestedIndex].mpUser != null) {
+                    isMyComment = list[nestedIndex].mpUser!.userId == myUserId;
                   }
-                  commentsModalBottomSheet(context, list[nestedIndex].commentId);
+                  commentsModalBottomSheet(context, list[nestedIndex], isMyComment);
                 },
                 icon: Icon(Icons.more_vert),
               ),
@@ -377,31 +378,11 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
         : list[index].organisation!.name;
   }
 
-  Future<List<String>> getReportTypes() async{
-    var response = await widget.http.get(
-        Uri.parse('https://eq-lab-dev.me/api/social-media/report/type/list')
-    );
-    if (response.statusCode == 200) {
-      List<dynamic> resultList = jsonDecode(response.body);
-      List<String> reportTypesList = [];
-      for (dynamic item in resultList) {
-        reportTypesList.add(item.toString());
-      }
-      return reportTypesList;
-    }
-    else {
-      var result = jsonDecode(response.body);
-      print(response.statusCode);
-      print(result);
-      throw Exception('A problem occurred while responding to this friend request');
-    }
-  }
-
-  void commentsModalBottomSheet(BuildContext context, String commentId) {
+  void commentsModalBottomSheet(BuildContext context, Comment comment, bool isMyComment) {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return ReportModal(reportedContentId: commentId, reportTypes: this.reportTypes, http: widget.http, isPost: false,);
+          return InitPostCommentModal(reportedContentId: comment.commentId, http: widget.http, isPost: false, isMyPostComment: isMyComment);
         }
     );
   }

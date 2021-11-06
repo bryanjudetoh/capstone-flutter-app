@@ -3,22 +3,96 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http_interceptor/http/intercepted_http.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 
 import '../constants.dart';
 
-class ReportModal extends StatefulWidget {
-  const ReportModal({Key? key, required this.reportedContentId, required this.reportTypes, required this.http, required this.isPost}) : super(key: key);
+class InitPostCommentModal extends StatelessWidget {
+  InitPostCommentModal({Key? key, required this.reportedContentId, required this.http, required this.isPost, required this.isMyPostComment}) : super(key: key);
+
+  final String reportedContentId;
+  final InterceptedHttp http;
+  final bool isPost;
+  final bool isMyPostComment;
+  final SecureStorage secureStorage = SecureStorage();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<String>>(
+      future: getReportTypes(),
+      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+        if (snapshot.hasData) {
+          List<String> reportTypes = snapshot.data!;
+          return PostCommentModal(reportedContentId: reportedContentId, reportTypes: reportTypes, http: this.http, isPost: this.isPost, isMyPostComment: this.isMyPostComment,);
+        }
+        else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 40,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: titleThreeTextStyleBold,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Future<List<String>> getReportTypes() async{
+    var response = await this.http.get(
+        Uri.parse('https://eq-lab-dev.me/api/social-media/report/type/list')
+    );
+    if (response.statusCode == 200) {
+      List<dynamic> resultList = jsonDecode(response.body);
+      List<String> reportTypesList = [];
+      for (dynamic item in resultList) {
+        reportTypesList.add(item.toString());
+      }
+      return reportTypesList;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(response.statusCode);
+      print(result);
+      throw Exception('A problem occurred while responding to this friend request');
+    }
+  }
+}
+
+
+class PostCommentModal extends StatefulWidget {
+  const PostCommentModal({
+    Key? key, required this.reportedContentId, required this.reportTypes,
+    required this.http, required this.isPost, required this.isMyPostComment,
+  }) : super(key: key);
 
   final String reportedContentId;
   final List<String> reportTypes;
   final InterceptedHttp http;
   final bool isPost;
+  final bool isMyPostComment;
 
   @override
-  _ReportModalState createState() => _ReportModalState();
+  _PostCommentModalState createState() => _PostCommentModalState();
 }
 
-class _ReportModalState extends State<ReportModal> {
+class _PostCommentModalState extends State<PostCommentModal> {
   final _formkey = GlobalKey<FormState>();
   late String selectedReportType;
   late TextEditingController reportReasonController;
@@ -44,10 +118,14 @@ class _ReportModalState extends State<ReportModal> {
     return Container(
       color: Colors.white,
       child: PageView(
-        children: [
-          reportMainPage(),
-          submitReportPage(),
-        ],
+        children: widget.isMyPostComment
+            ? [
+              editDeletePage(),
+            ]
+            : [
+              reportMainPage(),
+              submitReportPage(),
+            ],
         controller: this.pageController,
         physics: const NeverScrollableScrollPhysics(),
       ),
@@ -154,6 +232,21 @@ class _ReportModalState extends State<ReportModal> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget editDeletePage() {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          leading: Icon(Icons.edit,),
+          title: Text('Edit ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
+        ),
+        ListTile(
+          leading: Icon(Icons.delete, color: Colors.redAccent,),
+          title: Text('Delete ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
+        ),
+      ],
     );
   }
 
