@@ -93,9 +93,11 @@ class PostCommentModal extends StatefulWidget {
 }
 
 class _PostCommentModalState extends State<PostCommentModal> {
-  final _formkey = GlobalKey<FormState>();
+  final _reportFormKey = GlobalKey<FormState>();
+  final _editingFormKey = GlobalKey<FormState>();
   late String selectedReportType;
   late TextEditingController reportReasonController;
+  late TextEditingController editingController;
   late PageController pageController;
 
   @override
@@ -103,6 +105,7 @@ class _PostCommentModalState extends State<PostCommentModal> {
     super.initState();
     this.selectedReportType = '';
     this.reportReasonController = TextEditingController();
+    this.editingController = TextEditingController();
     this.pageController = PageController();
   }
 
@@ -111,6 +114,7 @@ class _PostCommentModalState extends State<PostCommentModal> {
     super.dispose();
     this.reportReasonController.dispose();
     this.pageController.dispose();
+    this.editingController.dispose();
   }
 
   @override
@@ -121,6 +125,7 @@ class _PostCommentModalState extends State<PostCommentModal> {
         children: widget.isMyPostComment
             ? [
               editDeletePage(),
+              editingPage(),
             ]
             : [
               reportMainPage(),
@@ -189,7 +194,7 @@ class _PostCommentModalState extends State<PostCommentModal> {
               TextButton(
                 child: Text('Submit', style: smallBodyTextStyleBold,),
                 onPressed: () async {
-                  if (this._formkey.currentState!.validate()) {
+                  if (this._reportFormKey.currentState!.validate()) {
                     String message = '';
                     try {
                       message = await doReport(this.reportReasonController.text, this.selectedReportType);
@@ -213,7 +218,7 @@ class _PostCommentModalState extends State<PostCommentModal> {
             ],
           ),
           Form(
-            key: _formkey,
+            key: _reportFormKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -232,21 +237,6 @@ class _PostCommentModalState extends State<PostCommentModal> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget editDeletePage() {
-    return Column(
-      children: <Widget>[
-        ListTile(
-          leading: Icon(Icons.edit,),
-          title: Text('Edit ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
-        ),
-        ListTile(
-          leading: Icon(Icons.delete, color: Colors.redAccent,),
-          title: Text('Delete ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
-        ),
-      ],
     );
   }
 
@@ -274,6 +264,116 @@ class _PostCommentModalState extends State<PostCommentModal> {
       print(response.statusCode);
       print(result);
       throw Exception('A problem occurred while reporting this ${widget.isPost ? 'post' : 'comment'}');
+    }
+  }
+
+  Widget editDeletePage() {
+    return Column(
+      children: <Widget>[
+        ListTile(
+          leading: Icon(Icons.edit,),
+          title: Text('Edit ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
+          onTap: () {
+            changePage(1);
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.delete, color: Colors.redAccent,),
+          title: Text('Delete ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
+        ),
+      ],
+    );
+  }
+
+  Widget editingPage() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                      onPressed: () {
+                        changePage(0);
+                      },
+                      icon: Icon(Icons.arrow_back_outlined)),
+                  Text('Editing ${widget.isPost ? 'post' : 'comment'}', style: bodyTextStyle,),
+                ],
+              ),
+              TextButton(
+                child: Text('Submit', style: smallBodyTextStyleBold,),
+                onPressed: () async {
+                  if (this._editingFormKey.currentState!.validate()) {
+                    String message = '';
+                    try {
+                      message = await submitEditing(this.editingController.text);
+                      Navigator.pop(context);
+                    }
+                    on Exception catch (err) {
+                      message = formatExceptionMessage(err.toString());
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            message,
+                            style: bodyTextStyle,
+                          ),
+                          duration: const Duration(seconds: 3),
+                        )
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          Form(
+            key: _editingFormKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  maxLines: 4,
+                  controller: this.editingController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Write your edits for this ${widget.isPost ? 'post' : 'comment'} here',
+                    contentPadding: EdgeInsets.all(12),
+                  ),
+                  validator: RequiredValidator(errorText: "* Required"),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String> submitEditing(String newContent) async {
+    var response = await widget.http.put(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/${widget.isPost ? 'post' : 'comment'}/${widget.reportedContentId}'),
+      body: jsonEncode(<String, String> {
+        'content': newContent,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      return responseBody['message'];
+    }
+    else if (response.statusCode == 403) {
+      var result = jsonDecode(response.body);
+      print(result);
+      return result['error']['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(response.statusCode);
+      print(result);
+      throw Exception('A problem occurred while submiting this edit');
     }
   }
 }
