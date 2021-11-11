@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:http_interceptor/http/intercepted_http.dart';
+import 'package:youthapp/models/post.dart';
 import 'package:youthapp/utilities/securestorage.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../constants.dart';
 
@@ -18,12 +20,12 @@ class InitPostCommentModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<String>>(
-      future: getReportTypes(),
-      builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: initData(),
+      builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         if (snapshot.hasData) {
-          List<String> reportTypes = snapshot.data!;
-          return PostCommentModal(reportedContentId: reportedContentId, reportTypes: reportTypes, http: this.http, isPost: this.isPost, isMyPostComment: this.isMyPostComment,);
+          Map<String, dynamic> data = snapshot.data!;
+          return PostCommentModal(reportedContentId: reportedContentId, reportTypes: data['reportTypes'], http: this.http, isPost: this.isPost, isMyPostComment: this.isMyPostComment, post: data['post'],);
         }
         else if (snapshot.hasError) {
           return Center(
@@ -54,6 +56,16 @@ class InitPostCommentModal extends StatelessWidget {
     );
   }
 
+  Future<Map<String, dynamic>> initData() async {
+    Map<String, dynamic> data = {};
+    data['reportTypes'] = await getReportTypes();
+    if (this.isPost) {
+      data['post'] = await retrievePost(this.reportedContentId);
+    }
+
+    return data;
+  }
+
   Future<List<String>> getReportTypes() async{
     var response = await this.http.get(
         Uri.parse('https://eq-lab-dev.me/api/social-media/report/type/list')
@@ -73,13 +85,29 @@ class InitPostCommentModal extends StatelessWidget {
       throw Exception('A problem occurred while responding to this friend request');
     }
   }
-}
 
+  Future<Post> retrievePost(String postId) async {
+    var response = await this.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/post/$postId'),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      Post post = Post.fromJson(responseBody);
+      return post;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception('A problem occured while retrieving post data');
+    }
+  }
+}
 
 class PostCommentModal extends StatefulWidget {
   const PostCommentModal({
     Key? key, required this.reportedContentId, required this.reportTypes,
-    required this.http, required this.isPost, required this.isMyPostComment,
+    required this.http, required this.isPost, required this.isMyPostComment, this.post
   }) : super(key: key);
 
   final String reportedContentId;
@@ -87,6 +115,7 @@ class PostCommentModal extends StatefulWidget {
   final InterceptedHttp http;
   final bool isPost;
   final bool isMyPostComment;
+  final Post? post;
 
   @override
   _PostCommentModalState createState() => _PostCommentModalState();
@@ -271,6 +300,15 @@ class _PostCommentModalState extends State<PostCommentModal> {
   Widget editDeletePage() {
     return Column(
       children: <Widget>[
+        if (widget.post != null)
+          if (widget.post!.sharedActivity == null && widget.post!.sharedReward == null)
+            ListTile(
+              leading: Icon(Icons.share,),
+              title: Text('Share Post', style: bodyTextStyleBold,),
+              onTap: () {
+                doShare();
+              },
+            ),
         ListTile(
           leading: Icon(Icons.edit,),
           title: Text('Edit ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
@@ -449,6 +487,10 @@ class _PostCommentModalState extends State<PostCommentModal> {
         ],
       ),
     );
+  }
+
+  void doShare() {
+    Share.share(widget.post!.content);
   }
 
   Future<String> submitEditing(String newContent) async {
