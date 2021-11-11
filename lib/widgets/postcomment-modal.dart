@@ -126,6 +126,7 @@ class _PostCommentModalState extends State<PostCommentModal> {
             ? [
               editDeletePage(),
               editingPage(),
+              deletingPage(),
             ]
             : [
               reportMainPage(),
@@ -280,6 +281,9 @@ class _PostCommentModalState extends State<PostCommentModal> {
         ListTile(
           leading: Icon(Icons.delete, color: Colors.redAccent,),
           title: Text('Delete ${widget.isPost ? 'Post' : 'Comment'}', style: bodyTextStyleBold,),
+          onTap: () {
+            changePage(2);
+          },
         ),
       ],
     );
@@ -352,12 +356,129 @@ class _PostCommentModalState extends State<PostCommentModal> {
     );
   }
 
+  Widget deletingPage() {
+    return Container(
+      padding: EdgeInsets.all(5.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    changePage(0);
+                  },
+                  icon: Icon(Icons.arrow_back_outlined)),
+              SizedBox(width: 10,),
+            ],
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height*0.05,),
+          Column(
+            children: <Widget>[
+              Text(
+                'Are you sure you want to delete this ${widget.isPost ? 'post' : 'comment'}?',
+                style: titleThreeTextStyleBold,
+              ),
+              SizedBox(height: 50,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      changePage(0);
+                    },
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        fontFamily: 'SF Pro Display',
+                        fontSize: 20.0,
+                        height: 1.25,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 80),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        padding: EdgeInsets.fromLTRB(10, 3, 13, 3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        )
+                    ),
+                    onPressed: () async {
+                      String message = '';
+                      try {
+                        message = await doDeleting();
+                        Navigator.pop(context);
+                      }
+                      on Exception catch (err) {
+                        message = formatExceptionMessage(err.toString());
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              message,
+                              style: bodyTextStyle,
+                            ),
+                            duration: const Duration(seconds: 3),
+                          )
+                      );
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.delete_forever,),
+                        SizedBox(width: 5,),
+                        Text(
+                          'Delete',
+                          style: TextStyle(
+                            fontFamily: 'SF Pro Display',
+                            fontSize: 20.0,
+                            height: 1.25,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<String> submitEditing(String newContent) async {
     var response = await widget.http.put(
       Uri.parse('https://eq-lab-dev.me/api/social-media/mp/${widget.isPost ? 'post' : 'comment'}/${widget.reportedContentId}'),
       body: jsonEncode(<String, String> {
         'content': newContent,
       }),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      return responseBody['message'];
+    }
+    else if (response.statusCode == 403) {
+      var result = jsonDecode(response.body);
+      print(result);
+      return result['error']['message'];
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(response.statusCode);
+      print(result);
+      throw Exception('A problem occurred while submiting this edit');
+    }
+  }
+
+  Future<String> doDeleting() async {
+    var response = await widget.http.delete(
+      Uri.parse('https://eq-lab-dev.me/api/social-media/mp/${widget.isPost ? 'post' : 'comment'}/${widget.reportedContentId}'),
     );
 
     if (response.statusCode == 200) {
