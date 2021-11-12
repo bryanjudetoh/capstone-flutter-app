@@ -242,7 +242,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
     );
   }
 
-  Future<void> doRedemption(String rewardId, int? elixirCost) async {
+  Future<void> doRedemption(String rewardId) async {
     var response = await widget.http.post(
       Uri.parse('https://eq-lab-dev.me/api/reward-svc/mp/reward/' + rewardId),
     );
@@ -625,7 +625,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                             children: [
                               RoundedButton(
                                   func: () {
-                                    doRedemption(rewards[index].rewardId, rewards[index].elixirCost);
+                                    doRedemption(rewards[index].rewardId);
                                   },
                                   colorFont: Colors.white,
                                   colorBG: kLightBlue,
