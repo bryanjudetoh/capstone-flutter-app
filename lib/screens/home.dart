@@ -206,6 +206,34 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                   height: 15,
                 ),
                 Column(
+                  children: <Widget>[
+                    Text('Activities being boosted:', style: homeElixirSmallBodyTextStyle,),
+                    SizedBox(height: 5,),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: widget.user.multipliers!.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String key = widget.user.multipliers!.keys.elementAt(index);
+                        print(widget.user.multipliers!);
+                        return widget.user.multipliers![key] == 1
+                          ? Container()
+                          : Container(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('${activityTypeMap[key]}:', style: homeElixirSmallBodyTextStyle,),
+                                  SizedBox(width: 30,),
+                                  Text('${widget.user.multipliers![key]}x', style: homeElixirSmallBodyTextStyle,),
+                                ],
+                              ),
+                            );
+                      },
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15,),
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     RoundedButton(

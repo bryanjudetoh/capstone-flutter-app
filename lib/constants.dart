@@ -210,6 +210,14 @@ const homeElixirBodyTextStyle = TextStyle(
   color: Colors.white,
 );
 
+const homeElixirSmallBodyTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 20.0,
+  height: 1.25,
+  fontWeight: FontWeight.bold,
+  color: Colors.white,
+);
+
 const countryCodesList = ['MN', 'SG', 'MY'];
 const genderList = ['male', 'female', 'others'];
 const activityTypeMap = <String, String>{
