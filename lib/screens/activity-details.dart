@@ -220,7 +220,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
                             Image(
-                              image: AssetImage('assets/images/elixir.png'),
+                              image: AssetImage('${activityTypeToPotionColorPathMap[widget.activity.type]}'),
                               height: 40,
                               width: 40,
                             ),

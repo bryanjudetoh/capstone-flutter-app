@@ -430,7 +430,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                               children: <Widget>[
                                 Image(
                                   image: AssetImage(
-                                      'assets/images/elixir.png'),
+                                      '${activityTypeToPotionColorPathMap[activities[index].type]}'),
                                   height: 25,
                                   width: 25,
                                 ),

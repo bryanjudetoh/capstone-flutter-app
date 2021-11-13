@@ -345,7 +345,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
                                       children: <Widget>[
                                         Image(
                                           image: AssetImage(
-                                              'assets/images/elixir.png'),
+                                              'assets/images/power-elixir.png'),
                                           height: 40,
                                           width: 40,
                                         ),

@@ -216,7 +216,7 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                       children: <Widget>[
                                         Image(
                                           image: AssetImage(
-                                              'assets/images/elixir.png'),
+                                              '${activityTypeToPotionColorPathMap[item.type]}'),
                                           height: 25,
                                           width: 25,
                                         ),

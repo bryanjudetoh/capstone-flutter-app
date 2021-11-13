@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 
 const kWhite = Color(0xFFE5E5E5);
 const kBlack = Color(0xFF000000);
@@ -196,7 +197,8 @@ const carouselActivityTitleTextStyle = TextStyle(
 
 const homeElixirTitleTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
-  fontSize: 60.0,
+  fontSize: 38.0,
+  decoration: TextDecoration.underline,
   height: 1.25,
   fontWeight: FontWeight.bold,
   color: Colors.white,
@@ -204,7 +206,7 @@ const homeElixirTitleTextStyle = TextStyle(
 
 const homeElixirBodyTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
-  fontSize: 28.0,
+  fontSize: 26.0,
   height: 1.25,
   fontWeight: FontWeight.bold,
   color: Colors.white,
@@ -218,17 +220,25 @@ const homeElixirSmallBodyTextStyle = TextStyle(
   color: Colors.white,
 );
 
+const homeElixirXsmallBodyTextStyle = TextStyle(
+  fontFamily: 'SF Pro Display',
+  fontSize: 14.0,
+  height: 1.25,
+  color: Colors.white,
+);
+
 const countryCodesList = ['MN', 'SG', 'MY'];
 const genderList = ['male', 'female', 'others'];
 const activityTypeMap = <String, String>{
   'scholarship': 'Scholarship',
   'internship': 'Internship',
   'mentorship': 'Mentorship',
-  'onlineCourse': 'Online Courses',
-  'offlineCourse': 'Offline Courses',
+  'onlineCourse': 'Online Course',
+  'offlineCourse': 'Offline Course',
   'volunteer': 'Volunteering',
   'sports': 'Sports',
 };
+
 const leaderboardTypeMapInverse = <String, String> {
   'Overall': 'overall',
   'Scholarship': 'scholarship',
@@ -239,6 +249,17 @@ const leaderboardTypeMapInverse = <String, String> {
   'Volunteering': 'volunteer',
   'Sports': 'sports',
 };
+
+const activityTypeToPotionColorPathMap = <String, String>{
+  'scholarship': 'assets/images/red-potion.png',
+  'internship': 'assets/images/yellow-potion.png',
+  'mentorship': 'assets/images/blue-potion.png',
+  'onlineCourse': 'assets/images/grey-potion.png',
+  'offlineCourse': 'assets/images/orange-potion.png',
+  'volunteer': 'assets/images/purple-potion.png',
+  'sports': 'assets/images/green-potion.png',
+};
+
 const rewardTypeMap = <String, String> {
   'externalReward': 'External',
   'inAppReward': 'In App'

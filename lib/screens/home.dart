@@ -8,6 +8,7 @@ import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/activities-carousel.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:youthapp/widgets/homepage-potions.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -133,6 +134,13 @@ class HomeScreenBody extends StatefulWidget {
 
 class _HomeScreenBodyState extends State<HomeScreenBody> {
   final SecureStorage secureStorage = SecureStorage();
+  late Map<String, int> currentMultipliers;
+
+  @override
+  void initState() {
+    super.initState();
+    this.currentMultipliers = widget.user.multipliers!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -161,8 +169,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
             height: 20,
           ),
           Container(
-              padding: EdgeInsets.all(20.0),
-              margin: EdgeInsets.fromLTRB(15, 0, 15, 15),
+              padding: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                   color: kLightBlue,
                   border: Border.all(
@@ -176,86 +183,119 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                       blurRadius: 10, // changes position of shadow
                     ),
                   ]),
-              child: Column(children: <Widget>[
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        maxRadius: 50,
-                        backgroundImage: AssetImage('assets/images/elixir.png',),
-                      ),
-                      SizedBox(
-                        width: 25,
-                      ),
-                      Column(
-                        children: <Widget> [
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          CircleAvatar(
+                            backgroundColor: Colors.white,
+                            maxRadius: 30,
+                            backgroundImage: AssetImage('assets/images/elixir.png',),
+                          ),
+                          SizedBox(
+                            width: 25,
+                          ),
                           Text(
                             '${widget.user.potionBalance!.values.reduce((a, b) => a + b)}',
                             style: homeElixirTitleTextStyle,
                           ),
+                          SizedBox(
+                            width: 10,
+                          ),
                           Text(
-                            'Equity Score',
+                            'Total Potions',
                             style: homeElixirBodyTextStyle,
-                          )
+                          ),
+                          SizedBox(
+                            width: 45,
+                          ),
                         ]
-                      )
-                    ]
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Column(
-                  children: <Widget>[
-                    Text('Activities being boosted:', style: homeElixirSmallBodyTextStyle,),
-                    SizedBox(height: 5,),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: widget.user.multipliers!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String key = widget.user.multipliers!.keys.elementAt(index);
-                        print(widget.user.multipliers!);
-                        return widget.user.multipliers![key] == 1
-                          ? Container()
-                          : Container(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('${activityTypeMap[key]}:', style: homeElixirSmallBodyTextStyle,),
-                                  SizedBox(width: 30,),
-                                  Text('${widget.user.multipliers![key]}x', style: homeElixirSmallBodyTextStyle,),
-                                ],
-                              ),
-                            );
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    RoundedButton(
-                        func: () {
-                            Navigator.pushNamed(context, '/browse-rewards');
-                        },
-                        colorFont: kLightBlue,
-                        colorBG: Colors.white,
-                        title: 'Rewards'
                     ),
                     SizedBox(
-                        height: 15
+                      height: 15,
                     ),
-                    RoundedButton(
-                        func: () {Navigator.pushNamed(context, '/leaderboard');},
-                        colorFont: kLightBlue,
-                        colorBG: Colors.white,
-                        title: 'Leaderboards'
+                    GridView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      primary: false,
+                      padding: EdgeInsets.all(0),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                        ),
+                      children: <Widget>[
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'scholarship',
+                        ),
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'internship',
+                        ),
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'mentorship',
+                        ),
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'onlineCourse',
+                        ),
+                      ],
                     ),
-                  ],
-                )
-              ]
+                    GridView(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      primary: false,
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                      ),
+                      children: <Widget>[
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'offlineCourse',
+                        ),
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'sports',
+                        ),
+                        HomepagePotion(
+                          multiplier: this.currentMultipliers,
+                          potionBalance: widget.user.potionBalance!,
+                          mapKey: 'volunteer',
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        RoundedButton(
+                            func: () {
+                                Navigator.pushNamed(context, '/browse-rewards');
+                            },
+                            colorFont: kLightBlue,
+                            colorBG: Colors.white,
+                            title: 'Rewards'
+                        ),
+                        SizedBox(
+                            height: 15
+                        ),
+                        RoundedButton(
+                            func: () {Navigator.pushNamed(context, '/leaderboard');},
+                            colorFont: kLightBlue,
+                            colorBG: Colors.white,
+                            title: 'Leaderboards'
+                        ),
+                      ],
+                    )
+                  ]
             )
           ),
           ActivitiesCarousel(

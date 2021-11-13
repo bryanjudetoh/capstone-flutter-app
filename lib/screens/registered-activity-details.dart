@@ -225,7 +225,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: <Widget>[
                               Image(
-                                image: AssetImage('assets/images/elixir.png'),
+                                image: AssetImage('${activityTypeToPotionColorPathMap[widget.participant.activity.type]}'),
                                 height: 40,
                                 width: 40,
                               ),

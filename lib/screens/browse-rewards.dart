@@ -206,9 +206,9 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                               Text('My elixirs: ${this.myElixirs.toString()}', style: titleThreeTextStyleBold,),
                               Image(
                                 image: AssetImage(
-                                    'assets/images/elixir.png'),
-                                height: 35,
-                                width: 35,
+                                    'assets/images/power-elixir.png'),
+                                height: 25,
+                                width: 25,
                               ),
                             ],
                           ),
@@ -380,13 +380,12 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                                   ),
                                 ),
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceEvenly,
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     Image(
                                       image: AssetImage(
-                                          'assets/images/elixir.png'),
+                                          'assets/images/power-elixir.png'),
                                       height: 40,
                                       width: 40,
                                     ),
@@ -400,7 +399,7 @@ class _BrowseRewardsScreenState extends State<BrowseRewardsScreen> {
                                         style: TextStyle(
                                           fontFamily: 'Nunito',
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 24,
+                                          fontSize: 30,
                                           color: Color(0xFF5EC8D8),
                                         ),
                                       ),

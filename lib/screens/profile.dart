@@ -647,7 +647,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                         children: <Widget>[
                           Image(
                             image: AssetImage(
-                                'assets/images/elixir.png'),
+                                '${activityTypeToPotionColorPathMap[participantList[index].activity.type]}'),
                             height: 25,
                             width: 25,
                           ),
@@ -712,7 +712,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                     ),
                     SizedBox(width: 3,),
                     Image(
-                      image: AssetImage('assets/images/elixir.png'),
+                      image: AssetImage('${activityTypeToPotionColorPathMap[type]}'),
                       height: 40,
                       width: 40,
                     ),
@@ -769,7 +769,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                             ),
                             SizedBox(width: 3,),
                             Image(
-                              image: AssetImage('assets/images/elixir.png'),
+                              image: AssetImage('${activityTypeToPotionColorPathMap[type]}'),
                               height: 25,
                               width: 25,
                             ),
@@ -810,7 +810,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                     ),
                     SizedBox(width: 3,),
                     Image(
-                      image: AssetImage('assets/images/elixir.png'),
+                      image: AssetImage('${activityTypeToPotionColorPathMap[type]}'),
                       height: 40,
                       width: 40,
                     ),
