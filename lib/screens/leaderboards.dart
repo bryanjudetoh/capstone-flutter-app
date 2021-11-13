@@ -132,6 +132,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   List<LeaderboardEntity> leaderboardList = [];
   late User user;
   String leaderboardType = leaderboardTypesList[0];
+  String finalLeaderboardType = leaderboardTypesList[0];
   String leaderboardPeriod = leaderboardPeriodList[0];
   List<String> emptyList = ['-NA-'];
   bool isCumulative = true;
@@ -323,6 +324,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       List<LeaderboardEntity> list = await queryLeaderboard();
                       setState(() {
                         this.leaderboardList = list;
+                        this.finalLeaderboardType = this.leaderboardType;
                       });
                     },
                     child: Text(
@@ -366,18 +368,21 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           user: this.leaderboardList.length > 2 ? this.leaderboardList[2] : emptyEntity,
           position: 3,
           userIdCheck: this.user.userId,
+          leaderboardType: leaderboardTypeMapInverse[this.finalLeaderboardType]!,
         ),
         TopThreeIcon(
           myUserId: this.user.userId,
           user: this.leaderboardList.length > 0 ? this.leaderboardList[0] : emptyEntity,
           position: 1,
           userIdCheck: this.user.userId,
+          leaderboardType: leaderboardTypeMapInverse[this.finalLeaderboardType]!,
         ),
         TopThreeIcon(
           myUserId: this.user.userId,
           user: this.leaderboardList.length > 1 ? this.leaderboardList[1] : emptyEntity,
           position: 2,
           userIdCheck: this.user.userId,
+          leaderboardType: leaderboardTypeMapInverse[this.finalLeaderboardType]!,
         ),
       ],
     );
@@ -385,14 +390,26 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     if (this.leaderboardList.length > 3) {
       for (int i = 3; i < this.leaderboardList.length; i++) {
         display.add(
-            LeaderboardListTile(myUserId: this.user.userId, user: leaderboardList[i], position: i+1, userIdCheck: this.user.userId,)
+            LeaderboardListTile(
+              myUserId: this.user.userId,
+              user: leaderboardList[i],
+              position: i+1,
+              userIdCheck: this.user.userId,
+              leaderboardType: leaderboardTypeMapInverse[this.finalLeaderboardType]!,
+            )
         );
         display.add(SizedBox(height: 7,));
       }
     }
     else {
       display.add(
-        LeaderboardListTile(myUserId: 'fakeId', user: emptyEntity, position: 4, userIdCheck: '',)
+        LeaderboardListTile(
+          myUserId: 'fakeId',
+          user: emptyEntity,
+          position: 4,
+          userIdCheck: '',
+          leaderboardType: leaderboardTypeMapInverse[this.finalLeaderboardType]!,
+        )
       );
     }
     return display;

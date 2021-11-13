@@ -251,6 +251,7 @@ const leaderboardTypeMapInverse = <String, String> {
 };
 
 const activityTypeToPotionColorPathMap = <String, String>{
+  'overall': 'assets/images/elixir.png',
   'scholarship': 'assets/images/red-potion.png',
   'internship': 'assets/images/yellow-potion.png',
   'mentorship': 'assets/images/blue-potion.png',

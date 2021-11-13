@@ -4,12 +4,13 @@ import 'package:youthapp/models/leaderboard-entity.dart';
 import '../constants.dart';
 
 class LeaderboardListTile extends StatelessWidget {
-  const LeaderboardListTile({Key? key, required this.myUserId, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
+  const LeaderboardListTile({Key? key, required this.myUserId, required this.user, required this.position, required this.userIdCheck, required this.leaderboardType}) : super(key: key);
 
   final String myUserId;
   final LeaderboardEntity user;
   final int position;
   final String userIdCheck;
+  final String leaderboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,7 @@ class LeaderboardListTile extends StatelessWidget {
             children: <Widget>[
               Image(
                 image: AssetImage(
-                    'assets/images/elixir.png'),
+                    '${activityTypeToPotionColorPathMap[leaderboardType]}'),
                 height: 35,
                 width: 35,
               ),

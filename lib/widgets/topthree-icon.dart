@@ -6,12 +6,13 @@ import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/leaderboard-entity.dart';
 
 class TopThreeIcon extends StatelessWidget {
-  const TopThreeIcon({Key? key, required this.myUserId, required this.user, required this.position, required this.userIdCheck}) : super(key: key);
+  const TopThreeIcon({Key? key, required this.myUserId, required this.user, required this.position, required this.userIdCheck, required this.leaderboardType}) : super(key: key);
 
   final String myUserId;
   final LeaderboardEntity user;
   final int position;
   final String userIdCheck;
+  final String leaderboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +118,7 @@ class TopThreeIcon extends StatelessWidget {
             children: <Widget>[
               Image(
                 image: AssetImage(
-                    'assets/images/elixir.png'),
+                    '${activityTypeToPotionColorPathMap[leaderboardType]}'),
                 height: 30,
                 width: 30,
               ),
