@@ -91,76 +91,76 @@ flutter:
   fonts:
     - family: SF Pro Display
       fonts:
-        - asset: fonts/SFProDisplay-Regular.ttf
+        - asset: assets/fonts/SFProDisplay-Regular.ttf
           weight: 700
     - family: Nunito
       fonts:
-        - asset: fonts/Nunito/Nunito-Black.ttf
+        - asset: assets/fonts/Nunito/Nunito-Black.ttf
           weight: 900
-        - asset: fonts/Nunito/Nunito-BlackItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-BlackItalic.ttf
           weight: 900
           style: italic
-        - asset: fonts/Nunito/Nunito-Bold.ttf
+        - asset: assets/fonts/Nunito/Nunito-Bold.ttf
           weight: 700
-        - asset: fonts/Nunito/Nunito-BoldItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-BoldItalic.ttf
           weight: 700
           style: italic
-        - asset: fonts/Nunito/Nunito-ExtraBold.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraBold.ttf
           weight: 800
-        - asset: fonts/Nunito/Nunito-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraBoldItalic.ttf
           weight: 800
           style: italic
-        - asset: fonts/Nunito/Nunito-ExtraLight.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraLight.ttf
           weight: 200
-        - asset: fonts/Nunito/Nunito-ExtraLightItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-ExtraLightItalic.ttf
           weight: 200
           style: italic
-        - asset: fonts/Nunito/Nunito-Regular.ttf
-        - asset: fonts/Nunito/Nunito-Italic.ttf
+        - asset: assets/fonts/Nunito/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito/Nunito-Italic.ttf
           style: italic
-        - asset: fonts/Nunito/Nunito-Light.ttf
+        - asset: assets/fonts/Nunito/Nunito-Light.ttf
           weight: 300
-        - asset: fonts/Nunito/Nunito-LightItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-LightItalic.ttf
           weight: 300
           style: italic
-        - asset: fonts/Nunito/Nunito-SemiBold.ttf
+        - asset: assets/fonts/Nunito/Nunito-SemiBold.ttf
           weight: 600
-        - asset: fonts/Nunito/Nunito-SemiBoldItalic.ttf
+        - asset: assets/fonts/Nunito/Nunito-SemiBoldItalic.ttf
           weight: 600
           style: italic
     - family: Rubik
       fonts:
-        - asset: fonts/Rubik/Rubik-Black.ttf
+        - asset: assets/fonts/Rubik/Rubik-Black.ttf
           weight: 900
-        - asset: fonts/Rubik/Rubik-BlackItalic.ttf
+        - asset: assets/fonts/Rubik/Rubik-BlackItalic.ttf
           weight: 900
           style: italic
-        - asset: fonts/Rubik/Rubik-Bold.ttf
+        - asset: assets/fonts/Rubik/Rubik-Bold.ttf
           weight: 700
-        - asset: fonts/Rubik/Rubik-BoldItalic.ttf
+        - asset: assets/fonts/Rubik/Rubik-BoldItalic.ttf
           weight: 700
           style: italic
-        - asset: fonts/Rubik/Rubik-ExtraBold.ttf
+        - asset: assets/fonts/Rubik/Rubik-ExtraBold.ttf
           weight: 800
-        - asset: fonts/Rubik/Rubik-ExtraBoldItalic.ttf
+        - asset: assets/fonts/Rubik/Rubik-ExtraBoldItalic.ttf
           weight: 800
           style: italic
-        - asset: fonts/Rubik/Rubik-Regular.ttf
-        - asset: fonts/Rubik/Rubik-Italic.ttf
+        - asset: assets/fonts/Rubik/Rubik-Regular.ttf
+        - asset: assets/fonts/Rubik/Rubik-Italic.ttf
           style: italic
-        - asset: fonts/Rubik/Rubik-Light.ttf
+        - asset: assets/fonts/Rubik/Rubik-Light.ttf
           weight: 300
-        - asset: fonts/Rubik/Rubik-LightItalic.ttf
+        - asset: assets/fonts/Rubik/Rubik-LightItalic.ttf
           weight: 300
           style: italic
-        - asset: fonts/Rubik/Rubik-Medium.ttf
+        - asset: assets/fonts/Rubik/Rubik-Medium.ttf
           weight: 500
-        - asset: fonts/Rubik/Rubik-MediumItalic.ttf
+        - asset: assets/fonts/Rubik/Rubik-MediumItalic.ttf
           weight: 500
           style: italic
-        - asset: fonts/Rubik/Rubik-SemiBold.ttf
+        - asset: assets/fonts/Rubik/Rubik-SemiBold.ttf
           weight: 600
-        - asset: fonts/Rubik/Rubik-SemiBoldItalic.ttf
+        - asset: assets/fonts/Rubik/Rubik-SemiBoldItalic.ttf
           weight: 600
           style: italic
   #
