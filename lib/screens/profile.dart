@@ -636,15 +636,33 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        '${participantList[index].activity.name}',
-                        style: carouselActivityTitleTextStyle,
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.ellipsis,
+                      Container(
+                        width: MediaQuery.of(context).size.width*0.5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${participantList[index].activity.name}',
+                              style: carouselActivityTitleTextStyle,
+                              textAlign: TextAlign.left,
+                            )
+                          ],
+                        ),
                       ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.only(top:3),
+                            child: Text('Awarded:',
+                              style: TextStyle(
+                                fontFamily: 'Nunito',
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Color(0xFF5EC8D8),
+                              ),
+                            ),
+                          ),
                           Image(
                             image: AssetImage(
                                 '${activityTypeToPotionColorPathMap[participantList[index].activity.type]}'),
@@ -653,7 +671,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                           ),
                           Padding(
                             padding: EdgeInsets.only(top:3),
-                            child: Text('${participantList[index].activity.potions}',
+                            child: Text('${participantList[index].awardedPotions}',
                               style: TextStyle(
                                 fontFamily: 'Nunito',
                                 fontWeight: FontWeight.bold,
@@ -690,9 +708,9 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
   }
 
   Widget progressTile (List<Participant> completedList, String type) {
-    List<Participant> typeList = [];
-    typeList.addAll(completedList.where((p) => p.activity.type == type));
-    if (typeList.isNotEmpty) {
+    List<Participant> completedByTypeList = [];
+    completedByTypeList.addAll(completedList.where((p) => p.activity.type == type));
+    if (completedByTypeList.isNotEmpty) {
       return Container(
         padding: EdgeInsets.fromLTRB(10, 15, 10, 15),
         child: Column(
@@ -722,7 +740,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
             ),
             ListView.builder(
               physics: NeverScrollableScrollPhysics(),
-              itemCount: typeList.length,
+              itemCount: completedByTypeList.length,
               shrinkWrap: true,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
@@ -749,15 +767,9 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                '${typeList[index].activity.name}',
+                                '${completedByTypeList[index].activity.name}',
                                 style: bodyTextStyle,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                              Text(
-                                '${typeList[index].activity.description!}',
-                                style: subtitleTextStyle,
-                                overflow: TextOverflow.ellipsis,
-                              )
                             ],
                           ),
                           width: MediaQuery.of(context).size.width*0.38,
@@ -765,7 +777,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                         Row(
                           children: <Widget>[
                             Text(
-                              'Awarded: ${typeList[index].awardedPotions}',
+                              'Awarded: ${completedByTypeList[index].awardedPotions}',
                             ),
                             SizedBox(width: 3,),
                             Image(
@@ -781,7 +793,7 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                     ),
                   ),
                   onTap: () {
-                    Navigator.pushNamed(context, '/registered-activity-details', arguments: typeList[index].participantId);
+                    Navigator.pushNamed(context, '/registered-activity-details', arguments: completedByTypeList[index].participantId);
                   },
                 );
               },
