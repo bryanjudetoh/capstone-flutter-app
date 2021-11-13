@@ -417,12 +417,16 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Container(
-                              width: MediaQuery.of(context).size.width*0.7,
-                              child: Text(
-                                '${activities[index].name}',
-                                style: carouselActivityTitleTextStyle,
-                                textAlign: TextAlign.left,
-                                overflow: TextOverflow.ellipsis,
+                              width: MediaQuery.of(context).size.width*0.65,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${activities[index].name}',
+                                    style: carouselActivityTitleTextStyle,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
                               ),
                             ),
                             Row(
@@ -431,15 +435,18 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                 Image(
                                   image: AssetImage(
                                       '${activityTypeToPotionColorPathMap[activities[index].type]}'),
-                                  height: 25,
-                                  width: 25,
+                                  height: 30,
+                                  width: 30,
                                 ),
-                                Text('${activities[index].potions}',
-                                  style: TextStyle(
-                                    fontFamily: 'Nunito',
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 18,
-                                    color: Color(0xFF5EC8D8),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text('${activities[index].potions}',
+                                    style: TextStyle(
+                                      fontFamily: 'Nunito',
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 28,
+                                      color: Color(0xFF5EC8D8),
+                                    ),
                                   ),
                                 )
                               ],

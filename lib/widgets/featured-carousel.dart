@@ -204,11 +204,15 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                   children: <Widget>[
                                     Container(
                                       width: MediaQuery.of(context).size.width*0.55,
-                                      child: Text(
-                                        '${item.name}',
-                                        style: carouselActivityTitleTextStyle,
-                                        textAlign: TextAlign.left,
-                                        overflow: TextOverflow.ellipsis,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '${item.name}',
+                                            style: carouselActivityTitleTextStyle,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Row(
