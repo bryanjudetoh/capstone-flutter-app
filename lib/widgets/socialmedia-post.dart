@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/models/post.dart';
+import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/securestorage.dart';
@@ -68,20 +69,40 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      getProfilePicUrl().isNotEmpty ? getProfilePicUrl() : placeholderDisplayPicUrl,
+                  GestureDetector(
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        getProfilePicUrl().isNotEmpty ? getProfilePicUrl() : placeholderDisplayPicUrl,
+                      ),
+                      radius: 30,
                     ),
-                    radius: 30,
+                    onTap: () async {
+                      if (widget.post.mpUser != null && widget.post.mpUser!.userId != await getMyUserId()) {
+                        Navigator.pushNamed(context, '/user-profile', arguments: widget.post.mpUser!.userId);
+                      }
+                      else if (widget.post.organisation != null) {
+                        Navigator.pushNamed(context, '/organisation-details', arguments: widget.post.organisation!.organisationId);
+                      }
+                    },
                   ),
                   SizedBox(width: 10,),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        '${getName()}',
-                        style: bodyTextStyleBold,
-                        overflow: TextOverflow.ellipsis,
+                      GestureDetector(
+                        child: Text(
+                          '${getName()}',
+                          style: bodyTextStyleBold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () async {
+                          if (widget.post.mpUser != null && widget.post.mpUser!.userId != await getMyUserId()) {
+                            Navigator.pushNamed(context, '/user-profile', arguments: widget.post.mpUser!.userId);
+                          }
+                          else if (widget.post.organisation != null) {
+                            Navigator.pushNamed(context, '/organisation-details', arguments: widget.post.organisation!.organisationId);
+                          }
+                        },
                       ),
                       SizedBox(height: 5,),
                       Text(
@@ -311,6 +332,12 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     return widget.post.mpUser != null
         ? '${widget.post.mpUser!.firstName} ${widget.post.mpUser!.lastName}'
         : widget.post.organisation!.name;
+  }
+
+  Future<String> getMyUserId() async {
+    String userData = await this.secureStorage.readSecureData('user');
+    User user = User.fromJson(jsonDecode(userData));
+    return user.userId;
   }
 
   Future<void> handleLikePost() async {

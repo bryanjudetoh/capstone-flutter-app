@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:loadmore/loadmore.dart';
 import 'package:youthapp/models/comment.dart';
+import 'package:youthapp/models/user.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
@@ -145,20 +146,40 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(
-                              getProfilePicUrl(this.commentsList, index).isNotEmpty ? getProfilePicUrl(this.commentsList, index) : placeholderDisplayPicUrl,
+                          GestureDetector(
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                getProfilePicUrl(this.commentsList, index).isNotEmpty ? getProfilePicUrl(this.commentsList, index) : placeholderDisplayPicUrl,
+                              ),
+                              radius: 20,
                             ),
-                            radius: 20,
+                            onTap: () async {
+                              if (this.commentsList[index].mpUser != null && this.commentsList[index].mpUser!.userId != await getMyUserId()) {
+                                Navigator.pushNamed(context, '/user-profile', arguments: this.commentsList[index].mpUser!.userId);
+                              }
+                              else if (this.commentsList[index].organisation != null) {
+                                Navigator.pushNamed(context, '/organisation-details', arguments: this.commentsList[index].organisation!.organisationId);
+                              }
+                            },
                           ),
                           SizedBox(width: 10,),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text(
-                                '${getName(this.commentsList, index)}',
-                                style: smallBodyTextStyleBold,
-                                overflow: TextOverflow.ellipsis,
+                              GestureDetector(
+                                child: Text(
+                                  '${getName(this.commentsList, index)}',
+                                  style: smallBodyTextStyleBold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                onTap: () async {
+                                  if (this.commentsList[index].mpUser != null && this.commentsList[index].mpUser!.userId != await getMyUserId()) {
+                                    Navigator.pushNamed(context, '/user-profile', arguments: this.commentsList[index].mpUser!.userId);
+                                  }
+                                  else if (this.commentsList[index].organisation != null) {
+                                    Navigator.pushNamed(context, '/organisation-details', arguments: this.commentsList[index].organisation!.organisationId);
+                                  }
+                                },
                               ),
                               SizedBox(height: 5,),
                               Container(
@@ -261,22 +282,42 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      getProfilePicUrl(list, nestedIndex).isNotEmpty
-                          ? getProfilePicUrl(list, nestedIndex)
-                          : placeholderDisplayPicUrl,
+                  GestureDetector(
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        getProfilePicUrl(list, nestedIndex).isNotEmpty
+                            ? getProfilePicUrl(list, nestedIndex)
+                            : placeholderDisplayPicUrl,
+                      ),
+                      radius: 20,
                     ),
-                    radius: 20,
+                    onTap: () async {
+                      if (list[nestedIndex].mpUser != null && list[nestedIndex].mpUser!.userId != await getMyUserId()) {
+                        Navigator.pushNamed(context, '/user-profile', arguments: list[nestedIndex].mpUser!.userId);
+                      }
+                      else if (list[nestedIndex].organisation != null) {
+                        Navigator.pushNamed(context, '/organisation-details', arguments: list[nestedIndex].organisation!.organisationId);
+                      }
+                    },
                   ),
                   SizedBox(width: 10,),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        '${getName(list, nestedIndex)}',
-                        style: smallBodyTextStyleBold,
-                        overflow: TextOverflow.ellipsis,
+                      GestureDetector(
+                        child: Text(
+                          '${getName(list, nestedIndex)}',
+                          style: smallBodyTextStyleBold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        onTap: () async {
+                          if (list[nestedIndex].mpUser != null && list[nestedIndex].mpUser!.userId != await getMyUserId()) {
+                            Navigator.pushNamed(context, '/user-profile', arguments: list[nestedIndex].mpUser!.userId);
+                          }
+                          else if (list[nestedIndex].organisation != null) {
+                            Navigator.pushNamed(context, '/organisation-details', arguments: list[nestedIndex].organisation!.organisationId);
+                          }
+                        },
                       ),
                       SizedBox(height: 5,),
                       Container(
@@ -376,6 +417,12 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
     return list[index].mpUser != null
         ? '${list[index].mpUser!.firstName} ${list[index].mpUser!.lastName}'
         : list[index].organisation!.name;
+  }
+
+  Future<String> getMyUserId() async {
+    String userData = await this.secureStorage.readSecureData('user');
+    User user = User.fromJson(jsonDecode(userData));
+    return user.userId;
   }
 
   void commentsModalBottomSheet(BuildContext context, Comment comment, bool isMyComment) {
