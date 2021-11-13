@@ -21,7 +21,11 @@ Comment _$CommentFromJson(Map<String, dynamic> json) {
     organisation: json['organisation'] == null
         ? null
         : Organisation.fromJson(json['organisation'] as Map<String, dynamic>),
+    parentPost: json['parentPost'] as String?,
     parentComment: json['parentComment'] as String?,
+    comments: (json['comments'] as List<dynamic>)
+        .map((e) => Comment.fromJson(e as Map<String, dynamic>))
+        .toList(),
     status: json['status'] as String?,
     createdAt: json['createdAt'] == null
         ? null
@@ -33,6 +37,7 @@ Comment _$CommentFromJson(Map<String, dynamic> json) {
     numLikes: json['numLikes'] as int?,
     numDislikes: json['numDislikes'] as int?,
     numComments: json['numComments'] as int?,
+    layer: json['layer'] as int,
     hasLiked: json['hasLiked'] as bool?,
     hasDisliked: json['hasDisliked'] as bool?,
   );
@@ -43,7 +48,9 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'content': instance.content,
       'mpUser': instance.mpUser,
       'organisation': instance.organisation,
+      'parentPost': instance.parentPost,
       'parentComment': instance.parentComment,
+      'comments': instance.comments,
       'status': instance.status,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
@@ -51,6 +58,7 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'numLikes': instance.numLikes,
       'numDislikes': instance.numDislikes,
       'numComments': instance.numComments,
+      'layer': instance.layer,
       'hasLiked': instance.hasLiked,
       'hasDisliked': instance.hasDisliked,
     };

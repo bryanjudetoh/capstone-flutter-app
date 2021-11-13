@@ -172,7 +172,6 @@ class _SearchFriendsScreenState extends State<SearchFriendsScreen> {
       List<User> userList = [];
       for (dynamic item in resultList) {
         Map<String, dynamic> i = Map<String, dynamic>.from(item);
-        print(i['isFriend']);
         userList.add(User.fromJson(i));
       }
       setState(() {
@@ -212,11 +211,7 @@ class _SearchFriendsScreenState extends State<SearchFriendsScreen> {
               style: bodyTextStyle,
             ),
             onTap: () {
-              print('tapped userId: ${searchUsersResultList[index].userId}');
-              Map<String, dynamic> data = {};
-              data['userId'] = searchUsersResultList[index].userId;
-              data['isFriend'] = searchUsersResultList[index].isFriend;
-              Navigator.pushNamed(context, '/user-profile', arguments: data);
+              Navigator.pushNamed(context, '/user-profile', arguments: searchUsersResultList[index].userId);
             },
           ),
         );

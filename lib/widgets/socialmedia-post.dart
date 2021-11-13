@@ -26,6 +26,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   late bool hasDisliked;
   late int numLikes;
   late int numDislikes;
+  late int numComments;
 
   @override
   void initState() {
@@ -34,6 +35,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     this.hasDisliked = widget.post.hasDisliked!;
     this.numLikes = widget.post.numLikes!;
     this.numDislikes = widget.post.numDislikes!;
+    this.numComments = widget.post.numComments!;
   }
 
   @override
@@ -103,12 +105,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(15),
                     child: widget.post.mediaContentUrls.isEmpty
-                        ? Image.network(
-                      placeholderPostPicUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 220,
-                    )
+                        ? Container()
                         : CarouselSlider(
                             options: CarouselOptions(
                               autoPlay: false,
@@ -275,6 +272,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                             this.hasDisliked = data['hasDisliked'];
                             this.numLikes = data['numLikes'];
                             this.numDislikes = data['numDislikes'];
+                            this.numComments = data['numComments'];
                             print('states set');
                           });
                         }
@@ -282,7 +280,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                       icon: Icon(Icons.chat_bubble_outline_rounded, color: Colors.amber,),
                     ),
                     SizedBox(width: 5,),
-                    Text('${widget.post.numComments}', style: bodyTextStyle,),
+                    Text('${this.numComments}', style: bodyTextStyle,),
                   ],
                 ),
               ],
@@ -316,7 +314,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
         }
       });
       if (widget.getLikeState != null) {
-        widget.getLikeState!(this.hasLiked, this.hasDisliked, this.numLikes, this.numDislikes);
+        widget.getLikeState!(this.hasLiked, this.hasDisliked, this.numLikes, this.numDislikes, this.numComments);
       }
     }
     on Exception catch (err) {
@@ -373,7 +371,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
         }
       });
       if (widget.getLikeState != null) {
-        widget.getLikeState!(this.hasLiked, this.hasDisliked, this.numLikes, this.numDislikes);
+        widget.getLikeState!(this.hasLiked, this.hasDisliked, this.numLikes, this.numDislikes, this.numComments);
       }
     }
     on Exception catch (err) {

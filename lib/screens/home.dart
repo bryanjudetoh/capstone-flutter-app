@@ -52,6 +52,12 @@ class _HomeScreenState extends State<HomeScreen> {
           physics: NeverScrollableScrollPhysics(),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {Navigator.pushNamed(context, '/create-post', arguments: widget.user);},
+        child: const Icon(Icons.add, color: Colors.white,),
+        backgroundColor: kLightBlue,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

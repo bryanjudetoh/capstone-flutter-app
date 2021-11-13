@@ -13,7 +13,10 @@ class Comment {
 
   User? mpUser;
   Organisation? organisation;
+
+  String? parentPost;
   String? parentComment;
+  List<Comment> comments;
 
   String? status;
   DateTime? createdAt;
@@ -24,14 +27,15 @@ class Comment {
   int? numDislikes;
   int? numComments;
 
+  int layer;
   bool? hasLiked;
   bool? hasDisliked;
 
-  Comment({required this.commentId, required this.content,
-    this.mpUser, this.organisation, this.parentComment,
+  Comment({required this.commentId, required this.content, this.mpUser, this.organisation,
+    this.parentPost, this.parentComment, required this.comments,
     this.status, this.createdAt, this.updatedAt,
     this.wasEdited, this.numLikes, this.numDislikes, this.numComments,
-    this.hasLiked, this.hasDisliked,
+    required this.layer, this.hasLiked, this.hasDisliked,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
