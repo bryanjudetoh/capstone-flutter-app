@@ -169,7 +169,9 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                             Navigator.pushNamed(context, '/activity-details', arguments: widget.post.sharedActivity!.activityId);
                           }
                           else {
-                            print('no reward details screen yet');
+                            Map<String, dynamic> data = {};
+                            data['reward'] = widget.post.sharedReward;
+                            Navigator.pushNamed(context, '/reward-details', arguments: data);
                           }
                         },
                         child: Column(
