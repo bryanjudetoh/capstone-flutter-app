@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/models/claimed-reward.dart';
 import 'package:youthapp/models/session.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:http_interceptor/http_interceptor.dart';
@@ -120,6 +122,7 @@ class ActivityDetailsScreen extends StatefulWidget {
     ],
     retryPolicy: RefreshTokenRetryPolicy(),
   );
+  final SecureStorage secureStorage = SecureStorage();
 
   @override
   _ActivityDetailsScreenState createState() => _ActivityDetailsScreenState();
@@ -874,19 +877,37 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       }),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       print('registration OK');
-      var result = jsonDecode(response.body);
-      print(result['message']);
+
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Success!', style: titleTwoTextStyleBold,),
+              content: Text('Redirecting you to payment...', style: bodyTextStyle,),
+            );
+          }
+      );
+
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      print(responseBody);
+      String transactionId = responseBody['transactionId'];
+      String redirectUrl = responseBody['redirectUrl'];
+
+      Future.delayed(const Duration(seconds: 5), () {
+        Navigator.pop(context);
+      });
+
+      String message = await handlePaymentRedirect(redirectUrl);
+      print('awaiting... this is message: $message');
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertPopup(
               title: 'Success!',
               desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
-                  '${claimRewardDiscount != null
-                      ? '\n\nThe final price paid for this activity is \$${(widget.activity.registrationPrice! - claimRewardDiscount).toStringAsFixed(2)}!'
-                      : ''}',
+                  '\n\nThe final price paid for this activity is \$${(widget.activity.registrationPrice! - (claimRewardDiscount ?? 0)).toStringAsFixed(2)}!',
               func: () {
                 int count = 2;
                 Navigator.of(context).popUntil((_) => count-- <= 0);
@@ -905,6 +926,39 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       print('doActivityRegistration error: ${response.statusCode}');
       print('error response body: ${result.toString()}');
       throw Exception('A problem occured while registering for this activity');
+    }
+  }
+
+  Future<String> handlePaymentRedirect(String redirectUrl) async {
+    String message = '';
+    try {
+      await _launchInBrowser(redirectUrl);
+      await Future.delayed(Duration(seconds: 5));
+      //implement listen to backend for outcome of payment redirect here
+      message = 'success';
+    }
+    on Exception catch (err) {
+      print(err.toString());
+      message = 'problem!';
+    }
+
+    return message;
+  }
+
+  Future<void> _launchInBrowser(String url) async {
+    final String accessToken = await widget.secureStorage.readSecureData('accessToken');
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization': 'Bearer $accessToken',
+        },
+      );
+    } else {
+      throw 'Could not launch $url';
     }
   }
 
