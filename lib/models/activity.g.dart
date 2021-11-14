@@ -51,6 +51,7 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     isRegistered: json['isRegistered'] as bool?,
     participantId: json['participantId'] as String?,
     activityRating: (json['activityRating'] as num?)?.toDouble(),
+    multiplier: json['multiplier'] as int?,
   );
 }
 
@@ -80,4 +81,5 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'isFeatured': instance.isFeatured,
       'isRegistered': instance.isRegistered,
       'participantId': instance.participantId,
+      'multiplier': instance.multiplier,
     };
