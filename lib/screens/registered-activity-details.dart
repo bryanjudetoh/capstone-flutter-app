@@ -245,6 +245,36 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                                   textAlign: TextAlign.left,
                                 ),
                               ),
+                              if (widget.participant.multiplier == 2)
+                                Row(
+                                  children: [
+                                    SizedBox(width: 10,),
+                                    Container(
+                                      padding: EdgeInsets.all(7),
+                                      margin: EdgeInsets.only(top: 5),
+                                      decoration: BoxDecoration(
+                                        color: kLightBlue,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.amberAccent,
+                                            spreadRadius: 3.0,
+                                            blurRadius: 3.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        'x2',
+                                        style: TextStyle(
+                                          fontFamily: 'Nunito',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                         ),
@@ -439,38 +469,72 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                 ),
               ),
               SizedBox(height: 5,),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: kLightBlue,
-                      padding: EdgeInsets.fromLTRB(10, 3, 13, 3),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      )
-                  ),
-                  onPressed: () {
-                    Map<String, dynamic> data = {};
-                    data['sharedActivity'] = widget.participant.activity;
-                    Navigator.pushNamed(context, '/create-post-shared', arguments: data);
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     children: [
-                      Icon(Icons.share,),
-                      SizedBox(width: 5,),
-                      Text(
-                        'Share',
-                        style: TextStyle(
-                          fontFamily: 'SF Pro Display',
-                          fontSize: 20.0,
-                          height: 1.25,
-                          color: Colors.white,
+                      Padding(
+                        padding: EdgeInsets.only(top:3),
+                        child: Text('Awarded:',
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Color(0xFF5EC8D8),
+                          ),
+                        ),
+                      ),
+                      Image(
+                        image: AssetImage(
+                            '${activityTypeToPotionColorPathMap[widget.participant.activity.type]}'),
+                        height: 25,
+                        width: 25,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top:3),
+                        child: Text('${widget.participant.awardedPotions}',
+                          style: TextStyle(
+                            fontFamily: 'Nunito',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                            color: Color(0xFF5EC8D8),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: kLightBlue,
+                        padding: EdgeInsets.fromLTRB(10, 3, 13, 3),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        )
+                    ),
+                    onPressed: () {
+                      Map<String, dynamic> data = {};
+                      data['sharedActivity'] = widget.participant.activity;
+                      Navigator.pushNamed(context, '/create-post-shared', arguments: data);
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.share,),
+                        SizedBox(width: 5,),
+                        Text(
+                          'Share',
+                          style: TextStyle(
+                            fontFamily: 'SF Pro Display',
+                            fontSize: 20.0,
+                            height: 1.25,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 5,),
               Align(
@@ -498,13 +562,14 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                   disableText: this.isRated ? '    Already Rated    ' : null,
                 ),
               SizedBox(height: 20,),
-              RoundedButton(
-                title: 'View Attendances',
-                colorBG: kLightBlue,
-                colorFont: kWhite,
-                func: viewAttendanceModalBottomSheet(context),
-                disableText: widget.participant.status == "registered" ? 'Pending Acceptance' : null,
-              ),
+              if (widget.participant.status == 'accepted' || widget.participant.status == 'completed')
+                RoundedButton(
+                  title: 'View Attendances',
+                  colorBG: kLightBlue,
+                  colorFont: kWhite,
+                  func: viewAttendanceModalBottomSheet(context),
+                  disableText: widget.participant.status == "registered" ? 'Pending Acceptance' : null,
+                ),
               SizedBox(
                 height: 20,
               ),

@@ -239,6 +239,36 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                 ),
                               ),
                             ),
+                            if (widget.activity.multiplier == 2)
+                              Row(
+                                children: [
+                                  SizedBox(width: 10,),
+                                  Container(
+                                    padding: EdgeInsets.all(7),
+                                    margin: EdgeInsets.only(top: 5),
+                                    decoration: BoxDecoration(
+                                      color: kLightBlue,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.amberAccent,
+                                          spreadRadius: 3.0,
+                                          blurRadius: 3.0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text(
+                                      'x2',
+                                      style: TextStyle(
+                                        fontFamily: 'Nunito',
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                           ],
                         )
                       ]),
@@ -618,38 +648,10 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
   }
 
   Future<void> checkforInAppRewards(String activityId) async {
-    List<ClaimedReward> inAppRewardsList = await getUserInAppRewards();
 
-    if (inAppRewardsList.isEmpty) {
+    if (widget.activity.registrationPrice! == 0) {
       try {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertPopup(
-                title: 'No Rewards Found',
-                desc: 'We looked at your claimed rewards... and we did not find any that can be used with this activity :(',
-                func: () async {
-                  Navigator.of(context).pop();
-                  try {
-                    await doActivityRegistration(activityId: activityId);
-                  }
-                  on Exception catch (err) {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertPopup(
-                            title: 'Error',
-                            desc: formatExceptionMessage(err.toString()),
-                            func: () { Navigator.of(context).pop();},
-                          );
-                        }
-                    );
-                  }
-                },
-                buttonName: 'Continue',
-              );
-            }
-        );
+        await doFreeActivityRegistration(activityId: activityId);
       }
       on Exception catch (err) {
         showDialog(
@@ -665,19 +667,20 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       }
     }
     else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('We Found Rewards for this Activity!', style: titleTwoTextStyleBold,),
-              content: RewardsListDialog(inAppRewardsList: inAppRewardsList, updateSelectedRewardIndex: updateSelectedRewardIndex,),
-              actions: [
-                TextButton(
-                  child: Text('Skip', style: bodyTextStyle,),
-                  onPressed: () async {
+      List<ClaimedReward> inAppRewardsList = await getUserInAppRewards();
+
+      if (inAppRewardsList.isEmpty) {
+        try {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertPopup(
+                  title: 'No Rewards Found',
+                  desc: 'We looked at your claimed rewards... and we did not find any that can be used with this activity :(',
+                  func: () async {
                     Navigator.of(context).pop();
                     try {
-                      await doActivityRegistration(activityId: activityId);
+                      await doPaidActivityRegistration(activityId: activityId);
                     }
                     on Exception catch (err) {
                       showDialog(
@@ -686,24 +689,50 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             return AlertPopup(
                               title: 'Error',
                               desc: formatExceptionMessage(err.toString()),
-                              func: () { Navigator.of(context).pop();},
+                              func: () {
+                                Navigator.of(context).pop();
+                              },
                             );
                           }
                       );
                     }
                   },
-                ),
-                TextButton(
-                  child: Text('Use This Reward', style: bodyTextStyle,),
-                  onPressed: () async {
-                    if (this.selectedRewardIndex > -1) {
+                  buttonName: 'Continue',
+                );
+              }
+          );
+        }
+        on Exception catch (err) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertPopup(
+                  title: 'Error',
+                  desc: formatExceptionMessage(err.toString()),
+                  func: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              }
+          );
+        }
+      }
+      else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('We Found Rewards for this Activity!',
+                  style: titleTwoTextStyleBold,),
+                content: RewardsListDialog(inAppRewardsList: inAppRewardsList,
+                  updateSelectedRewardIndex: updateSelectedRewardIndex,),
+                actions: [
+                  TextButton(
+                    child: Text('Skip', style: bodyTextStyle,),
+                    onPressed: () async {
                       Navigator.of(context).pop();
                       try {
-                        await doActivityRegistration(
-                            activityId: activityId,
-                            claimedRewardId: inAppRewardsList[this.selectedRewardIndex].claimedRewardId,
-                            claimRewardDiscount: inAppRewardsList[this.selectedRewardIndex].reward.discount!,
-                        );
+                        await doPaidActivityRegistration(activityId: activityId);
                       }
                       on Exception catch (err) {
                         showDialog(
@@ -712,18 +741,51 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                               return AlertPopup(
                                 title: 'Error',
                                 desc: formatExceptionMessage(err.toString()),
-                                func: () { Navigator.of(context).pop();},
+                                func: () {
+                                  Navigator.of(context).pop();
+                                },
                               );
                             }
                         );
                       }
-                    }
-                  },
-                ),
-              ],
-            );
-          }
-      );
+                    },
+                  ),
+                  TextButton(
+                    child: Text('Use This Reward', style: bodyTextStyle,),
+                    onPressed: () async {
+                      if (this.selectedRewardIndex > -1) {
+                        Navigator.of(context).pop();
+                        try {
+                          await doPaidActivityRegistration(
+                            activityId: activityId,
+                            claimedRewardId: inAppRewardsList[this
+                                .selectedRewardIndex].claimedRewardId,
+                            claimRewardDiscount: inAppRewardsList[this
+                                .selectedRewardIndex].reward.discount!,
+                          );
+                        }
+                        on Exception catch (err) {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertPopup(
+                                  title: 'Error',
+                                  desc: formatExceptionMessage(err.toString()),
+                                  func: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              }
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              );
+            }
+        );
+      }
     }
   }
 
@@ -757,12 +819,52 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
-  Future<void> doActivityRegistration({required String activityId, String? claimedRewardId, double? claimRewardDiscount}) async {
+  Future<void> doFreeActivityRegistration({required String activityId}) async {
+    print('doing free registration');
+    var response = await widget.http.post(
+      Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register/free'),
+      body: jsonEncode(<String, String>{
+        "activityId": "$activityId",
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      print('registration OK');
+      var result = jsonDecode(response.body);
+      print(result['message']);
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertPopup(
+              title: 'Success!',
+              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.',
+              func: () {
+                int count = 2;
+                Navigator.of(context).popUntil((_) => count-- <= 0);
+              },
+            );
+          }
+      );
+    }
+    else if (response.statusCode == 400) {
+      var result = jsonDecode(response.body);
+      print(result);
+      throw Exception(result['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('doActivityRegistration error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while registering for this activity');
+    }
+  }
+
+  Future<void> doPaidActivityRegistration({required String activityId, String? claimedRewardId, double? claimRewardDiscount}) async {
     print('activityId: $activityId');
     print('claimedRewardId: $claimedRewardId');
 
     var response = await widget.http.post(
-      Uri.parse('https://eq-lab-dev.me/api/activity-svc/mp/activity/register'),
+      Uri.parse('https://eq-lab-dev.me/api/payment/mp/register-activity'),
       body: claimedRewardId == null ?
         jsonEncode(<String, String>{
         "activityId": "$activityId",
