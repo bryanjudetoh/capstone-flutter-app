@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
-import 'package:youthapp/utilities/onboardingParams.dart';
+import 'package:youthapp/utilities/onboarding-params.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/onboarding-datepicker.dart';
 import 'package:youthapp/widgets/rounded-button.dart';

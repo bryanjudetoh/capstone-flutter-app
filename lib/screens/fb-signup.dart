@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
-import 'package:youthapp/utilities/onboardingParams.dart';
+import 'package:youthapp/utilities/onboarding-params.dart';
 import 'package:youthapp/widgets/alert-popup.dart';
 import 'package:youthapp/widgets/text-button.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';

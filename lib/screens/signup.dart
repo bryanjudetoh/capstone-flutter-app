@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:youthapp/constants.dart';
-import 'package:youthapp/utilities/onboardingParams.dart';
+import 'package:youthapp/utilities/onboarding-params.dart';
 import 'package:youthapp/widgets/form-input.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
 import 'package:youthapp/utilities/validators.dart';
