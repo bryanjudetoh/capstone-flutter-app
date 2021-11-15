@@ -106,6 +106,14 @@ class _FeaturedCarouselState extends State<FeaturedCarousel> {
                                                   : item.mediaContentUrls![0],
                                               fit: BoxFit.cover,
                                               width: double.infinity,
+                                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                  print('bad url: ${item.mediaContentUrls!.isEmpty
+                                                      ? widget.placeholderPicUrl
+                                                      : item.mediaContentUrls![0]}');
+                                                  return const Center(
+                                                    child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                                  );
+                                                }
                                             ),
                                             Container(
                                                 alignment: Alignment.bottomCenter,

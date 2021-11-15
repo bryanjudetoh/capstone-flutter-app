@@ -314,6 +314,12 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
                                           : activities[index].mediaContentUrls![0],
                                       fit: BoxFit.cover,
                                       width: double.infinity,
+                                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                        print('bad url: ${activities[index].mediaContentUrls![0]}');
+                                        return const Center(
+                                          child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                        );
+                                      }
                                     ),
                                     Container(
                                       alignment: Alignment.bottomCenter,

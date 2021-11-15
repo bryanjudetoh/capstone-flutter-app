@@ -199,6 +199,12 @@ class _RewardDetailsScreenState extends State<RewardDetailsScreen> {
                                       placeholderRewardsPicUrl,
                                       width: 500,
                                       height: 200,
+                                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                        print('bad url: $placeholderRewardsPicUrl');
+                                        return const Center(
+                                          child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                        );
+                                      }
                                     )
                                         : CarouselSlider(
                                       options: CarouselOptions(
@@ -211,6 +217,12 @@ class _RewardDetailsScreenState extends State<RewardDetailsScreen> {
                                               (url) => Image.network(
                                             url,
                                             fit: BoxFit.fitHeight,
+                                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                              print('bad url: $url');
+                                              return const Center(
+                                                child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                              );
+                                            }
                                           )
                                       ).toList(),
                                     ),

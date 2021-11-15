@@ -227,6 +227,12 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: 220,
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    print('bad url: ${getPlaceholderPicUrl(widget.sharedActivity!.type!)}');
+                    return const Center(
+                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                    );
+                  }
                 )
                     : CarouselSlider(
                   options: CarouselOptions(
@@ -239,6 +245,12 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
                           (url) => Image.network(
                         url,
                         fit: BoxFit.fitHeight,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                          print('bad url: $url');
+                          return const Center(
+                            child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                          );
+                        }
                       )
                   ).toList(),
                 ),
@@ -251,6 +263,12 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                   height: 220,
+                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                    print('bad url: ${getPlaceholderPicUrl(widget.sharedActivity!.type!)}');
+                    return const Center(
+                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                    );
+                  }
                 )
                     : CarouselSlider(
                   options: CarouselOptions(
@@ -263,6 +281,12 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
                           (url) => Image.network(
                         url,
                         fit: BoxFit.fitHeight,
+                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                          print('bad url: $url');
+                          return const Center(
+                            child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                          );
+                        }
                       )
                   ).toList(),
                 ),

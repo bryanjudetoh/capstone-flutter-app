@@ -567,7 +567,9 @@ class _ProfileFeedState extends State<ProfileFeed> {
     super.initState();
     this.profileFeed = widget.initialPostList;
     this.skip = this.profileFeed.length;
+    print('skip: ${this.skip}');
     this.isEndOfList = this.profileFeed.length < backendSkipLimit ? true : false;
+    print('isEndOfList: ${this.isEndOfList}');
   }
 
   @override
@@ -600,6 +602,7 @@ class _ProfileFeedState extends State<ProfileFeed> {
         setState(() {
           this.profileFeed.addAll(postList);
           this.skip += resultList.length;
+          print('skip: ${this.skip}');
         });
       }
       else {

@@ -150,6 +150,12 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                     (url) => Image.network(
                                   url,
                                   fit: BoxFit.fitHeight,
+                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                    print('bad url: $url');
+                                    return const Center(
+                                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                    );
+                                  },
                                 )
                             ).toList(),
                           ),
@@ -184,6 +190,12 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: 220,
+                                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                          print('bad url: ${getPlaceholderPicUrl(widget.post.sharedActivity!.type!)}');
+                                          return const Center(
+                                            child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                          );
+                                        }
                                       )
                                     : CarouselSlider(
                                         options: CarouselOptions(
@@ -194,10 +206,16 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                         items: widget.post.sharedActivity!.mediaContentUrls!
                                             .map(
                                                 (url) => Image.network(
-                                              url,
-                                              fit: BoxFit.fitHeight,
-                                            )
-                                        ).toList(),
+                                                  url,
+                                                  fit: BoxFit.fitHeight,
+                                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                      print('bad url: $url');
+                                                      return const Center(
+                                                        child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                                      );
+                                                    }
+                                                )
+                                            ).toList(),
                                       ),
                               ),
                             if (widget.post.sharedReward != null)
@@ -208,6 +226,12 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                   fit: BoxFit.cover,
                                   width: double.infinity,
                                   height: 220,
+                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                    print('bad url: $placeholderRewardsPicUrl');
+                                    return const Center(
+                                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                    );
+                                  }
                                 )
                                     : CarouselSlider(
                                   options: CarouselOptions(
@@ -220,6 +244,12 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                           (url) => Image.network(
                                         url,
                                         fit: BoxFit.fitHeight,
+                                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                          print('bad url: $url');
+                                          return const Center(
+                                            child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                          );
+                                        }
                                       )
                                   ).toList(),
                                 ),

@@ -189,6 +189,12 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: 220,
+                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                        print('bad url: ${widget.placeholderPicUrl}');
+                        return const Center(
+                          child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                        );
+                      }
                     )
                         : CarouselSlider(
                       options: CarouselOptions(
@@ -201,6 +207,12 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                               (url) => Image.network(
                             url,
                             fit: BoxFit.fitHeight,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              print('bad url: $url');
+                              return const Center(
+                                child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                              );
+                            }
                           )
                       ).toList(),
                     ),
@@ -899,15 +911,14 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
         Navigator.pop(context);
       });
 
-      String message = await handlePaymentRedirect(redirectUrl);
+      String message = await handlePaymentRedirect(redirectUrl, claimRewardDiscount);
       print('awaiting... this is message: $message');
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertPopup(
               title: 'Success!',
-              desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
-                  '\n\nThe final price paid for this activity is \$${(widget.activity.registrationPrice! - (claimRewardDiscount ?? 0)).toStringAsFixed(2)}!',
+              desc: message,
               func: () {
                 int count = 2;
                 Navigator.of(context).popUntil((_) => count-- <= 0);
@@ -929,13 +940,14 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
-  Future<String> handlePaymentRedirect(String redirectUrl) async {
+  Future<String> handlePaymentRedirect(String redirectUrl, double? claimRewardDiscount) async {
     String message = '';
     try {
       await _launchInBrowser(redirectUrl);
       await Future.delayed(Duration(seconds: 5));
       //implement listen to backend for outcome of payment redirect here
-      message = 'success';
+      message = 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
+          '\n\nThe final price paid for this activity is \$${(widget.activity.registrationPrice! - (claimRewardDiscount ?? 0)).toStringAsFixed(2)}!';
     }
     on Exception catch (err) {
       print(err.toString());
@@ -958,7 +970,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
         },
       );
     } else {
-      throw 'Could not launch $url';
+      throw Exception('Could not launch $url');
     }
   }
 

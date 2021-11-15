@@ -583,6 +583,14 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
                                   : participantList[index].activity.mediaContentUrls![0],
                               fit: BoxFit.cover,
                               width: double.infinity,
+                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                print('bad url: ${participantList[index].activity.mediaContentUrls!.isEmpty
+                                    ? getPlaceholderPicUrl(participantList[index].activity.type!)
+                                    : participantList[index].activity.mediaContentUrls![0]}');
+                                return const Center(
+                                  child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                );
+                              }
                             ),
                             Container(
                               alignment: Alignment.bottomLeft,
