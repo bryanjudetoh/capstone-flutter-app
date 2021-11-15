@@ -22,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _page = 0;
+  double _iconSize = 35.0;
   PageController pageController = new PageController();
 
   @override
@@ -53,60 +54,87 @@ class _HomeScreenState extends State<HomeScreen> {
           physics: NeverScrollableScrollPhysics(),
         ),
       ),
-      floatingActionButton: MaterialButton(
+      floatingActionButton: Container(
         height: 60,
-        color: kLightBlue,
-        shape: CircleBorder(),
-        onPressed: () {Navigator.pushNamed(context, '/create-post', arguments: widget.user);},
-        child: const Icon(Icons.add, color: Colors.white,),
+        width: 60,
+        child: FloatingActionButton(
+          heroTag: null,
+          backgroundColor: kLightBlue,
+          onPressed: () {Navigator.pushNamed(context, '/create-post', arguments: widget.user);},
+          child: const Icon(Icons.add, color: Colors.white, size: 30,),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.cottage_outlined, size: 30),
-            label: 'Home',
-            backgroundColor: kDarkGrey,
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.cottage_outlined,
+                    size: _iconSize,
+                    color: this._page == 0 ? kLightBlue : kDarkGrey,
+                  ),
+                  tooltip: 'Home',
+                  onPressed: () {
+                    navigationTapped(0);
+                  },
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.notifications_outlined,
+                    size: _iconSize,
+                    color: this._page == 1 ? kLightBlue : kDarkGrey,
+                  ),
+                  tooltip: 'Notifications',
+                  onPressed: () {
+                    navigationTapped(1);
+                  },
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.people_alt_outlined,
+                    size: _iconSize,
+                    color: this._page == 2 ? kLightBlue : kDarkGrey,
+                  ),
+                  tooltip: 'Social Media',
+                  onPressed: () {
+                    navigationTapped(2);
+                  },
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.person_outlined,
+                    size: _iconSize,
+                    color: this._page == 3 ? kLightBlue : kDarkGrey,
+                  ),
+                  tooltip: 'Profile',
+                  onPressed: () {
+                    navigationTapped(3);
+                  },
+                ),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.notifications_outlined,
-              size: 30,
-            ),
-            label: 'Notifications',
-            backgroundColor: kDarkGrey,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.people_alt_outlined,
-              size: 30,
-            ),
-            label: 'Social Media',
-            backgroundColor: kDarkGrey,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person_outlined,
-              size: 30,
-            ),
-            label: 'Profile',
-            backgroundColor: kDarkGrey,
-          ),
-        ],
-        currentIndex: _page,
-        selectedItemColor: kLightBlue,
-        onTap: navigationTapped,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        elevation: 0.0,
-        backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
+        ),
       ),
     );
   }
 
   void navigationTapped(int page) {
-    //Animating Page
     pageController.jumpToPage(page);
   }
 
