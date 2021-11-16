@@ -132,6 +132,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
   DateFormat dateFormat = DateFormat.yMd();
   DateFormat timeFormat = DateFormat.jm();
   int selectedRewardIndex = -1;
+  bool cancelCheckTransactionStatus = false;
 
   @override
   Widget build(BuildContext context) {
@@ -896,8 +897,25 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Success!', style: titleTwoTextStyleBold,),
-              content: Text('Redirecting you to payment...', style: bodyTextStyle,),
+              title: Text('Processing Payment', style: titleTwoTextStyleBold,),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Redirecting you to Paypal for checkout...', style: bodyTextStyle,),
+                  SizedBox(height: 10,),
+                  CircularProgressIndicator(),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  child: Text('Cancel', style: bodyTextStyle,),
+                  onPressed: () {
+                    setState(() {
+                      this.cancelCheckTransactionStatus = true;
+                    });
+                  },
+                )
+              ],
             );
           }
       );
@@ -907,21 +925,22 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       String transactionId = responseBody['transactionId'];
       String redirectUrl = responseBody['redirectUrl'];
 
-      Future.delayed(const Duration(seconds: 5), () {
-        Navigator.pop(context);
-      });
-
-      String message = await handlePaymentRedirect(redirectUrl, claimRewardDiscount);
-      print('awaiting... this is message: $message');
+      String message = await handlePaymentRedirect(redirectUrl, transactionId);
+      Navigator.pop(context);
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertPopup(
-              title: 'Success!',
-              desc: message,
+              title: this.cancelCheckTransactionStatus ? 'Unsuccessful Payment' : 'Success!',
+              desc: this.cancelCheckTransactionStatus ? 'Payment was cancelled' : message,
               func: () {
-                int count = 2;
-                Navigator.of(context).popUntil((_) => count-- <= 0);
+                if (this.cancelCheckTransactionStatus) {
+                  Navigator.pop(context);
+                }
+                else {
+                  int count = 2;
+                  Navigator.of(context).popUntil((_) => count-- <= 0);
+                }
               },
             );
           }
@@ -940,18 +959,24 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
     }
   }
 
-  Future<String> handlePaymentRedirect(String redirectUrl, double? claimRewardDiscount) async {
+  Future<String> handlePaymentRedirect(String redirectUrl, String transactionId) async {
     String message = '';
     try {
       await _launchInBrowser(redirectUrl);
-      await Future.delayed(Duration(seconds: 5));
-      //implement listen to backend for outcome of payment redirect here
+      Map<String, dynamic> transactionStatus = await checkTransactionStatus(transactionId);
+      while (transactionStatus['status'] == 'pendingPayment' && !this.cancelCheckTransactionStatus) {
+        print('in waiting for complete transaction loop');
+        await Future.delayed(Duration(seconds: 2));
+        transactionStatus = await checkTransactionStatus(transactionId);
+      }
+      print('exited transaction loop');
+
       message = 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
-          '\n\nThe final price paid for this activity is \$${(widget.activity.registrationPrice! - (claimRewardDiscount ?? 0)).toStringAsFixed(2)}!';
+          '\n\nThe final price paid for this activity is \$${transactionStatus['amount']['currency']} ${transactionStatus['amount']['value'].toStringAsFixed(2)}!';
     }
     on Exception catch (err) {
       print(err.toString());
-      message = 'problem!';
+      message = '${formatExceptionMessage(err.toString())}!';
     }
 
     return message;
@@ -971,6 +996,23 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       );
     } else {
       throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<Map<String, dynamic>> checkTransactionStatus(String transactionId) async {
+    var response = await widget.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/payment/mp/transaction/status/$transactionId'),
+    );
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      return responseBody;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('checkTransactionStatus error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while registering checking for transaction status');
     }
   }
 
