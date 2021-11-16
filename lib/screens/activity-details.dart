@@ -358,7 +358,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             ),
                             Text(
                                 widget.activity.registrationPrice! > 0
-                                    ? '\$${widget.activity.registrationPrice!.toStringAsFixed(2)}'
+                                    ? 'USD \$${widget.activity.registrationPrice!.toStringAsFixed(2)}'
                                     : 'Free'
                               ,
                               style: bodyTextStyleBold,

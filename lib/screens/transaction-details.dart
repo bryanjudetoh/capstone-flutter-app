@@ -191,7 +191,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.only(top: 6),
                         child: Text(
-                          '\$${this.txn.amount!['currency']}',
+                          '${this.txn.amount!['currency']}\$',
                           style: bodyTextStyle,
                         ),
                       ),
@@ -220,6 +220,34 @@ class TransactionDetailsScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20,),
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, '/activity-details', arguments: this.txn.details!['refId']);
+                },
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Activity:',
+                      style: titleThreeTextStyle,
+                    ),
+                    SizedBox(height: 10,),
+                    Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          alignment: Alignment.centerRight,
+                          width: MediaQuery.of(context).size.width*0.5,
+                          child: Text(
+                            '${this.txn.details!['activityName']}',
+                            style: titleThreeTextStyle,
+                            textAlign: TextAlign.right,
+                          ),
+                        )
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20,),
               if (this.txn.discount != null)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,8 +262,8 @@ class TransactionDetailsScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Value: '
-                            '\$${this.txn.discount!['currency']} '
-                            '${this.txn.discount!['value']!.toStringAsFixed(2)}',
+                            '${this.txn.discount!['currency']} '
+                            '\$${this.txn.discount!['value']!.toStringAsFixed(2)}',
                             style: titleThreeTextStyle,
                           ),
                           Text(

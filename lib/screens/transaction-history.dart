@@ -223,7 +223,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        '\$${widget.transactionList[index].amount!['currency']} ${(widget.transactionList[index].amount!['value'])!.toStringAsFixed(2)}',
+                        '${widget.transactionList[index].amount!['currency']} \$${(widget.transactionList[index].amount!['value'])!.toStringAsFixed(2)}',
                         style: bodyTextStyle,
                       ),
                       Text(
