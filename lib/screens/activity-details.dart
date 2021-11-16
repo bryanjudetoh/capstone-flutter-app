@@ -186,17 +186,17 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                     borderRadius: BorderRadius.circular(40),
                     child: widget.activity.mediaContentUrls!.isEmpty
                         ? Image.network(
-                      widget.placeholderPicUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: 220,
-                      errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                        print('bad url: ${widget.placeholderPicUrl}');
-                        return const Center(
-                          child: Text('Couldn\'t load image.', style: bodyTextStyle,),
-                        );
-                      }
-                    )
+                            widget.placeholderPicUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: 220,
+                            errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                              print('bad url: ${widget.placeholderPicUrl}');
+                              return const Center(
+                                child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                              );
+                            }
+                          )
                         : CarouselSlider(
                       options: CarouselOptions(
                         autoPlay: false,
