@@ -45,7 +45,6 @@ const titleOneTextStyle = TextStyle(
   fontFamily: 'SF Pro Display',
   fontSize: 28.0,
   height: 1.25,
-  fontWeight: FontWeight.bold,
 );
 
 const titleOneTextStyleBold = TextStyle(
@@ -264,6 +263,13 @@ const activityTypeToPotionColorPathMap = <String, String>{
 const rewardTypeMap = <String, String> {
   'externalReward': 'External',
   'inAppReward': 'In App'
+};
+
+const transactionTypeMap = <String, String> {
+  'pendingPayment': 'Pending Payment',
+  'onHold': 'On Hold',
+  'completed': 'Completed',
+  'refunded': 'Refunded',
 };
 
 const leaderboardTypesList = ['Overall', 'Scholarship', 'Internship', 'Mentorship', 'Online Courses', 'Offline Courses', 'Volunteering', 'Sports',];

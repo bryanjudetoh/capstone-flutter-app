@@ -21,6 +21,8 @@ import 'package:youthapp/screens/signup.dart';
 import 'package:youthapp/screens/fb-signup.dart';
 import 'package:youthapp/screens/forgot-password.dart';
 import 'package:youthapp/screens/init-home.dart';
+import 'package:youthapp/screens/transaction-details.dart';
+import 'package:youthapp/screens/transaction-history.dart';
 import 'package:youthapp/screens/user-profile.dart';
 import 'package:youthapp/screens/verification.dart';
 import 'package:youthapp/utilities/navigation-service.dart';
@@ -110,6 +112,8 @@ class _MyAppState extends State<MyApp> {
         '/full-post': (context) => InitFullPostScreen(),
         '/create-post': (context) => CreatePostScreen(),
         '/create-post-shared': (context) => InitCreatePostShared(),
+        '/transaction-history': (context) => InitTransactionHistoryScreen(),
+        '/transaction-details': (context) => InitTransactionDetailsScreen(),
       }
     );
   }

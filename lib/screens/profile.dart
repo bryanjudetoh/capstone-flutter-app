@@ -90,7 +90,7 @@ class InitProfileScreenBody extends StatelessWidget {
     if (response.statusCode == 200) {
       this.secureStorage.writeSecureData('user', response.body);
       var responseBody = jsonDecode(response.body);
-      print(responseBody);
+      //print(responseBody);
       User user = User.fromJson(responseBody);
 
       return user;
@@ -724,6 +724,13 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                ListTile(
+                  leading: new Icon(Icons.payments_outlined),
+                  title: new Text('View Transaction History'),
+                  onTap: () {
+                    Navigator.pushReplacementNamed(context, '/transaction-history');
+                  },
+                ),
                 ListTile(
                   leading: new Icon(Icons.edit),
                   title: new Text('Edit Account Details'),
