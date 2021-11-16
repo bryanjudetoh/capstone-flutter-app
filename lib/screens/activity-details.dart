@@ -935,6 +935,9 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
               desc: this.cancelCheckTransactionStatus ? 'Payment was cancelled' : message,
               func: () {
                 if (this.cancelCheckTransactionStatus) {
+                  setState(() {
+                    this.cancelCheckTransactionStatus = false;
+                  });
                   Navigator.pop(context);
                 }
                 else {
@@ -966,10 +969,15 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       Map<String, dynamic> transactionStatus = await checkTransactionStatus(transactionId);
       while (transactionStatus['status'] == 'pendingPayment' && !this.cancelCheckTransactionStatus) {
         print('in waiting for complete transaction loop');
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(Duration(seconds: 5));
         transactionStatus = await checkTransactionStatus(transactionId);
       }
-      print('exited transaction loop');
+      print('exited transaction loop: ${transactionStatus['status']}');
+      if (transactionStatus['status'] == 'paymentCancelled') {
+        setState(() {
+          this.cancelCheckTransactionStatus = true;
+        });
+      }
 
       message = 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
           '\n\nThe final price paid for this activity is \$${transactionStatus['amount']['currency']} ${transactionStatus['amount']['value'].toStringAsFixed(2)}!';
