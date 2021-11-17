@@ -24,7 +24,7 @@ class Notif {
 
   Organisation organisation;
   bool isSystemTriggered;
-  String receiverGroup;
+  String? receiverGroup;
 
   Activity? activity;
   Reward? reward;

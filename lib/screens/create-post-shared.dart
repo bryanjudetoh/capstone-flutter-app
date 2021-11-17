@@ -223,73 +223,75 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
               Container(
                 child: widget.sharedActivity!.mediaContentUrls!.isEmpty
                     ? Image.network(
-                  getPlaceholderPicUrl(widget.sharedActivity!.type!),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 220,
-                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                    print('bad url: ${getPlaceholderPicUrl(widget.sharedActivity!.type!)}');
-                    return const Center(
-                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
-                    );
-                  }
-                )
-                    : CarouselSlider(
-                  options: CarouselOptions(
-                    autoPlay: false,
-                    enableInfiniteScroll: true,
-                    viewportFraction: 1.0,
-                  ),
-                  items: widget.sharedActivity!.mediaContentUrls!
-                      .map(
-                          (url) => Image.network(
-                        url,
-                        fit: BoxFit.fitHeight,
+                        getPlaceholderPicUrl(widget.sharedActivity!.type!),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 220,
                         errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                          print('bad url: $url');
+                          print('bad url: ${getPlaceholderPicUrl(widget.sharedActivity!.type!)}');
                           return const Center(
                             child: Text('Couldn\'t load image.', style: bodyTextStyle,),
                           );
                         }
                       )
-                  ).toList(),
-                ),
+                    : CarouselSlider(
+                        options: CarouselOptions(
+                          autoPlay: false,
+                          enableInfiniteScroll: true,
+                          viewportFraction: 1.0,
+                          aspectRatio: 4/3,
+                        ),
+                        items: widget.sharedActivity!.mediaContentUrls!
+                            .map(
+                                (url) => Image.network(
+                              url,
+                              fit: BoxFit.fitHeight,
+                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                print('bad url: $url');
+                                return const Center(
+                                  child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                );
+                              }
+                            )
+                        ).toList(),
+                      ),
               ),
             if (widget.sharedReward != null)
               Container(
                 child: widget.sharedReward!.mediaContentUrls!.isEmpty
                     ? Image.network(
-                  placeholderRewardsPicUrl,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 220,
-                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                    print('bad url: ${getPlaceholderPicUrl(widget.sharedActivity!.type!)}');
-                    return const Center(
-                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
-                    );
-                  }
-                )
-                    : CarouselSlider(
-                  options: CarouselOptions(
-                    autoPlay: false,
-                    enableInfiniteScroll: true,
-                    viewportFraction: 1.0,
-                  ),
-                  items: widget.sharedReward!.mediaContentUrls!
-                      .map(
-                          (url) => Image.network(
-                        url,
-                        fit: BoxFit.fitHeight,
+                        placeholderRewardsPicUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 220,
                         errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                          print('bad url: $url');
+                          print('bad url: ${getPlaceholderPicUrl(widget.sharedActivity!.type!)}');
                           return const Center(
                             child: Text('Couldn\'t load image.', style: bodyTextStyle,),
                           );
                         }
                       )
-                  ).toList(),
-                ),
+                    : CarouselSlider(
+                        options: CarouselOptions(
+                          autoPlay: false,
+                          enableInfiniteScroll: true,
+                          viewportFraction: 1.0,
+                          aspectRatio: 4/3,
+                        ),
+                        items: widget.sharedReward!.mediaContentUrls!
+                            .map(
+                                (url) => Image.network(
+                              url,
+                              fit: BoxFit.fitHeight,
+                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                print('bad url: $url');
+                                return const Center(
+                                  child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                );
+                              }
+                            )
+                        ).toList(),
+                      ),
               ),
             Container(
               width: double.infinity,

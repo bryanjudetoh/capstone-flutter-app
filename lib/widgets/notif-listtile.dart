@@ -108,7 +108,14 @@ class _NotifListTileState extends State<NotifListTile> {
                 color: Colors.white,
                 child: InkWell(
                   onTap: () {
-                    print('tapped');
+                    if (!this.hasRead) {
+                      doMarkAsRead(showSnackbar: false);
+                    }
+                    Navigator.pushNamed(
+                      context,
+                      '/notification-details',
+                      arguments: widget.notification
+                    );
                   },
                   child: ListTile(
                     minVerticalPadding: 15,
@@ -203,7 +210,7 @@ class _NotifListTileState extends State<NotifListTile> {
     );
   }
 
-  Future<void> doMarkAsRead() async {
+  Future<void> doMarkAsRead({bool showSnackbar = true}) async {
     String message = '';
     try {
       message = await doMarkNotification(true);
@@ -216,16 +223,18 @@ class _NotifListTileState extends State<NotifListTile> {
       message = formatExceptionMessage(err.toString());
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          behavior: SnackBarBehavior.floating,
-          content: Text(
-            message,
-            style: bodyTextStyle,
-          ),
-          duration: const Duration(seconds: 1),
-        )
-    );
+    if (showSnackbar) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text(
+              message,
+              style: bodyTextStyle,
+            ),
+            duration: const Duration(seconds: 1),
+          )
+      );
+    }
   }
 
   Future<void> doMarkAsUnread() async {

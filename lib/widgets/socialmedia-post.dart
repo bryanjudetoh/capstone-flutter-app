@@ -202,6 +202,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                           autoPlay: false,
                                           enableInfiniteScroll: true,
                                           viewportFraction: 1.0,
+                                          aspectRatio: 4/3,
                                         ),
                                         items: widget.post.sharedActivity!.mediaContentUrls!
                                             .map(
@@ -222,37 +223,38 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                               Container(
                                 child: widget.post.sharedReward!.mediaContentUrls!.isEmpty
                                     ? Image.network(
-                                  placeholderRewardsPicUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 220,
-                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                    print('bad url: $placeholderRewardsPicUrl');
-                                    return const Center(
-                                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
-                                    );
-                                  }
-                                )
-                                    : CarouselSlider(
-                                  options: CarouselOptions(
-                                    autoPlay: false,
-                                    enableInfiniteScroll: true,
-                                    viewportFraction: 1.0,
-                                  ),
-                                  items: widget.post.sharedReward!.mediaContentUrls!
-                                      .map(
-                                          (url) => Image.network(
-                                        url,
-                                        fit: BoxFit.fitHeight,
+                                        placeholderRewardsPicUrl,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: 220,
                                         errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                          print('bad url: $url');
+                                          print('bad url: $placeholderRewardsPicUrl');
                                           return const Center(
                                             child: Text('Couldn\'t load image.', style: bodyTextStyle,),
                                           );
                                         }
                                       )
-                                  ).toList(),
-                                ),
+                                    : CarouselSlider(
+                                        options: CarouselOptions(
+                                          autoPlay: false,
+                                          enableInfiniteScroll: true,
+                                          viewportFraction: 1.0,
+                                          aspectRatio: 4/3,
+                                        ),
+                                        items: widget.post.sharedReward!.mediaContentUrls!
+                                            .map(
+                                                (url) => Image.network(
+                                              url,
+                                              fit: BoxFit.fitHeight,
+                                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                print('bad url: $url');
+                                                return const Center(
+                                                  child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                                );
+                                              }
+                                            )
+                                        ).toList(),
+                                      ),
                               ),
                             Container(
                               width: double.infinity,

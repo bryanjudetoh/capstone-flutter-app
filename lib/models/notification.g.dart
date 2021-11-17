@@ -33,7 +33,7 @@ Notif _$NotifFromJson(Map<String, dynamic> json) {
     organisation:
         Organisation.fromJson(json['organisation'] as Map<String, dynamic>),
     isSystemTriggered: json['isSystemTriggered'] as bool,
-    receiverGroup: json['receiverGroup'] as String,
+    receiverGroup: json['receiverGroup'] as String?,
     activity: json['activity'] == null
         ? null
         : Activity.fromJson(json['activity'] as Map<String, dynamic>),

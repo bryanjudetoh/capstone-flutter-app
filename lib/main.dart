@@ -11,6 +11,7 @@ import 'package:youthapp/screens/edit-account-details.dart';
 import 'package:youthapp/screens/full-post.dart';
 import 'package:youthapp/screens/leaderboards.dart';
 import 'package:youthapp/screens/my-rewards.dart';
+import 'package:youthapp/screens/notification-details.dart';
 import 'package:youthapp/screens/onboarding.dart';
 import 'package:youthapp/screens/organisation-details.dart';
 import 'package:youthapp/screens/registered-activity-details.dart';
@@ -114,6 +115,7 @@ class _MyAppState extends State<MyApp> {
         '/create-post-shared': (context) => InitCreatePostShared(),
         '/transaction-history': (context) => InitTransactionHistoryScreen(),
         '/transaction-details': (context) => InitTransactionDetailsScreen(),
+        '/notification-details': (context) => InitNotificationDetailsScreen(),
       }
     );
   }
