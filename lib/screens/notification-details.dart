@@ -349,7 +349,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
           ),
         Text('${widget.notification.content}', style: bodyTextStyle,),
         SizedBox(width: double.infinity,),
-        if (widget.notification.activity != null)
+        if (widget.notification.isSystemTriggered)
           Align(
             alignment: Alignment.center,
             child: Column(
