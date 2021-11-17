@@ -142,7 +142,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Column(
             children: <Widget>[
               Row(

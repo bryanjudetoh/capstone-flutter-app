@@ -225,7 +225,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
         child: Container(
           color: Colors.white,
           child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
             child: Column(
               children: <Widget>[
                 Row(

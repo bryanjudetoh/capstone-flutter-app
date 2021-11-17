@@ -76,7 +76,7 @@ class _EditAccountDetailsScreenState extends State<EditAccountDetailsScreen> {
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Container(
               child: Column(
                 children: <Widget>[

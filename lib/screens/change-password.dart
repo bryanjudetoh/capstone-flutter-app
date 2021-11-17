@@ -42,7 +42,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         resizeToAvoidBottomInset: true,
         body: SafeArea(
           child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+              padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[

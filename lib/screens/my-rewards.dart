@@ -46,7 +46,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return [
@@ -307,7 +307,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
                                     width: 500,
                                     height: 200,
                                     errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                      print('bad url: ${placeholderPicUrl}');
+                                      print('bad url: $placeholderPicUrl');
                                       return const Center(
                                         child: Text('Couldn\'t load image.', style: bodyTextStyle,),
                                       );

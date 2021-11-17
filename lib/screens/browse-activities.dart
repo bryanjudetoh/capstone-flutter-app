@@ -169,7 +169,7 @@ class _BrowseActivitiesScreenState extends State<BrowseActivitiesScreen> {
       body: SafeArea(
         child: Container(
           color: Colors.white,
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
