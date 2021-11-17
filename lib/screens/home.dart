@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/notifications.dart';
@@ -24,6 +25,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _page = 0;
   double _iconSize = 35.0;
   PageController pageController = new PageController();
+  late int numUnreadNotifications;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.user.numUnreadNotifications != null) {
+      this.numUnreadNotifications = widget.user.numUnreadNotifications!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Container(
               color: Colors.white,
-              child: NotificationsScreenBody(user: widget.user),
+              child: InitNotificationsScreenBody(
+                updateNumUnreadNotifications: updateNumUnreadNotifications,
+                setNumUnreadNotifications: setNumUnreadNotifications,
+              ),
             ),
             Container(
               color: Colors.white,
@@ -87,16 +100,42 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.notifications_outlined,
-                    size: _iconSize,
-                    color: this._page == 1 ? kLightBlue : kDarkGrey,
-                  ),
-                  tooltip: 'Notifications',
-                  onPressed: () {
-                    navigationTapped(1);
-                  },
+                child: Stack(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.notifications_outlined,
+                        size: _iconSize,
+                        color: this._page == 1 ? kLightBlue : kDarkGrey,
+                      ),
+                      tooltip: 'Notifications',
+                      onPressed: () {
+                        navigationTapped(1);
+                      },
+                    ),
+                    if (this.numUnreadNotifications > 0)
+                      Positioned(
+                        top: 2.0,
+                        right: 2.0,
+                        child: Container(
+                          height: 20,
+                          width: 20,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${numUnreadNotifsOverflow(this.numUnreadNotifications)}',
+                            style: TextStyle(
+                              fontFamily: 'Nunito',
+                              fontSize: this.numUnreadNotifications > 9 ? 10.0 : 14.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               Container(
@@ -144,6 +183,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void updateNumUnreadNotifications(int changeNum) {
+    setState(() {
+      this.numUnreadNotifications += changeNum;
+    });
+  }
+
+  void setNumUnreadNotifications(int newUnread) {
+    setState(() {
+      this.numUnreadNotifications = newUnread;
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -173,7 +224,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[

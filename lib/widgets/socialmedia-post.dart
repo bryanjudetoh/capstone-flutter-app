@@ -391,6 +391,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text(
             message,
             style: bodyTextStyle,
@@ -448,6 +449,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text(
             message,
             style: bodyTextStyle,

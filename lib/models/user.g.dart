@@ -48,6 +48,7 @@ User _$UserFromJson(Map<String, dynamic> json) {
         .toList(),
     numFriends: json['numFriends'] as int?,
     isFriend: json['isFriend'] as bool?,
+    numUnreadNotifications: json['numUnreadNotifications'] as int?,
     multipliers: (json['multipliers'] as Map<String, dynamic>?)?.map(
       (k, e) => MapEntry(k, e as int),
     ),
@@ -84,5 +85,6 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'rewardList': instance.rewardList,
       'numFriends': instance.numFriends,
       'isFriend': instance.isFriend,
+      'numUnreadNotifications': instance.numUnreadNotifications,
       'multipliers': instance.multipliers,
     };
