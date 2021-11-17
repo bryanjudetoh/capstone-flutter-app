@@ -255,7 +255,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                           Column(
                                             children: <Widget>[
                                               Text(
-                                                'Equity Score',
+                                                'Total Potions',
                                                 style: captionTextStyle,
                                               ),
                                               Text(

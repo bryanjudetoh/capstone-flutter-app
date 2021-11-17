@@ -68,7 +68,16 @@ class _NotifListTileState extends State<NotifListTile> {
               FocusedMenuItem(
                 title: Text('Open', style: smallBodyTextStyle,),
                 trailingIcon: Icon(Icons.open_in_new) ,
-                onPressed: () {},
+                onPressed: () {
+                  if (!this.hasRead) {
+                    doMarkAsRead(showSnackbar: false);
+                  }
+                  Navigator.pushNamed(
+                      context,
+                      '/notification-details',
+                      arguments: widget.notification
+                  );
+                  },
               ),
               if (!this.hasRead)
                 FocusedMenuItem(
@@ -313,7 +322,6 @@ class _NotifListTileState extends State<NotifListTile> {
   }
 
   Future<String> doDeleteNotification() async {
-    print('dismissing : ${widget.notification.notificationId}');
     var response = await widget.http.delete(
         Uri.parse('https://eq-lab-dev.me/api/notification-svc/mp/received-notification/${widget.notification.notificationId}'),
     );

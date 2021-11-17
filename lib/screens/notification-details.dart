@@ -5,10 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:youthapp/models/activity.dart';
 import 'package:youthapp/models/notification.dart';
 import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/models/participant.dart';
 import 'package:youthapp/models/reward.dart';
+import 'package:youthapp/screens/rating-fullscreen-dialog.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/widgets/rounded-button.dart';
 
 import '../constants.dart';
 
@@ -25,11 +28,10 @@ class InitNotificationDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Notif notification = ModalRoute.of(context)!.settings.arguments as Notif;
-    print(notification.toJson());
     return Scaffold(
       backgroundColor: Colors.white,
       body: notification.activity == null && notification.reward == null
-          ? NotificationDetailsScreen(notification: notification)
+          ? NotificationDetailsScreen(notification: notification, http: this.http)
           : FutureBuilder<Map<String, dynamic>>(
               future: getActivityOrReward(notification),
               builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
@@ -39,6 +41,7 @@ class InitNotificationDetailsScreen extends StatelessWidget {
                     notification: notification,
                     activity: data['activity'],
                     reward: data['reward'],
+                    http: this.http,
                   );
                 }
                 else if (snapshot.hasError) {
@@ -133,11 +136,12 @@ class InitNotificationDetailsScreen extends StatelessWidget {
 }
 
 class NotificationDetailsScreen extends StatefulWidget {
-  const NotificationDetailsScreen({Key? key, required this.notification, this.activity, this.reward}) : super(key: key);
+  const NotificationDetailsScreen({Key? key, required this.notification, this.activity, this.reward, required this.http}) : super(key: key);
 
   final Notif notification;
   final Activity? activity;
   final Reward? reward;
+  final InterceptedHttp http;
 
   @override
   State<NotificationDetailsScreen> createState() => _NotificationDetailsScreenState();
@@ -345,7 +349,63 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
           ),
         Text('${widget.notification.content}', style: bodyTextStyle,),
         SizedBox(width: double.infinity,),
+        if (widget.notification.activity != null)
+          Align(
+            alignment: Alignment.center,
+            child: Column(
+              children: [
+                SizedBox(height: 40,),
+                RoundedButton(
+                  title: ' Rate This Activity ',
+                  colorBG: kLightBlue,
+                  colorFont: kWhite,
+                  func: () async {
+                    Participant participant = await getParticipantData();
+                    if (participant.submittedRating == null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) => RatingFullScreenDialog(participant: participant,),
+                          fullscreenDialog: true,
+                        ),
+                      );
+                    }
+                    else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            behavior: SnackBarBehavior.floating,
+                            content: Text(
+                              'You have already rated this activity',
+                              style: bodyTextStyle,
+                            ),
+                            duration: const Duration(seconds: 1),
+                          )
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
       ],
     );
+  }
+
+  Future<Participant> getParticipantData() async {
+    final response = await widget.http.get(
+      Uri.parse(
+          'https://eq-lab-dev.me/api/activity-svc/mp/activity/activity-history/${widget.activity!.participantId}'),
+    );
+
+    if (response.statusCode == 200) {
+      var responseBody = jsonDecode(response.body);
+      return Participant.fromJson(Map<String, dynamic>.from(responseBody));
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print(result);
+
+      throw Exception('A problem occured while initialising participant data');
+    }
   }
 }
