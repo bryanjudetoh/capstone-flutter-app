@@ -259,6 +259,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
                             'Value: '
@@ -267,7 +268,7 @@ class TransactionDetailsScreen extends StatelessWidget {
                             style: titleThreeTextStyle,
                           ),
                           Text(
-                            'Reward ID: ${this.txn.discount!['value']!.toStringAsFixed(2)}',
+                            'Reward ID: ${this.txn.discount!['rewardId']!}',
                             style: subtitleTextStyle,
                           ),
                         ],
@@ -324,25 +325,30 @@ class TransactionDetailsScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 20,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Paid by:', style: titleThreeTextStyle,),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Image.network(
-                        'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg',
-                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                          print('bad url: https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg');
-                          return const Center(
-                            child: Text('Couldn\'t load image.'),
-                          );
-                        }
+              if (this.txn.paymentChannel != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Paid by:', style: titleThreeTextStyle,),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        child: this.txn.paymentChannel == 'paypal'
+                            ? Image.network(
+                                'https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg',
+                                errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                    print('bad url: https://www.paypalobjects.com/webstatic/mktg/logo/pp_cc_mark_37x23.jpg');
+                                    return const Center(
+                                      child: Text('Couldn\'t load image.'),
+                                    );
+                                }
+                            )
+                            : Icon(Icons.attach_money, size: 40,),
+                      )
                     ),
-                  )
-                ],
-              ),
-              SizedBox(height: 20,),
+                    SizedBox(height: 20,),
+                  ],
+                ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
