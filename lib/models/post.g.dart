@@ -9,14 +9,14 @@ part of 'post.dart';
 Post _$PostFromJson(Map<String, dynamic> json) {
   $checkKeys(
     json,
-    requiredKeys: const ['postId', 'content', 'mediaContentUrls'],
+    requiredKeys: const ['postId', 'content'],
     disallowNullValues: const ['postId'],
   );
   return Post(
     postId: json['postId'] as String,
     content: json['content'] as String,
-    mediaContentUrls: (json['mediaContentUrls'] as List<dynamic>)
-        .map((e) => e as String)
+    mediaContentUrls: (json['mediaContentUrls'] as List<dynamic>?)
+        ?.map((e) => e as String)
         .toList(),
     mpUser: json['mpUser'] == null
         ? null

@@ -90,6 +90,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              behavior: SnackBarBehavior.floating,
                               content: Text(
                                 message,
                                 style: bodyTextStyle,

@@ -14,8 +14,7 @@ class Post {
   @JsonKey(required: true)
   String content;
 
-  @JsonKey(required: true)
-  List<String> mediaContentUrls;
+  List<String>? mediaContentUrls;
 
   User? mpUser;
   Organisation? organisation;
@@ -34,7 +33,7 @@ class Post {
   bool? hasLiked;
   bool? hasDisliked;
 
-  Post({required this.postId, required this.content, required this.mediaContentUrls,
+  Post({required this.postId, required this.content, this.mediaContentUrls,
     this.mpUser, this.organisation, this.sharedActivity, this.sharedReward,
     this.wasEdited, this.createdAt, this.updatedAt,
     this.numLikes, this.numDislikes, this.numComments, this.hasLiked, this.hasDisliked,

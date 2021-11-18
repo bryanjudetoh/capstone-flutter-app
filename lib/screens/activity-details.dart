@@ -95,6 +95,7 @@ class InitActivityDetailsScreen extends StatelessWidget {
   }
 
   Future<Activity> retrieveActivity(String activityId) async {
+    print('$activityId');
     final response = await http.get(
       Uri.parse(
           'https://eq-lab-dev.me/api/activity-svc/mp/activity/$activityId'),
@@ -103,8 +104,12 @@ class InitActivityDetailsScreen extends StatelessWidget {
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       return Activity.fromJson(Map<String, dynamic>.from(responseBody));
-    } else {
-      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('retrieveActivity error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving this activity');
     }
   }
 }

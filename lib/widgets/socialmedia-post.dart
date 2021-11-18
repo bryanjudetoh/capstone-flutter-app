@@ -150,7 +150,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
             child: widget.post.sharedActivity == null && widget.post.sharedReward == null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: widget.post.mediaContentUrls.isEmpty
+                    child: widget.post.mediaContentUrls != null && widget.post.mediaContentUrls!.isEmpty
                         ? Container()
                         : CarouselSlider(
                             options: CarouselOptions(
@@ -158,8 +158,9 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                               enableInfiniteScroll: true,
                               viewportFraction: 1.0,
                             ),
-                            items: widget.post.mediaContentUrls.map( (url) =>
-                                Image.network(
+                            items: widget.post.mediaContentUrls != null
+                                ? widget.post.mediaContentUrls!.map( (url) =>
+                                  Image.network(
                                   url,
                                   fit: BoxFit.fitHeight,
                                   errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
@@ -169,7 +170,8 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                     );
                                   },
                                 )
-                            ).toList(),
+                                ).toList()
+                                : [Image.network(placeholderPostPicUrl)],
                           ),
                 )
                 : Container(

@@ -116,6 +116,7 @@ class _CreatePostSharedScreenState extends State<CreatePostSharedScreen> {
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
+                              behavior: SnackBarBehavior.floating,
                               content: Text(
                                 message,
                                 style: bodyTextStyle,

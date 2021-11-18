@@ -944,6 +944,7 @@ class _RequestsBodyState extends State<RequestsBody> {
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
                                     message,
                                     style: bodyTextStyle,
@@ -971,6 +972,7 @@ class _RequestsBodyState extends State<RequestsBody> {
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
                                     message,
                                     style: bodyTextStyle,
