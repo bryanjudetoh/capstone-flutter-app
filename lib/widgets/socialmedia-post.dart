@@ -32,6 +32,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   late int numDislikes;
   late int numComments;
   late String content;
+  late bool wasEdited;
   final SecureStorage secureStorage = SecureStorage();
 
   @override
@@ -43,6 +44,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     this.numDislikes = widget.post.numDislikes!;
     this.numComments = widget.post.numComments!;
     this.content = widget.post.content;
+    this.wasEdited = widget.post.wasEdited!;
   }
 
   @override
@@ -109,7 +111,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                       SizedBox(height: 5,),
                       Row(
                         children: [
-                          if (widget.post.wasEdited != null && widget.post.wasEdited!)
+                          if (this.wasEdited)
                             Text(
                               'Edited: ',
                               style: subtitleTextStyle,
@@ -156,9 +158,8 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                               enableInfiniteScroll: true,
                               viewportFraction: 1.0,
                             ),
-                            items: widget.post.mediaContentUrls
-                                .map(
-                                    (url) => Image.network(
+                            items: widget.post.mediaContentUrls.map( (url) =>
+                                Image.network(
                                   url,
                                   fit: BoxFit.fitHeight,
                                   errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
@@ -533,6 +534,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   void setPostContent(String newContent) {
     setState(() {
       this.content = newContent;
+      this.wasEdited = true;
     });
   }
 }

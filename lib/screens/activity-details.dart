@@ -225,68 +225,75 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: 300,
+                          width: MediaQuery.of(context).size.width*0.5,
                           child: Text(
                             '${widget.activity.name}',
                             style: titleOneTextStyleBold,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Image(
-                              image: AssetImage('${activityTypeToPotionColorPathMap[widget.activity.type]}'),
-                              height: 40,
-                              width: 40,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 5),
-                              child: Text(
-                                '${widget.activity.potions}',
-                                style: TextStyle(
-                                  fontFamily: 'Nunito',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Color(0xFF5EC8D8),
+                        Container(
+                          width: MediaQuery.of(context).size.width*0.4,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Image(
+                                image: AssetImage('${activityTypeToPotionColorPathMap[widget.activity.type]}'),
+                                height: 40,
+                                width: 40,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Container(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width*0.2,
+                                ),
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                  '${widget.activity.potions}',
+                                  style: TextStyle(
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Color(0xFF5EC8D8),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
-                            if (widget.activity.multiplier == 2)
-                              Row(
-                                children: [
-                                  SizedBox(width: 10,),
-                                  Container(
-                                    padding: EdgeInsets.all(7),
-                                    margin: EdgeInsets.only(top: 5),
-                                    decoration: BoxDecoration(
-                                      color: kLightBlue,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.amberAccent,
-                                          spreadRadius: 3.0,
-                                          blurRadius: 3.0,
+                              if (widget.activity.multiplier == 2)
+                                Row(
+                                  children: [
+                                    SizedBox(width: 10,),
+                                    Container(
+                                      padding: EdgeInsets.all(7),
+                                      margin: EdgeInsets.only(top: 5),
+                                      decoration: BoxDecoration(
+                                        color: kLightBlue,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.amberAccent,
+                                            spreadRadius: 3.0,
+                                            blurRadius: 3.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        'x2',
+                                        style: TextStyle(
+                                          fontFamily: 'Nunito',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.white,
                                         ),
-                                      ],
-                                    ),
-                                    child: Text(
-                                      'x2',
-                                      style: TextStyle(
-                                        fontFamily: 'Nunito',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        )
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
                       ]),
                   SizedBox(
                     height: 2,
@@ -825,7 +832,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
         mapList.add(i);
       }
       List<ClaimedReward> claimedRewardsList = mapList.map((reward) => ClaimedReward.fromJson(reward)).toList();
-      List<ClaimedReward> inAppRewardsList = claimedRewardsList.where((cr) => cr.reward.type! == 'inAppReward').toList(); //TODO: double check that i got the field and inAppReward correct
+      List<ClaimedReward> inAppRewardsList = claimedRewardsList.where((cr) => cr.reward.type! == 'inAppReward').toList();
       return inAppRewardsList;
     }
     else {

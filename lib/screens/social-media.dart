@@ -496,8 +496,9 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
     }
     else {
       var result = jsonDecode(response.body);
-      print(result);
-      throw Exception('A problem occured while loading initial feed posts');
+      print('getInitialFeed error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving initial feed posts');
     }
   }
 
