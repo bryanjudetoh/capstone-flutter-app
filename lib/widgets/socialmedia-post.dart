@@ -105,11 +105,20 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                         },
                       ),
                       SizedBox(height: 5,),
-                      Text(
-                        '${dateTimeFormat.format(widget.post.createdAt!.toLocal())}',
-                        style: subtitleTextStyle,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      Row(
+                        children: [
+                          if (widget.post.wasEdited != null && widget.post.wasEdited!)
+                            Text(
+                              'Edited: ',
+                              style: subtitleTextStyle,
+                            ),
+                          Text(
+                            '${dateTimeFormat.format(widget.post.updatedAt!.toLocal())}',
+                            style: subtitleTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ],

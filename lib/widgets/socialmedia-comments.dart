@@ -214,13 +214,23 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                               SizedBox(height: 5,),
                               Row(
                                 children: <Widget>[
+                                  if (this.commentsList[index].wasEdited != null && this.commentsList[index].wasEdited!)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                      ),
+                                      child: Text(
+                                        'Edited: ',
+                                        style: xSmallSubtitleTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                     ),
                                     child: Text(
-                                      '${dateTimeFormat.format(this.commentsList[index].createdAt!.toLocal())}',
+                                      '${dateTimeFormat.format(this.commentsList[index].updatedAt!.toLocal())}',
                                       style: xSmallSubtitleTextStyle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -352,13 +362,23 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                       SizedBox(height: 10,),
                       Row(
                         children: <Widget>[
+                          if (list[nestedIndex].wasEdited != null && list[nestedIndex].wasEdited!)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              child: Text(
+                                'Edited: ',
+                                style: xSmallSubtitleTextStyle,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           Container(
-                            padding: EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                             ),
                             child: Text(
-                              '${dateTimeFormat.format(list[nestedIndex].createdAt!.toLocal())}',
+                              '${dateTimeFormat.format(list[nestedIndex].updatedAt!.toLocal())}',
                               style: xSmallSubtitleTextStyle,
                               overflow: TextOverflow.ellipsis,
                             ),
