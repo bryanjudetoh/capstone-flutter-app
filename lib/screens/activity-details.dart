@@ -922,32 +922,51 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
 
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       print(responseBody);
-      String transactionId = responseBody['transactionId'];
-      String redirectUrl = responseBody['redirectUrl'];
 
-      String message = await handlePaymentRedirect(redirectUrl, transactionId);
-      Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertPopup(
-              title: this.cancelCheckTransactionStatus ? 'Unsuccessful Payment' : 'Success!',
-              desc: this.cancelCheckTransactionStatus ? 'Payment was cancelled' : message,
-              func: () {
-                if (this.cancelCheckTransactionStatus) {
-                  setState(() {
-                    this.cancelCheckTransactionStatus = false;
-                  });
-                  Navigator.pop(context);
-                }
-                else {
+      if (claimRewardDiscount != null && widget.activity.registrationPrice! - claimRewardDiscount <= 0) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'Success!',
+                desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
+                    '\n\nWith the use of your reward, the final price paid for this activity is USD\$ 0.00!',
+                func: () {
                   int count = 2;
                   Navigator.of(context).popUntil((_) => count-- <= 0);
-                }
-              },
-            );
-          }
-      );
+                },
+              );
+            }
+        );
+      }
+      else {
+        String transactionId = responseBody['transactionId'];
+        String redirectUrl = responseBody['redirectUrl'];
+
+        String message = await handlePaymentRedirect(redirectUrl, transactionId);
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: this.cancelCheckTransactionStatus ? 'Unsuccessful Payment' : 'Success!',
+                desc: this.cancelCheckTransactionStatus ? 'Payment was cancelled' : message,
+                func: () {
+                  if (this.cancelCheckTransactionStatus) {
+                    setState(() {
+                      this.cancelCheckTransactionStatus = false;
+                    });
+                    Navigator.pop(context);
+                  }
+                  else {
+                    int count = 2;
+                    Navigator.of(context).popUntil((_) => count-- <= 0);
+                  }
+                },
+              );
+            }
+        );
+      }
     }
     else if (response.statusCode == 400) {
       var result = jsonDecode(response.body);
