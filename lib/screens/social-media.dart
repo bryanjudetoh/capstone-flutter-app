@@ -761,30 +761,43 @@ class _RequestsBodyState extends State<RequestsBody> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 10),
+            child: Text(
+              'Requests',
+              style: bodyTextStyleBold,
+              textAlign: TextAlign.left,
+            ),
+          ),
+          SizedBox( height: 20, ),
           displayRequests(),
           SizedBox( height: 20, ),
-          Row(
-              children: [
-                SizedBox(
-                  width: 10,
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Suggested',
-                      style: bodyTextStyleBold,
-                      textAlign: TextAlign.left,
-                    )),
-              ]
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 10),
+            child: Text(
+              'Suggested',
+              style: bodyTextStyleBold,
+              textAlign: TextAlign.left,
+            ),
           ),
-          SizedBox( height: 2, ),
+          SizedBox( height: 20, ),
           displaySuggested(),
         ]
       ),
     );
   }
 
-  ListView displayRequests() {
+  Widget displayRequests() {
+    if (this.friendRequestsList.isEmpty) {
+      return Center(
+        child: Text(
+          'No pending friend requests',
+          style: bodyTextStyle,
+        ),
+      );
+    }
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -881,7 +894,16 @@ class _RequestsBodyState extends State<RequestsBody> {
     );
   }
 
-  ListView displaySuggested() {
+  Widget displaySuggested() {
+    if (this.suggestedFriendsList.isEmpty) {
+      return Center(
+        child: Text(
+          'Participate in more activities to view your suggested friends list!',
+          style: bodyTextStyle,
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
