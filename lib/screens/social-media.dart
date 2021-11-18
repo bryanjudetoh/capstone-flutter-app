@@ -8,12 +8,104 @@ import 'package:youthapp/models/user.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/socialmedia-post.dart';
 
 import '../constants.dart';
 
+class InitSocialMediaScreenBody extends StatelessWidget {
+  InitSocialMediaScreenBody({Key? key, required this.setNumUnreadNotifications}) : super(key: key);
+
+  final Function setNumUnreadNotifications;
+  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<User>(
+      future: getUserDetails(),
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+        if (snapshot.hasData) {
+          User user = snapshot.data!;
+          return SocialMediaScreenBody(
+            user: user,
+            setNumUnreadNotifications: setNumUnreadNotifications,
+          );
+        }
+        else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: titleTwoTextStyleBold,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        else {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 60,
+                  height: 60,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Loading...',
+                    style: titleTwoTextStyleBold,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<User> getUserDetails() async {
+    var response = await this.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+    );
+
+    if (response.statusCode == 200) {
+      this.secureStorage.writeSecureData('user', response.body);
+      var responseBody = jsonDecode(response.body);
+      //print(responseBody);
+      User user = User.fromJson(responseBody);
+
+      return user;
+    } else {
+      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
+  }
+}
+
+
 class SocialMediaScreenBody extends StatefulWidget {
-  SocialMediaScreenBody({Key? key, required this.user}) : super(key: key);
+  SocialMediaScreenBody({Key? key, required this.user, required this.setNumUnreadNotifications}) : super(key: key);
 
   final User user;
   final http = InterceptedHttp.build(
@@ -22,6 +114,7 @@ class SocialMediaScreenBody extends StatefulWidget {
     ],
     retryPolicy: RefreshTokenRetryPolicy(),
   );
+  final Function setNumUnreadNotifications;
 
   @override
   _SocialMediaScreenBodyState createState() => _SocialMediaScreenBodyState();
@@ -36,6 +129,8 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+        widget.setNumUnreadNotifications(widget.user.numUnreadNotifications));
   }
 
   @override

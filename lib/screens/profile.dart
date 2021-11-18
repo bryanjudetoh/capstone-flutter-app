@@ -15,7 +15,7 @@ import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 import 'package:youthapp/utilities/date-time-formatter.dart';
 
 class InitProfileScreenBody extends StatelessWidget {
-  InitProfileScreenBody({Key? key}) : super(key: key);
+  InitProfileScreenBody({Key? key, required this.setNumUnreadNotifications}) : super(key: key);
 
   final SecureStorage secureStorage = SecureStorage();
   final http = InterceptedHttp.build(
@@ -24,6 +24,7 @@ class InitProfileScreenBody extends StatelessWidget {
     ],
     retryPolicy: RefreshTokenRetryPolicy(),
   );
+  final Function setNumUnreadNotifications;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +36,10 @@ class InitProfileScreenBody extends StatelessWidget {
             return ProfileScreenBody(
               user: user,
               secureStorage: secureStorage,
+              setNumUnreadNotifications: setNumUnreadNotifications,
             );
-          } else if (snapshot.hasError) {
+          }
+          else if (snapshot.hasError) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +60,8 @@ class InitProfileScreenBody extends StatelessWidget {
                 ],
               ),
             );
-          } else {
+          }
+          else {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -102,9 +106,11 @@ class InitProfileScreenBody extends StatelessWidget {
 }
 
 class ProfileScreenBody extends StatefulWidget {
-  ProfileScreenBody(
-      {Key? key, required this.user, required this.secureStorage})
-      : super(key: key);
+  ProfileScreenBody({Key? key,
+    required this.user,
+    required this.secureStorage,
+    required this.setNumUnreadNotifications,
+  }) : super(key: key);
 
   final User user;
   final SecureStorage secureStorage;
@@ -115,6 +121,7 @@ class ProfileScreenBody extends StatefulWidget {
     ],
     retryPolicy: RefreshTokenRetryPolicy(),
   );
+  final Function setNumUnreadNotifications;
 
   @override
   _ProfileScreenBodyState createState() => _ProfileScreenBodyState();
@@ -129,6 +136,8 @@ class _ProfileScreenBodyState extends State<ProfileScreenBody>
   void initState() {
     super.initState();
     tabController = TabController(length: 3, vsync: this);
+    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+        widget.setNumUnreadNotifications(widget.user.numUnreadNotifications));
   }
 
   @override
