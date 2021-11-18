@@ -275,9 +275,8 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
         itemCount: myRewardsList.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-              height: 600,
               child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Card(
                       margin: EdgeInsets.only(
                         top: 10.0,
@@ -496,10 +495,13 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
                               ),
                               Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    '${myRewardsList[index].reward.description}',
-                                    style: bodyTextStyle,
-                                    textAlign: TextAlign.left,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(
+                                      '${myRewardsList[index].reward.description}',
+                                      style: bodyTextStyle,
+                                      textAlign: TextAlign.left,
+                                    ),
                                   )
                               ),
                             ]
