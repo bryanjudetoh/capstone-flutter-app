@@ -31,6 +31,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   late int numLikes;
   late int numDislikes;
   late int numComments;
+  late String content;
   final SecureStorage secureStorage = SecureStorage();
 
   @override
@@ -41,6 +42,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     this.numLikes = widget.post.numLikes!;
     this.numDislikes = widget.post.numDislikes!;
     this.numComments = widget.post.numComments!;
+    this.content = widget.post.content;
   }
 
   @override
@@ -139,7 +141,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
           ),
           SizedBox(height: 10,),
           Container(
-            child: Text('${widget.post.content}', style: bodyTextStyle,),
+            child: Text('${this.content}', style: bodyTextStyle,),
           ),
           SizedBox(height: 10,),
           Container(
@@ -503,7 +505,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return InitPostCommentModal(reportedContentId: widget.post.postId, http: widget.http, isPost: true, isMyPostComment: isMyPost,);
+        return InitPostCommentModal(reportedContentId: widget.post.postId, http: widget.http, isPost: true, isMyPostComment: isMyPost, setPostContent: setPostContent,);
       }
     );
   }
@@ -526,5 +528,11 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
       print(result);
       throw Exception('A problem occurred while responding to this friend request');
     }
+  }
+
+  void setPostContent(String newContent) {
+    setState(() {
+      this.content = newContent;
+    });
   }
 }

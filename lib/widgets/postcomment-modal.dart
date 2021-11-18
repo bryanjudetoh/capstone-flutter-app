@@ -15,6 +15,7 @@ class InitPostCommentModal extends StatelessWidget {
     required this.http, required this.isPost,
     required this.isMyPostComment,
     this.setCommentsWidget,
+    this.setPostContent,
   }) : super(key: key);
 
   final String reportedContentId;
@@ -23,6 +24,7 @@ class InitPostCommentModal extends StatelessWidget {
   final bool isMyPostComment;
   final SecureStorage secureStorage = SecureStorage();
   final Function? setCommentsWidget;
+  final Function? setPostContent;
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +41,7 @@ class InitPostCommentModal extends StatelessWidget {
             isMyPostComment: this.isMyPostComment,
             post: data['post'],
             setCommentsWidget: this.setCommentsWidget,
+            setPostContent: this.setPostContent,
           );
         }
         else if (snapshot.hasError) {
@@ -127,6 +130,7 @@ class PostCommentModal extends StatefulWidget {
     required this.isMyPostComment,
     this.post,
     this.setCommentsWidget,
+    this.setPostContent,
   }) : super(key: key);
 
   final String reportedContentId;
@@ -136,6 +140,7 @@ class PostCommentModal extends StatefulWidget {
   final bool isMyPostComment;
   final Post? post;
   final Function? setCommentsWidget;
+  final Function? setPostContent;
 
   @override
   _PostCommentModalState createState() => _PostCommentModalState();
@@ -373,9 +378,6 @@ class _PostCommentModalState extends State<PostCommentModal> {
                     try {
                       message = await submitEditing(this.editingController.text);
                       Navigator.pop(context);
-                      if (widget.setCommentsWidget != null) {
-                        widget.setCommentsWidget!(false, null,);
-                      }
                     }
                     on Exception catch (err) {
                       message = formatExceptionMessage(err.toString());
@@ -529,6 +531,14 @@ class _PostCommentModalState extends State<PostCommentModal> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+
+      if (widget.setCommentsWidget != null) {
+        widget.setCommentsWidget!(false, null,);
+      }
+      if (widget.setPostContent != null) {
+        widget.setPostContent!(newContent);
+      }
+
       return responseBody['message'];
     }
     else if (response.statusCode == 403) {

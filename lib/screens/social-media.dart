@@ -97,8 +97,12 @@ class InitSocialMediaScreenBody extends StatelessWidget {
       User user = User.fromJson(responseBody);
 
       return user;
-    } else {
-      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('get user details error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving your user details');
     }
   }
 }
@@ -484,6 +488,9 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
     if (response.statusCode == 200) {
       List<dynamic> resultList = jsonDecode(response.body);
       List<Post> initialFeedList = [];
+      // for (dynamic p in resultList) {
+      //   print(p);
+      // }
       initialFeedList.addAll(resultList.map((e) => Post.fromJson(Map<String,dynamic>.from(e))).toList());
       return initialFeedList;
     }
