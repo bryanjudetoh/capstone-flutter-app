@@ -354,19 +354,17 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                         Column(
                           children: <Widget>[
                             Text(
-                              'Price',
+                              'You Paid:',
                               style: captionTextStyle,
                             ),
                             SizedBox(
                               height: 1,
                             ),
-                            Text(
-                              widget.participant.activity.registrationPrice! > 0
-                                  ? 'USD \$${widget.participant.activity.registrationPrice!.toStringAsFixed(2)}'
-                                  : 'Free'
-                              ,
-                              style: bodyTextStyleBold,
-                            )
+                            Container(
+                              child: widget.participant.amount != null
+                                  ? Text('${widget.participant.amount!['currency']} \$${widget.participant.amount!['value'].toStringAsFixed(2)}', style: bodyTextStyleBold,)
+                                  : Text('Free', style: bodyTextStyleBold,),
+                            ),
                           ],
                         ),
                       ],

@@ -368,13 +368,32 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             SizedBox(
                               height: 1,
                             ),
-                            Text(
-                                widget.activity.registrationPrice! > 0
-                                    ? 'USD \$${widget.activity.registrationPrice!.toStringAsFixed(2)}'
-                                    : 'Free'
-                              ,
-                              style: bodyTextStyleBold,
-                            )
+                            Container(
+                              child: widget.activity.registrationPrice! > 0
+                                  ? FutureBuilder<String>(
+                                    future: getPlatformCurrency(),
+                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.hasData) {
+                                        String currency = snapshot.data!;
+                                        return Text(
+                                          '$currency \$${widget.activity.registrationPrice!.toStringAsFixed(2)}',
+                                          style: bodyTextStyleBold,
+                                        );
+                                      }
+                                      else if (snapshot.hasError) {
+                                        print(snapshot.error);
+                                        return Text(
+                                          'USD \$${widget.activity.registrationPrice!.toStringAsFixed(2)}',
+                                          style: bodyTextStyleBold,
+                                        );
+                                      }
+                                      else {
+                                        return Container();
+                                      }
+                                    },
+                                  )
+                                  : Text('Free', style: bodyTextStyleBold,),
+                            ),
                           ],
                         ),
                       ],
@@ -500,6 +519,21 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
             ])),
       ),
     );
+  }
+
+  Future<String> getPlatformCurrency() async {
+    var response = await widget.http.get(Uri.parse('https://eq-lab-dev.me/api/payment/currency'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      return responseBody['currency']!;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('getPlatformCurrency error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving platform currency');
+    }
   }
 
   void handleRegistration(String activityId) async {
