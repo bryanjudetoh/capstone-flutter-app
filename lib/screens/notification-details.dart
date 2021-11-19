@@ -361,7 +361,7 @@ class _NotificationDetailsScreenState extends State<NotificationDetailsScreen> {
                   colorFont: kWhite,
                   func: () async {
                     Participant participant = await getParticipantData();
-                    if (participant.submittedRating == null) {
+                    if (participant.submittedRating == 0) {
                       Navigator.push(
                         context,
                         MaterialPageRoute<void>(
