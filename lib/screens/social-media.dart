@@ -8,12 +8,108 @@ import 'package:youthapp/models/user.dart';
 import 'package:http_interceptor/http_interceptor.dart';
 import 'package:youthapp/utilities/authheader-interceptor.dart';
 import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
+import 'package:youthapp/utilities/securestorage.dart';
 import 'package:youthapp/widgets/socialmedia-post.dart';
 
 import '../constants.dart';
 
+class InitSocialMediaScreenBody extends StatelessWidget {
+  InitSocialMediaScreenBody({Key? key, required this.setNumUnreadNotifications}) : super(key: key);
+
+  final Function setNumUnreadNotifications;
+  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<User>(
+      future: getUserDetails(),
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+        if (snapshot.hasData) {
+          User user = snapshot.data!;
+          return SocialMediaScreenBody(
+            user: user,
+            setNumUnreadNotifications: setNumUnreadNotifications,
+          );
+        }
+        else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: titleTwoTextStyleBold,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        else {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 60,
+                  height: 60,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Loading...',
+                    style: titleTwoTextStyleBold,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<User> getUserDetails() async {
+    var response = await this.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+    );
+
+    if (response.statusCode == 200) {
+      this.secureStorage.writeSecureData('user', response.body);
+      var responseBody = jsonDecode(response.body);
+      //print(responseBody);
+      User user = User.fromJson(responseBody);
+
+      return user;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('get user details error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving your user details');
+    }
+  }
+}
+
+
 class SocialMediaScreenBody extends StatefulWidget {
-  SocialMediaScreenBody({Key? key, required this.user}) : super(key: key);
+  SocialMediaScreenBody({Key? key, required this.user, required this.setNumUnreadNotifications}) : super(key: key);
 
   final User user;
   final http = InterceptedHttp.build(
@@ -22,6 +118,7 @@ class SocialMediaScreenBody extends StatefulWidget {
     ],
     retryPolicy: RefreshTokenRetryPolicy(),
   );
+  final Function setNumUnreadNotifications;
 
   @override
   _SocialMediaScreenBodyState createState() => _SocialMediaScreenBodyState();
@@ -36,6 +133,8 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
   void initState() {
     super.initState();
     tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+        widget.setNumUnreadNotifications(widget.user.numUnreadNotifications));
   }
 
   @override
@@ -47,7 +146,7 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
       child: NestedScrollView(
           headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
@@ -389,13 +488,17 @@ class _SocialMediaScreenBodyState extends State<SocialMediaScreenBody> with Tick
     if (response.statusCode == 200) {
       List<dynamic> resultList = jsonDecode(response.body);
       List<Post> initialFeedList = [];
+      // for (dynamic p in resultList) {
+      //   print(p);
+      // }
       initialFeedList.addAll(resultList.map((e) => Post.fromJson(Map<String,dynamic>.from(e))).toList());
       return initialFeedList;
     }
     else {
       var result = jsonDecode(response.body);
-      print(result);
-      throw Exception('A problem occured while loading initial feed posts');
+      print('getInitialFeed error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving initial feed posts');
     }
   }
 
@@ -761,30 +864,43 @@ class _RequestsBodyState extends State<RequestsBody> {
     return SingleChildScrollView(
       child: Column(
         children: [
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 10),
+            child: Text(
+              'Requests',
+              style: bodyTextStyleBold,
+              textAlign: TextAlign.left,
+            ),
+          ),
+          SizedBox( height: 20, ),
           displayRequests(),
           SizedBox( height: 20, ),
-          Row(
-              children: [
-                SizedBox(
-                  width: 10,
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Suggested',
-                      style: bodyTextStyleBold,
-                      textAlign: TextAlign.left,
-                    )),
-              ]
+          Container(
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.only(left: 10),
+            child: Text(
+              'Suggested',
+              style: bodyTextStyleBold,
+              textAlign: TextAlign.left,
+            ),
           ),
-          SizedBox( height: 2, ),
+          SizedBox( height: 20, ),
           displaySuggested(),
         ]
       ),
     );
   }
 
-  ListView displayRequests() {
+  Widget displayRequests() {
+    if (this.friendRequestsList.isEmpty) {
+      return Center(
+        child: Text(
+          'No pending friend requests',
+          style: bodyTextStyle,
+        ),
+      );
+    }
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -828,6 +944,7 @@ class _RequestsBodyState extends State<RequestsBody> {
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
                                     message,
                                     style: bodyTextStyle,
@@ -855,6 +972,7 @@ class _RequestsBodyState extends State<RequestsBody> {
                             }
                             ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                  behavior: SnackBarBehavior.floating,
                                   content: Text(
                                     message,
                                     style: bodyTextStyle,
@@ -881,7 +999,16 @@ class _RequestsBodyState extends State<RequestsBody> {
     );
   }
 
-  ListView displaySuggested() {
+  Widget displaySuggested() {
+    if (this.suggestedFriendsList.isEmpty) {
+      return Center(
+        child: Text(
+          'Participate in more activities to view your suggested friends list!',
+          style: bodyTextStyle,
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

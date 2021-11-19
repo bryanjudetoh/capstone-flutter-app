@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[

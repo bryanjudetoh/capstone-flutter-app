@@ -49,6 +49,7 @@ class User {
 
   int? numFriends;
   bool? isFriend;
+  int? numUnreadNotifications;
   Map<String, int>? multipliers;
 
   User({required this.userId, this.email, this.mobile, required this.firstName, required this.lastName,
@@ -58,7 +59,7 @@ class User {
     this.roleId, this.role, this.userType, this.loginType,
     this.enabled, this.verified, this.createdAt, this.lastLogin, this.profilePicUrl,
     this.potionBalance, this.elixirBalance, this.rewardList,
-    this.numFriends, this.isFriend, this.multipliers,
+    this.numFriends, this.isFriend, this.numUnreadNotifications, this.multipliers,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

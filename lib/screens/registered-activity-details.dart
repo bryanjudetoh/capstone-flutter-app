@@ -142,7 +142,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Column(
             children: <Widget>[
               Row(
@@ -226,15 +226,17 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: 300,
+                          width: MediaQuery.of(context).size.width*0.5,
                           child: Text(
                             '${widget.participant.activity.name}',
                             style: titleOneTextStyleBold,
                           ),
                         ),
                         Container(
+                          width: MediaQuery.of(context).size.width*0.4,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
                               Image(
                                 image: AssetImage('${activityTypeToPotionColorPathMap[widget.participant.activity.type]}'),
@@ -244,7 +246,10 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                               SizedBox(
                                 width: 2,
                               ),
-                              Padding(
+                              Container(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width*0.2,
+                                ),
                                 padding: EdgeInsets.only(top: 5),
                                 child: Text(
                                   '${widget.participant.activity.potions}',
@@ -254,7 +259,7 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                                     fontSize: 30,
                                     color: Color(0xFF5EC8D8),
                                   ),
-                                  textAlign: TextAlign.left,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               if (widget.participant.multiplier == 2)
@@ -349,19 +354,17 @@ class _RegisteredActivitiesScreenState extends State<RegisteredActivitiesScreen>
                         Column(
                           children: <Widget>[
                             Text(
-                              'Price',
+                              'You Paid:',
                               style: captionTextStyle,
                             ),
                             SizedBox(
                               height: 1,
                             ),
-                            Text(
-                              widget.participant.activity.registrationPrice! > 0
-                                  ? 'USD \$${widget.participant.activity.registrationPrice!.toStringAsFixed(2)}'
-                                  : 'Free'
-                              ,
-                              style: bodyTextStyleBold,
-                            )
+                            Container(
+                              child: widget.participant.amount != null
+                                  ? Text('${widget.participant.amount!['currency']} \$${widget.participant.amount!['value'].toStringAsFixed(2)}', style: bodyTextStyleBold,)
+                                  : Text('Free', style: bodyTextStyleBold,),
+                            ),
                           ],
                         ),
                       ],

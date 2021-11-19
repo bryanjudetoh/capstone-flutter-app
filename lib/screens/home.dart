@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:youthapp/constants.dart';
 import 'package:youthapp/models/user.dart';
 import 'package:youthapp/screens/notifications.dart';
@@ -10,6 +13,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:youthapp/widgets/homepage-potions.dart';
 import 'package:youthapp/widgets/rounded-button.dart';
+import 'package:http_interceptor/http_interceptor.dart';
+import 'package:youthapp/utilities/authheader-interceptor.dart';
+import 'package:youthapp/utilities/refreshtoken-interceptor.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key, required this.user}) : super(key: key);
@@ -24,6 +30,15 @@ class _HomeScreenState extends State<HomeScreen> {
   int _page = 0;
   double _iconSize = 35.0;
   PageController pageController = new PageController();
+  late int numUnreadNotifications;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.user.numUnreadNotifications != null) {
+      this.numUnreadNotifications = widget.user.numUnreadNotifications!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +49,28 @@ class _HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Container(
               color: Colors.white,
-              child: HomeScreenBody(user: widget.user),
+              child: InitHomeScreenBody(
+                setNumUnreadNotifications: setNumUnreadNotifications,
+              ),
             ),
             Container(
               color: Colors.white,
-              child: NotificationsScreenBody(user: widget.user),
+              child: InitNotificationsScreenBody(
+                updateNumUnreadNotifications: updateNumUnreadNotifications,
+                setNumUnreadNotifications: setNumUnreadNotifications,
+              ),
             ),
             Container(
               color: Colors.white,
-              child: SocialMediaScreenBody(user: widget.user),
+              child: InitSocialMediaScreenBody(
+                setNumUnreadNotifications: setNumUnreadNotifications,
+              ),
             ),
             Container(
               color: Colors.white,
-              child: InitProfileScreenBody(),
+              child: InitProfileScreenBody(
+                setNumUnreadNotifications: setNumUnreadNotifications,
+              ),
             ),
           ],
           controller: pageController,
@@ -87,16 +111,42 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Container(
                 padding: EdgeInsets.fromLTRB(10, 5, 10, 10),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.notifications_outlined,
-                    size: _iconSize,
-                    color: this._page == 1 ? kLightBlue : kDarkGrey,
-                  ),
-                  tooltip: 'Notifications',
-                  onPressed: () {
-                    navigationTapped(1);
-                  },
+                child: Stack(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.notifications_outlined,
+                        size: _iconSize,
+                        color: this._page == 1 ? kLightBlue : kDarkGrey,
+                      ),
+                      tooltip: 'Notifications',
+                      onPressed: () {
+                        navigationTapped(1);
+                      },
+                    ),
+                    if (this.numUnreadNotifications > 0)
+                      Positioned(
+                        top: 2.0,
+                        right: 2.0,
+                        child: Container(
+                          height: 20,
+                          width: 20,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            '${numUnreadNotifsOverflow(this.numUnreadNotifications)}',
+                            style: TextStyle(
+                              fontFamily: 'Nunito',
+                              fontSize: this.numUnreadNotifications > 9 ? 10.0 : 14.0,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               Container(
@@ -144,6 +194,19 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void updateNumUnreadNotifications(int changeNum) {
+    setState(() {
+      this.numUnreadNotifications += changeNum;
+    });
+  }
+
+  void setNumUnreadNotifications(int newUnread) {
+    print('setting unread notifs');
+    setState(() {
+      this.numUnreadNotifications = newUnread;
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -151,10 +214,102 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+class InitHomeScreenBody extends StatelessWidget {
+  InitHomeScreenBody({Key? key, required this.setNumUnreadNotifications}) : super(key: key);
+
+  final Function setNumUnreadNotifications;
+  final SecureStorage secureStorage = SecureStorage();
+  final http = InterceptedHttp.build(
+    interceptors: [
+      AuthHeaderInterceptor(),
+    ],
+    retryPolicy: RefreshTokenRetryPolicy(),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<User>(
+      future: getUserDetails(),
+      builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+        if (snapshot.hasData) {
+          User user = snapshot.data!;
+          return HomeScreenBody(
+            user: user,
+            setNumUnreadNotifications: setNumUnreadNotifications,
+          );
+        }
+        else if (snapshot.hasError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.error_outline,
+                  color: Colors.red,
+                  size: 60,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: titleTwoTextStyleBold,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        else {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  child: CircularProgressIndicator(),
+                  width: 60,
+                  height: 60,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 16),
+                  child: Text(
+                    'Loading...',
+                    style: titleTwoTextStyleBold,
+                  ),
+                )
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future<User> getUserDetails() async {
+    var response = await this.http.get(
+      Uri.parse('https://eq-lab-dev.me/api/mp/user'),
+    );
+
+    if (response.statusCode == 200) {
+      this.secureStorage.writeSecureData('user', response.body);
+      var responseBody = jsonDecode(response.body);
+      //print(responseBody);
+      User user = User.fromJson(responseBody);
+
+      return user;
+    } else {
+      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
+  }
+}
+
+
 class HomeScreenBody extends StatefulWidget {
-  const HomeScreenBody({Key? key, required this.user}) : super(key: key);
+  const HomeScreenBody({Key? key, required this.user, required this.setNumUnreadNotifications}) : super(key: key);
 
   final User user;
+  final Function setNumUnreadNotifications;
 
   @override
   _HomeScreenBodyState createState() => _HomeScreenBodyState();
@@ -168,12 +323,14 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
   void initState() {
     super.initState();
     this.currentMultipliers = widget.user.multipliers!;
+    WidgetsBinding.instance!.addPostFrameCallback((_) =>
+        widget.setNumUnreadNotifications(widget.user.numUnreadNotifications));
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+      padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[

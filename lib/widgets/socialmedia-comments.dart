@@ -14,7 +14,13 @@ import 'package:youthapp/widgets/postcomment-modal.dart';
 import '../constants.dart';
 
 class InitSocialMediaComments extends StatelessWidget {
-  InitSocialMediaComments({Key? key, required this.postId, required this.getReplyCommentsState, required this.requestFocus, required this.cancelFocus}) : super(key: key);
+  InitSocialMediaComments({Key? key,
+    required this.postId,
+    required this.getReplyCommentsState,
+    required this.requestFocus,
+    required this.cancelFocus,
+    required this.setCommentsWidget,
+  }) : super(key: key);
 
   final http = InterceptedHttp.build(
     interceptors: [
@@ -26,6 +32,7 @@ class InitSocialMediaComments extends StatelessWidget {
   final Function getReplyCommentsState;
   final Function requestFocus;
   final Function cancelFocus;
+  final Function setCommentsWidget;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +42,15 @@ class InitSocialMediaComments extends StatelessWidget {
         builder: (BuildContext context, AsyncSnapshot<List<Comment>> snapshot) {
           if (snapshot.hasData) {
             List<Comment> initialCommentsList = snapshot.data!;
-            return SocialMediaComments(initialCommentsList: initialCommentsList, postId: this.postId, getReplyCommentsState: getReplyCommentsState, http: this.http, requestFocus: this.requestFocus, cancelFocus: this.cancelFocus,);
+            return SocialMediaComments(
+              initialCommentsList: initialCommentsList,
+              postId: this.postId,
+              getReplyCommentsState: getReplyCommentsState,
+              http: this.http,
+              requestFocus: this.requestFocus,
+              cancelFocus: this.cancelFocus,
+              setCommentsWidget: this.setCommentsWidget,
+            );
           }
           else if (snapshot.hasError) {
             return Center(
@@ -93,7 +108,13 @@ class InitSocialMediaComments extends StatelessWidget {
 
 
 class SocialMediaComments extends StatefulWidget {
-  SocialMediaComments({Key? key, required this.initialCommentsList, required this.postId, required this.getReplyCommentsState, required this.http, required this.requestFocus, required this.cancelFocus}) : super(key: key);
+  SocialMediaComments({Key? key,
+    required this.initialCommentsList,
+    required this.postId, required this.getReplyCommentsState,
+    required this.http, required this.requestFocus,
+    required this.cancelFocus,
+    required this.setCommentsWidget,
+  }) : super(key: key);
   
   final List<Comment> initialCommentsList;
   final String postId;
@@ -101,7 +122,7 @@ class SocialMediaComments extends StatefulWidget {
   final Function getReplyCommentsState;
   final Function requestFocus;
   final Function cancelFocus;
-  
+  final Function setCommentsWidget;
 
   @override
   _SocialMediaCommentsState createState() => _SocialMediaCommentsState();
@@ -193,13 +214,23 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                               SizedBox(height: 5,),
                               Row(
                                 children: <Widget>[
+                                  if (this.commentsList[index].wasEdited != null && this.commentsList[index].wasEdited!)
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                      ),
+                                      child: Text(
+                                        'Edited: ',
+                                        style: xSmallSubtitleTextStyle,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 5),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                     ),
                                     child: Text(
-                                      '${dateTimeFormat.format(this.commentsList[index].createdAt!.toLocal())}',
+                                      '${dateTimeFormat.format(this.commentsList[index].updatedAt!.toLocal())}',
                                       style: xSmallSubtitleTextStyle,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -331,13 +362,23 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
                       SizedBox(height: 10,),
                       Row(
                         children: <Widget>[
+                          if (list[nestedIndex].wasEdited != null && list[nestedIndex].wasEdited!)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                              ),
+                              child: Text(
+                                'Edited: ',
+                                style: xSmallSubtitleTextStyle,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           Container(
-                            padding: EdgeInsets.all(5),
                             decoration: BoxDecoration(
                               color: Colors.white,
                             ),
                             child: Text(
-                              '${dateTimeFormat.format(list[nestedIndex].createdAt!.toLocal())}',
+                              '${dateTimeFormat.format(list[nestedIndex].updatedAt!.toLocal())}',
                               style: xSmallSubtitleTextStyle,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -429,7 +470,12 @@ class _SocialMediaCommentsState extends State<SocialMediaComments> {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return InitPostCommentModal(reportedContentId: comment.commentId, http: widget.http, isPost: false, isMyPostComment: isMyComment);
+          return InitPostCommentModal(
+              reportedContentId: comment.commentId,
+              http: widget.http, isPost: false,
+              isMyPostComment: isMyComment,
+              setCommentsWidget: widget.setCommentsWidget,
+          );
         }
     );
   }

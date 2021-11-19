@@ -46,7 +46,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: NestedScrollView(
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return [
@@ -275,9 +275,8 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
         itemCount: myRewardsList.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-              height: 600,
               child: Padding(
-                  padding: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(5.0),
                   child: Card(
                       margin: EdgeInsets.only(
                         top: 10.0,
@@ -307,7 +306,7 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
                                     width: 500,
                                     height: 200,
                                     errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                      print('bad url: ${placeholderPicUrl}');
+                                      print('bad url: $placeholderPicUrl');
                                       return const Center(
                                         child: Text('Couldn\'t load image.', style: bodyTextStyle,),
                                       );
@@ -496,10 +495,13 @@ class _MyRewardsScreenState extends State<MyRewardsScreen> with TickerProviderSt
                               ),
                               Align(
                                   alignment: Alignment.centerLeft,
-                                  child: Text(
-                                    '${myRewardsList[index].reward.description}',
-                                    style: bodyTextStyle,
-                                    textAlign: TextAlign.left,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(5),
+                                    child: Text(
+                                      '${myRewardsList[index].reward.description}',
+                                      style: bodyTextStyle,
+                                      textAlign: TextAlign.left,
+                                    ),
                                   )
                               ),
                             ]

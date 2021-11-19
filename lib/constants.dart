@@ -351,3 +351,10 @@ String toOrdinal(int number) {
       return '${number}th';
   }
 }
+
+String numUnreadNotifsOverflow(int num) {
+  if (num > 9) {
+    return '9+';
+  }
+  return num.toString();
+}

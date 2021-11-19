@@ -95,6 +95,7 @@ class InitActivityDetailsScreen extends StatelessWidget {
   }
 
   Future<Activity> retrieveActivity(String activityId) async {
+    print('$activityId');
     final response = await http.get(
       Uri.parse(
           'https://eq-lab-dev.me/api/activity-svc/mp/activity/$activityId'),
@@ -103,8 +104,12 @@ class InitActivityDetailsScreen extends StatelessWidget {
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
       return Activity.fromJson(Map<String, dynamic>.from(responseBody));
-    } else {
-      throw Exception(jsonDecode(response.body)['error']['message']);
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('retrieveActivity error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving this activity');
     }
   }
 }
@@ -140,7 +145,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
             child: Column(children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -225,68 +230,75 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          width: 300,
+                          width: MediaQuery.of(context).size.width*0.5,
                           child: Text(
                             '${widget.activity.name}',
                             style: titleOneTextStyleBold,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Image(
-                              image: AssetImage('${activityTypeToPotionColorPathMap[widget.activity.type]}'),
-                              height: 40,
-                              width: 40,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(top: 5),
-                              child: Text(
-                                '${widget.activity.potions}',
-                                style: TextStyle(
-                                  fontFamily: 'Nunito',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Color(0xFF5EC8D8),
+                        Container(
+                          width: MediaQuery.of(context).size.width*0.4,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Image(
+                                image: AssetImage('${activityTypeToPotionColorPathMap[widget.activity.type]}'),
+                                height: 40,
+                                width: 40,
+                              ),
+                              SizedBox(
+                                width: 2,
+                              ),
+                              Container(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width*0.2,
+                                ),
+                                padding: EdgeInsets.only(top: 5),
+                                child: Text(
+                                  '${widget.activity.potions}',
+                                  style: TextStyle(
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30,
+                                    color: Color(0xFF5EC8D8),
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            ),
-                            if (widget.activity.multiplier == 2)
-                              Row(
-                                children: [
-                                  SizedBox(width: 10,),
-                                  Container(
-                                    padding: EdgeInsets.all(7),
-                                    margin: EdgeInsets.only(top: 5),
-                                    decoration: BoxDecoration(
-                                      color: kLightBlue,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.amberAccent,
-                                          spreadRadius: 3.0,
-                                          blurRadius: 3.0,
+                              if (widget.activity.multiplier == 2)
+                                Row(
+                                  children: [
+                                    SizedBox(width: 10,),
+                                    Container(
+                                      padding: EdgeInsets.all(7),
+                                      margin: EdgeInsets.only(top: 5),
+                                      decoration: BoxDecoration(
+                                        color: kLightBlue,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.amberAccent,
+                                            spreadRadius: 3.0,
+                                            blurRadius: 3.0,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        'x2',
+                                        style: TextStyle(
+                                          fontFamily: 'Nunito',
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.white,
                                         ),
-                                      ],
-                                    ),
-                                    child: Text(
-                                      'x2',
-                                      style: TextStyle(
-                                        fontFamily: 'Nunito',
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.white,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        )
+                                  ],
+                                ),
+                            ],
+                          ),
+                        ),
                       ]),
                   SizedBox(
                     height: 2,
@@ -356,13 +368,32 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             SizedBox(
                               height: 1,
                             ),
-                            Text(
-                                widget.activity.registrationPrice! > 0
-                                    ? 'USD \$${widget.activity.registrationPrice!.toStringAsFixed(2)}'
-                                    : 'Free'
-                              ,
-                              style: bodyTextStyleBold,
-                            )
+                            Container(
+                              child: widget.activity.registrationPrice! > 0
+                                  ? FutureBuilder<String>(
+                                    future: getPlatformCurrency(),
+                                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                                      if (snapshot.hasData) {
+                                        String currency = snapshot.data!;
+                                        return Text(
+                                          '$currency \$${widget.activity.registrationPrice!.toStringAsFixed(2)}',
+                                          style: bodyTextStyleBold,
+                                        );
+                                      }
+                                      else if (snapshot.hasError) {
+                                        print(snapshot.error);
+                                        return Text(
+                                          'USD \$${widget.activity.registrationPrice!.toStringAsFixed(2)}',
+                                          style: bodyTextStyleBold,
+                                        );
+                                      }
+                                      else {
+                                        return Container();
+                                      }
+                                    },
+                                  )
+                                  : Text('Free', style: bodyTextStyleBold,),
+                            ),
                           ],
                         ),
                       ],
@@ -488,6 +519,21 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
             ])),
       ),
     );
+  }
+
+  Future<String> getPlatformCurrency() async {
+    var response = await widget.http.get(Uri.parse('https://eq-lab-dev.me/api/payment/currency'));
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+      return responseBody['currency']!;
+    }
+    else {
+      var result = jsonDecode(response.body);
+      print('getPlatformCurrency error: ${response.statusCode}');
+      print('error response body: ${result.toString()}');
+      throw Exception('A problem occured while retrieving platform currency');
+    }
   }
 
   void handleRegistration(String activityId) async {
@@ -825,7 +871,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
         mapList.add(i);
       }
       List<ClaimedReward> claimedRewardsList = mapList.map((reward) => ClaimedReward.fromJson(reward)).toList();
-      List<ClaimedReward> inAppRewardsList = claimedRewardsList.where((cr) => cr.reward.type! == 'inAppReward').toList(); //TODO: double check that i got the field and inAppReward correct
+      List<ClaimedReward> inAppRewardsList = claimedRewardsList.where((cr) => cr.reward.type! == 'inAppReward').toList();
       return inAppRewardsList;
     }
     else {
@@ -922,32 +968,51 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
 
       Map<String, dynamic> responseBody = jsonDecode(response.body);
       print(responseBody);
-      String transactionId = responseBody['transactionId'];
-      String redirectUrl = responseBody['redirectUrl'];
 
-      String message = await handlePaymentRedirect(redirectUrl, transactionId);
-      Navigator.pop(context);
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertPopup(
-              title: this.cancelCheckTransactionStatus ? 'Unsuccessful Payment' : 'Success!',
-              desc: this.cancelCheckTransactionStatus ? 'Payment was cancelled' : message,
-              func: () {
-                if (this.cancelCheckTransactionStatus) {
-                  setState(() {
-                    this.cancelCheckTransactionStatus = false;
-                  });
-                  Navigator.pop(context);
-                }
-                else {
+      if (claimRewardDiscount != null && widget.activity.registrationPrice! - claimRewardDiscount <= 0) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: 'Success!',
+                desc: 'Your registration for ${widget.activity.name} is now pending for approval from the organisation.'
+                    '\n\nWith the use of your reward, the final price paid for this activity is USD\$ 0.00!',
+                func: () {
                   int count = 2;
                   Navigator.of(context).popUntil((_) => count-- <= 0);
-                }
-              },
-            );
-          }
-      );
+                },
+              );
+            }
+        );
+      }
+      else {
+        String transactionId = responseBody['transactionId'];
+        String redirectUrl = responseBody['redirectUrl'];
+
+        String message = await handlePaymentRedirect(redirectUrl, transactionId);
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertPopup(
+                title: this.cancelCheckTransactionStatus ? 'Unsuccessful Payment' : 'Success!',
+                desc: this.cancelCheckTransactionStatus ? 'Payment was cancelled' : message,
+                func: () {
+                  if (this.cancelCheckTransactionStatus) {
+                    setState(() {
+                      this.cancelCheckTransactionStatus = false;
+                    });
+                    Navigator.pop(context);
+                  }
+                  else {
+                    int count = 2;
+                    Navigator.of(context).popUntil((_) => count-- <= 0);
+                  }
+                },
+              );
+            }
+        );
+      }
     }
     else if (response.statusCode == 400) {
       var result = jsonDecode(response.body);

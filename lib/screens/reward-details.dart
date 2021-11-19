@@ -119,7 +119,7 @@ class _RewardDetailsScreenState extends State<RewardDetailsScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Column(
             children: <Widget>[
               Row(
@@ -240,7 +240,6 @@ class _RewardDetailsScreenState extends State<RewardDetailsScreen> {
                                           '${widget.reward.name}',
                                           style: titleTwoTextStyleBold,
                                           textAlign: TextAlign.left,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       Row(
@@ -518,7 +517,7 @@ class _RewardDetailsScreenState extends State<RewardDetailsScreen> {
     if (response.statusCode == 200) {
       print('redemption OK');
       var result = jsonDecode(response.body);
-      print(result['status']);
+      //print(result);
 
       User updatedUser = await getUserDetails();
       widget.secureStorage.writeSecureData('user', jsonEncode(updatedUser.toJson()));
@@ -530,7 +529,7 @@ class _RewardDetailsScreenState extends State<RewardDetailsScreen> {
       }
 
       //external reward
-      if(result['status'] == 'issued') {
+      if(result['status'] == 'claimed') {
         showDialog(
             context: this.context,
             builder: (BuildContext context) {

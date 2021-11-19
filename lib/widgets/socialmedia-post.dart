@@ -31,6 +31,8 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
   late int numLikes;
   late int numDislikes;
   late int numComments;
+  late String content;
+  late bool wasEdited;
   final SecureStorage secureStorage = SecureStorage();
 
   @override
@@ -41,6 +43,8 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     this.numLikes = widget.post.numLikes!;
     this.numDislikes = widget.post.numDislikes!;
     this.numComments = widget.post.numComments!;
+    this.content = widget.post.content;
+    this.wasEdited = widget.post.wasEdited!;
   }
 
   @override
@@ -105,11 +109,20 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                         },
                       ),
                       SizedBox(height: 5,),
-                      Text(
-                        '${dateTimeFormat.format(widget.post.createdAt!.toLocal())}',
-                        style: subtitleTextStyle,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      Row(
+                        children: [
+                          if (this.wasEdited)
+                            Text(
+                              'Edited: ',
+                              style: subtitleTextStyle,
+                            ),
+                          Text(
+                            '${dateTimeFormat.format(widget.post.updatedAt!.toLocal())}',
+                            style: subtitleTextStyle,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      )
                     ],
                   ),
                 ],
@@ -130,14 +143,14 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
           ),
           SizedBox(height: 10,),
           Container(
-            child: Text('${widget.post.content}', style: bodyTextStyle,),
+            child: Text('${this.content}', style: bodyTextStyle,),
           ),
           SizedBox(height: 10,),
           Container(
             child: widget.post.sharedActivity == null && widget.post.sharedReward == null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(15),
-                    child: widget.post.mediaContentUrls.isEmpty
+                    child: widget.post.mediaContentUrls != null && widget.post.mediaContentUrls!.isEmpty
                         ? Container()
                         : CarouselSlider(
                             options: CarouselOptions(
@@ -145,9 +158,9 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                               enableInfiniteScroll: true,
                               viewportFraction: 1.0,
                             ),
-                            items: widget.post.mediaContentUrls
-                                .map(
-                                    (url) => Image.network(
+                            items: widget.post.mediaContentUrls != null
+                                ? widget.post.mediaContentUrls!.map( (url) =>
+                                  Image.network(
                                   url,
                                   fit: BoxFit.fitHeight,
                                   errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
@@ -157,7 +170,8 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                     );
                                   },
                                 )
-                            ).toList(),
+                                ).toList()
+                                : [Image.network(placeholderPostPicUrl)],
                           ),
                 )
                 : Container(
@@ -202,6 +216,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                                           autoPlay: false,
                                           enableInfiniteScroll: true,
                                           viewportFraction: 1.0,
+                                          aspectRatio: 4/3,
                                         ),
                                         items: widget.post.sharedActivity!.mediaContentUrls!
                                             .map(
@@ -222,37 +237,38 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
                               Container(
                                 child: widget.post.sharedReward!.mediaContentUrls!.isEmpty
                                     ? Image.network(
-                                  placeholderRewardsPicUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 220,
-                                  errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                    print('bad url: $placeholderRewardsPicUrl');
-                                    return const Center(
-                                      child: Text('Couldn\'t load image.', style: bodyTextStyle,),
-                                    );
-                                  }
-                                )
-                                    : CarouselSlider(
-                                  options: CarouselOptions(
-                                    autoPlay: false,
-                                    enableInfiniteScroll: true,
-                                    viewportFraction: 1.0,
-                                  ),
-                                  items: widget.post.sharedReward!.mediaContentUrls!
-                                      .map(
-                                          (url) => Image.network(
-                                        url,
-                                        fit: BoxFit.fitHeight,
+                                        placeholderRewardsPicUrl,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: 220,
                                         errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                          print('bad url: $url');
+                                          print('bad url: $placeholderRewardsPicUrl');
                                           return const Center(
                                             child: Text('Couldn\'t load image.', style: bodyTextStyle,),
                                           );
                                         }
                                       )
-                                  ).toList(),
-                                ),
+                                    : CarouselSlider(
+                                        options: CarouselOptions(
+                                          autoPlay: false,
+                                          enableInfiniteScroll: true,
+                                          viewportFraction: 1.0,
+                                          aspectRatio: 4/3,
+                                        ),
+                                        items: widget.post.sharedReward!.mediaContentUrls!
+                                            .map(
+                                                (url) => Image.network(
+                                              url,
+                                              fit: BoxFit.fitHeight,
+                                              errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                print('bad url: $url');
+                                                return const Center(
+                                                  child: Text('Couldn\'t load image.', style: bodyTextStyle,),
+                                                );
+                                              }
+                                            )
+                                        ).toList(),
+                                      ),
                               ),
                             Container(
                               width: double.infinity,
@@ -391,6 +407,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text(
             message,
             style: bodyTextStyle,
@@ -448,6 +465,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text(
             message,
             style: bodyTextStyle,
@@ -490,7 +508,7 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return InitPostCommentModal(reportedContentId: widget.post.postId, http: widget.http, isPost: true, isMyPostComment: isMyPost,);
+        return InitPostCommentModal(reportedContentId: widget.post.postId, http: widget.http, isPost: true, isMyPostComment: isMyPost, setPostContent: setPostContent,);
       }
     );
   }
@@ -513,5 +531,12 @@ class _SocialMediaPostState extends State<SocialMediaPost> {
       print(result);
       throw Exception('A problem occurred while responding to this friend request');
     }
+  }
+
+  void setPostContent(String newContent) {
+    setState(() {
+      this.content = newContent;
+      this.wasEdited = true;
+    });
   }
 }

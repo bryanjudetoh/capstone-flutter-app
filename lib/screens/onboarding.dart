@@ -65,7 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
           child: Column(
             children: <Widget>[
               Row(
@@ -214,6 +214,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   void submit() async {
+    print('trying submit');
     var form = _formkey.currentState!;
     if (form.validate()) {
       form.save();

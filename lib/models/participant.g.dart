@@ -28,6 +28,7 @@ Participant _$ParticipantFromJson(Map<String, dynamic> json) {
     submittedRating: (json['submittedRating'] as num?)?.toDouble(),
     awardedPotions: json['awardedPotions'] as int?,
     multiplier: json['multiplier'] as int?,
+    amount: json['amount'] as Map<String, dynamic>?,
   );
 }
 
@@ -44,4 +45,5 @@ Map<String, dynamic> _$ParticipantToJson(Participant instance) =>
       'submittedRating': instance.submittedRating,
       'awardedPotions': instance.awardedPotions,
       'multiplier': instance.multiplier,
+      'amount': instance.amount,
     };

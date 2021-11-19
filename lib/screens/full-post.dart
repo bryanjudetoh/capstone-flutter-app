@@ -150,7 +150,13 @@ class _FullPostScreenState extends State<FullPostScreen> {
     this.replyingToId = widget.post.postId;
     this.isReplyingToPost = true;
     this.commentFocusNode = FocusNode();
-    this.commentsWidget = InitSocialMediaComments(postId: widget.post.postId, getReplyCommentsState: getReplyCommentsState, requestFocus: this.requestFocus, cancelFocus: this.cancelFocus,);
+    this.commentsWidget = InitSocialMediaComments(
+      postId: widget.post.postId,
+      getReplyCommentsState: getReplyCommentsState,
+      requestFocus: this.requestFocus,
+      cancelFocus: this.cancelFocus,
+      setCommentsWidget: setCommentsWidget,
+    );
   }
 
   @override
@@ -197,7 +203,13 @@ class _FullPostScreenState extends State<FullPostScreen> {
                           message = await doSendComment(this.commentController.text);
                           setState(() {
                             this.numComments += 1;
-                            this.commentsWidget = new InitSocialMediaComments(postId: widget.post.postId, getReplyCommentsState: getReplyCommentsState, requestFocus: this.requestFocus, cancelFocus: this.cancelFocus,);
+                            this.commentsWidget = new InitSocialMediaComments(
+                              postId: widget.post.postId,
+                              getReplyCommentsState: getReplyCommentsState,
+                              requestFocus: this.requestFocus,
+                              cancelFocus: this.cancelFocus,
+                              setCommentsWidget: setCommentsWidget,
+                            );
                           });
                         }
                         on Exception catch (err) {
@@ -225,7 +237,7 @@ class _FullPostScreenState extends State<FullPostScreen> {
         child: Container(
           color: Colors.white,
           child: SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+            padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
             child: Column(
               children: <Widget>[
                 Row(
@@ -339,6 +351,25 @@ class _FullPostScreenState extends State<FullPostScreen> {
       var result = jsonDecode(response.body);
       print(result);
       throw Exception('A problem occured in posting your comment');
+    }
+  }
+
+  void setCommentsWidget(bool isReset, Widget? blankCommentsWidget) {
+    if (isReset) {
+      setState(() {
+        this.commentsWidget = blankCommentsWidget!;
+      });
+    }
+    else {
+      setState(() {
+        this.commentsWidget = new InitSocialMediaComments(
+          postId: widget.post.postId,
+          getReplyCommentsState: getReplyCommentsState,
+          requestFocus: this.requestFocus,
+          cancelFocus: this.cancelFocus,
+          setCommentsWidget: setCommentsWidget,
+        );
+      });
     }
   }
 }

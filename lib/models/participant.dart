@@ -22,10 +22,11 @@ class Participant {
   double? submittedRating;
   int? awardedPotions;
   int? multiplier;
+  Map<String, dynamic>? amount;
 
   Participant({required this.participantId, required this.userId, required this.activity,
     this.status, this.attendancePercent, this.registeredDate, this.acceptedDate, this.testimonial,
-    this.submittedRating, this.awardedPotions, this.multiplier,
+    this.submittedRating, this.awardedPotions, this.multiplier, this.amount,
   });
 
   factory Participant.fromJson(Map<String, dynamic> json) => _$ParticipantFromJson(json);

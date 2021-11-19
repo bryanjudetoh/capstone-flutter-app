@@ -10,13 +10,21 @@ import 'package:share_plus/share_plus.dart';
 import '../constants.dart';
 
 class InitPostCommentModal extends StatelessWidget {
-  InitPostCommentModal({Key? key, required this.reportedContentId, required this.http, required this.isPost, required this.isMyPostComment}) : super(key: key);
+  InitPostCommentModal({Key? key,
+    required this.reportedContentId,
+    required this.http, required this.isPost,
+    required this.isMyPostComment,
+    this.setCommentsWidget,
+    this.setPostContent,
+  }) : super(key: key);
 
   final String reportedContentId;
   final InterceptedHttp http;
   final bool isPost;
   final bool isMyPostComment;
   final SecureStorage secureStorage = SecureStorage();
+  final Function? setCommentsWidget;
+  final Function? setPostContent;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +33,16 @@ class InitPostCommentModal extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
         if (snapshot.hasData) {
           Map<String, dynamic> data = snapshot.data!;
-          return PostCommentModal(reportedContentId: reportedContentId, reportTypes: data['reportTypes'], http: this.http, isPost: this.isPost, isMyPostComment: this.isMyPostComment, post: data['post'],);
+          return PostCommentModal(
+            reportedContentId: reportedContentId,
+            reportTypes: data['reportTypes'],
+            http: this.http,
+            isPost: this.isPost,
+            isMyPostComment: this.isMyPostComment,
+            post: data['post'],
+            setCommentsWidget: this.setCommentsWidget,
+            setPostContent: this.setPostContent,
+          );
         }
         else if (snapshot.hasError) {
           return Center(
@@ -105,9 +122,15 @@ class InitPostCommentModal extends StatelessWidget {
 }
 
 class PostCommentModal extends StatefulWidget {
-  const PostCommentModal({
-    Key? key, required this.reportedContentId, required this.reportTypes,
-    required this.http, required this.isPost, required this.isMyPostComment, this.post
+  const PostCommentModal({Key? key,
+    required this.reportedContentId,
+    required this.reportTypes,
+    required this.http,
+    required this.isPost,
+    required this.isMyPostComment,
+    this.post,
+    this.setCommentsWidget,
+    this.setPostContent,
   }) : super(key: key);
 
   final String reportedContentId;
@@ -116,6 +139,8 @@ class PostCommentModal extends StatefulWidget {
   final bool isPost;
   final bool isMyPostComment;
   final Post? post;
+  final Function? setCommentsWidget;
+  final Function? setPostContent;
 
   @override
   _PostCommentModalState createState() => _PostCommentModalState();
@@ -494,6 +519,9 @@ class _PostCommentModalState extends State<PostCommentModal> {
   }
 
   Future<String> submitEditing(String newContent) async {
+    if (widget.setCommentsWidget != null) {
+      widget.setCommentsWidget!(true, Container());
+    }
     var response = await widget.http.put(
       Uri.parse('https://eq-lab-dev.me/api/social-media/mp/${widget.isPost ? 'post' : 'comment'}/${widget.reportedContentId}'),
       body: jsonEncode(<String, String> {
@@ -503,6 +531,14 @@ class _PostCommentModalState extends State<PostCommentModal> {
 
     if (response.statusCode == 200) {
       var responseBody = jsonDecode(response.body);
+
+      if (widget.setCommentsWidget != null) {
+        widget.setCommentsWidget!(false, null,);
+      }
+      if (widget.setPostContent != null) {
+        widget.setPostContent!(newContent);
+      }
+
       return responseBody['message'];
     }
     else if (response.statusCode == 403) {

@@ -142,6 +142,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   void initState() {
     super.initState();
     this.leaderboardList = widget.data['leaderboardList']!;
+    this.leaderboardList.removeWhere((entity) => entity.value == 0);
     this.user = widget.data['user']!;
   }
 
@@ -151,7 +152,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+          padding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 0.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -324,6 +325,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       List<LeaderboardEntity> list = await queryLeaderboard();
                       setState(() {
                         this.leaderboardList = list;
+                        this.leaderboardList.removeWhere((entity) => entity.value == 0);
                         this.finalLeaderboardType = this.leaderboardType;
                       });
                     },
